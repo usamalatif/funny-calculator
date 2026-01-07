@@ -1,0 +1,425 @@
+import { StyleSheet, Dimensions, Platform } from 'react-native';
+
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const CALCULATOR_WIDTH = Math.min(SCREEN_WIDTH - 40, 380);
+const BUTTON_SIZE = (CALCULATOR_WIDTH - 60) / 4; // 4 columns with gaps
+
+export const colors = {
+  background: '#0a0a0a',
+  numButtonBg: ['#2a2a2a', '#1c1c1c'],
+  numButtonBgPressed: ['#1a1a1a', '#0d0d0d'],
+  funcButtonBg: ['#3a3a3a', '#2a2a2a'],
+  funcButtonBgPressed: ['#2a2a2a', '#1d1d1d'],
+  opButtonActive: ['#ffb347', '#ff6b35'],
+  opButtonPressed: ['#cc7a00', '#b36b00'],
+  equalsButton: ['#ff7b54', '#ff5733', '#c9302c'],
+  equalsButtonPressed: ['#cc5a3a', '#b34a2a'],
+  roastBubbleBg: ['rgba(45,45,45,0.98)', 'rgba(25,25,25,0.98)'],
+  white: '#ffffff',
+  gray: '#888888',
+  darkGray: '#5a5a5a',
+  lightGray: '#666666',
+  orange: '#f5a623',
+};
+
+export const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.background,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+  },
+
+  calculatorContainer: {
+    flex: 1,
+    width: CALCULATOR_WIDTH,
+    paddingVertical: 10,
+  },
+
+  // Top Bar
+  topBar: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 5,
+    paddingVertical: 10,
+    zIndex: 20,
+  },
+  iconButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  iconText: {
+    fontSize: 20,
+    color: colors.gray,
+  },
+
+  // Mood Indicator
+  moodContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  moodLabel: {
+    fontSize: 12,
+    color: colors.lightGray,
+    marginRight: 8,
+  },
+  moodEmoji: {
+    fontSize: 18,
+    color: colors.white,
+  },
+
+  // Roast Bubble
+  roastBubble: {
+    position: 'absolute',
+    top: 70,
+    left: 0,
+    right: 0,
+    zIndex: 30,
+    borderRadius: 18,
+    padding: 14,
+    paddingHorizontal: 18,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.1)',
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 15 },
+        shadowOpacity: 0.7,
+        shadowRadius: 35,
+      },
+      android: {
+        elevation: 15,
+      },
+    }),
+  },
+  roastText: {
+    color: colors.white,
+    textAlign: 'center',
+    fontWeight: '500',
+    fontSize: 14,
+    lineHeight: 20,
+  },
+
+  // Display Area
+  displayContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10,
+    marginTop: 30,
+  },
+  displayWrapper: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  displayText: {
+    color: '#ffffff',
+    fontWeight: '700',
+    letterSpacing: -1,
+    fontVariant: ['tabular-nums'],
+  },
+  // 3D effect layers for display
+  displayShadowLayer: {
+    position: 'absolute',
+  },
+
+  // Button Grid
+  buttonGrid: {
+    gap: 12,
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 10,
+  },
+
+  // Base button styles
+  button: {
+    width: BUTTON_SIZE,
+    height: 58,
+    borderRadius: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+    overflow: 'hidden',
+  },
+  buttonGradient: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 18,
+  },
+
+  // Number button
+  numButtonText: {
+    fontSize: 24,
+    fontWeight: '400',
+    color: colors.white,
+  },
+
+  // Function button
+  funcButtonText: {
+    fontSize: 22,
+    fontWeight: '400',
+    color: colors.gray,
+  },
+
+  // Operator button
+  opButton: {
+    backgroundColor: 'transparent',
+  },
+  opButtonText: {
+    fontSize: 28,
+    fontWeight: '300',
+    color: colors.orange,
+  },
+  opButtonTextActive: {
+    color: colors.white,
+  },
+
+  // Equals button
+  equalsButtonText: {
+    fontSize: 32,
+    fontWeight: '300',
+    color: colors.white,
+  },
+
+  // Button shadows
+  buttonShadow: {
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 4, height: 4 },
+        shadowOpacity: 0.5,
+        shadowRadius: 10,
+      },
+      android: {
+        elevation: 8,
+      },
+    }),
+  },
+  buttonShadowActive: {
+    ...Platform.select({
+      ios: {
+        shadowColor: 'rgba(255,159,67,0.5)',
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 1,
+        shadowRadius: 25,
+      },
+      android: {
+        elevation: 12,
+      },
+    }),
+  },
+  buttonPressed: {
+    transform: [{ scale: 0.93 }],
+  },
+
+  // Footer
+  footer: {
+    marginTop: 12,
+    alignItems: 'center',
+  },
+  footerText: {
+    fontSize: 12,
+    color: colors.lightGray,
+    fontStyle: 'italic',
+    letterSpacing: 2,
+  },
+
+  // History Panel
+  historyOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    zIndex: 100,
+  },
+  historyPanel: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    width: '80%',
+    backgroundColor: '#1a1a1a',
+    zIndex: 101,
+    paddingTop: 50,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 5, height: 0 },
+        shadowOpacity: 0.5,
+        shadowRadius: 10,
+      },
+      android: {
+        elevation: 20,
+      },
+    }),
+  },
+  historyHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingBottom: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(255,255,255,0.1)',
+  },
+  historyTitle: {
+    fontSize: 24,
+    fontWeight: '600',
+    color: colors.white,
+  },
+  historyCloseButton: {
+    padding: 10,
+  },
+  historyCloseText: {
+    fontSize: 20,
+    color: colors.gray,
+  },
+  historyList: {
+    flex: 1,
+    paddingHorizontal: 20,
+  },
+  historyEmpty: {
+    color: colors.lightGray,
+    fontSize: 16,
+    textAlign: 'center',
+    marginTop: 40,
+  },
+  historyItem: {
+    paddingVertical: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(255,255,255,0.05)',
+  },
+  historyExpression: {
+    fontSize: 14,
+    color: colors.gray,
+    marginBottom: 4,
+  },
+  historyResult: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: colors.white,
+  },
+
+  // Settings Panel
+  settingsPanel: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    width: '80%',
+    backgroundColor: '#1a1a1a',
+    zIndex: 101,
+    paddingTop: 50,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: -5, height: 0 },
+        shadowOpacity: 0.5,
+        shadowRadius: 10,
+      },
+      android: {
+        elevation: 20,
+      },
+    }),
+  },
+  settingsHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingBottom: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(255,255,255,0.1)',
+  },
+  settingsItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 18,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(255,255,255,0.05)',
+  },
+  settingsLabel: {
+    fontSize: 16,
+    color: colors.white,
+  },
+  settingsValue: {
+    fontSize: 16,
+    color: colors.gray,
+  },
+  settingsSection: {
+    marginBottom: 25,
+  },
+  settingsSectionTitle: {
+    fontSize: 13,
+    color: colors.lightGray,
+    fontWeight: '600',
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+    marginBottom: 10,
+  },
+  premiumButton: {
+    backgroundColor: 'rgba(245,166,35,0.15)',
+    borderWidth: 1,
+    borderColor: 'rgba(245,166,35,0.3)',
+    paddingVertical: 16,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  premiumButtonText: {
+    fontSize: 17,
+    color: '#f5a623',
+    fontWeight: '700',
+  },
+  premiumButtonSubtext: {
+    fontSize: 13,
+    color: colors.gray,
+    marginTop: 4,
+  },
+  premiumBadge: {
+    fontSize: 12,
+    color: '#f5a623',
+    fontWeight: '700',
+    backgroundColor: 'rgba(245,166,35,0.2)',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 6,
+    overflow: 'hidden',
+  },
+  settingsButtonDanger: {
+    marginTop: 10,
+    backgroundColor: 'rgba(255,100,100,0.15)',
+    paddingVertical: 14,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  settingsButtonDangerText: {
+    fontSize: 16,
+    color: '#ff6b6b',
+    fontWeight: '600',
+  },
+});
+
+// Dynamic font size based on display length
+export const getFontSize = (displayLength: number): number => {
+  if (displayLength <= 1) return 180;
+  if (displayLength <= 2) return 150;
+  if (displayLength <= 3) return 120;
+  if (displayLength <= 5) return 90;
+  if (displayLength <= 7) return 70;
+  return 55;
+};
+
+export const BUTTON_SIZE_EXPORT = BUTTON_SIZE;
