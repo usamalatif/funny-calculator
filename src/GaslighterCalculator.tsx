@@ -18,6 +18,7 @@ import { styles, darkColors, lightColors, getFontSize, BUTTON_SIZE_EXPORT } from
 import { BackspaceIcon } from './components/BackspaceIcon';
 import { HistoryIcon } from './components/HistoryIcon';
 import { UnitConverter } from './components/UnitConverter';
+import { TipCalculator } from './components/TipCalculator';
 
 const MOOD_EMOJIS = ['\u{1F60A}', '\u{1F610}', '\u{1F612}', '\u{1F624}', '\u{1F644}'];
 
@@ -181,7 +182,7 @@ export default function GaslighterCalculator() {
   const [isPremium, setIsPremium] = useState(false);
 
   // Calculator mode
-  type CalculatorMode = 'calculator' | 'unit-converter';
+  type CalculatorMode = 'calculator' | 'unit-converter' | 'tip-calculator';
   const [calculatorMode, setCalculatorMode] = useState<CalculatorMode>('calculator');
   const [modeMenuVisible, setModeMenuVisible] = useState(false);
 
@@ -808,9 +809,12 @@ export default function GaslighterCalculator() {
               </View>
             </View>
           </>
-        ) : (
+        ) : calculatorMode === 'unit-converter' ? (
           /* Unit Converter Mode */
           <UnitConverter colors={colors} />
+        ) : (
+          /* Tip Calculator Mode */
+          <TipCalculator colors={colors} />
         )}
 
         {/* Footer */}
@@ -932,6 +936,21 @@ export default function GaslighterCalculator() {
             >
               <Text style={[styles.settingsLabel, { color: colors.white }]}>Unit Converter</Text>
               {calculatorMode === 'unit-converter' && (
+                <Text style={{ color: colors.orange, fontSize: 16 }}>✓</Text>
+              )}
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.settingsItem,
+                calculatorMode === 'tip-calculator' && { backgroundColor: 'rgba(245,166,35,0.15)', borderRadius: 8 },
+              ]}
+              onPress={() => {
+                setCalculatorMode('tip-calculator');
+                closeSettings();
+              }}
+            >
+              <Text style={[styles.settingsLabel, { color: colors.white }]}>Tip Calculator</Text>
+              {calculatorMode === 'tip-calculator' && (
                 <Text style={{ color: colors.orange, fontSize: 16 }}>✓</Text>
               )}
             </TouchableOpacity>
