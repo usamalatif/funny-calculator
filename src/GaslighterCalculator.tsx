@@ -20,6 +20,7 @@ import { HistoryIcon } from './components/HistoryIcon';
 import { UnitConverter } from './components/UnitConverter';
 import { TipCalculator } from './components/TipCalculator';
 import { FuelCalculator } from './components/FuelCalculator';
+import { GPACalculator } from './components/GPACalculator';
 
 const MOOD_EMOJIS = ['\u{1F60A}', '\u{1F610}', '\u{1F612}', '\u{1F624}', '\u{1F644}'];
 
@@ -183,7 +184,7 @@ export default function GaslighterCalculator() {
   const [isPremium, setIsPremium] = useState(false);
 
   // Calculator mode
-  type CalculatorMode = 'calculator' | 'unit-converter' | 'tip-calculator' | 'fuel-calculator';
+  type CalculatorMode = 'calculator' | 'unit-converter' | 'tip-calculator' | 'fuel-calculator' | 'gpa-calculator';
   const [calculatorMode, setCalculatorMode] = useState<CalculatorMode>('calculator');
   const [modeMenuVisible, setModeMenuVisible] = useState(false);
 
@@ -816,9 +817,12 @@ export default function GaslighterCalculator() {
         ) : calculatorMode === 'tip-calculator' ? (
           /* Tip Calculator Mode */
           <TipCalculator colors={colors} />
-        ) : (
+        ) : calculatorMode === 'fuel-calculator' ? (
           /* Fuel Calculator Mode */
           <FuelCalculator colors={colors} />
+        ) : (
+          /* GPA Calculator Mode */
+          <GPACalculator colors={colors} />
         )}
 
         {/* Footer */}
@@ -970,6 +974,21 @@ export default function GaslighterCalculator() {
             >
               <Text style={[styles.settingsLabel, { color: colors.white }]}>Fuel Calculator</Text>
               {calculatorMode === 'fuel-calculator' && (
+                <Text style={{ color: colors.orange, fontSize: 16 }}>✓</Text>
+              )}
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.settingsItem,
+                calculatorMode === 'gpa-calculator' && { backgroundColor: 'rgba(245,166,35,0.15)', borderRadius: 8 },
+              ]}
+              onPress={() => {
+                setCalculatorMode('gpa-calculator');
+                closeSettings();
+              }}
+            >
+              <Text style={[styles.settingsLabel, { color: colors.white }]}>GPA Calculator</Text>
+              {calculatorMode === 'gpa-calculator' && (
                 <Text style={{ color: colors.orange, fontSize: 16 }}>✓</Text>
               )}
             </TouchableOpacity>
