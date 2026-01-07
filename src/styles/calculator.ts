@@ -4,7 +4,7 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const CALCULATOR_WIDTH = Math.min(SCREEN_WIDTH - 40, 380);
 const BUTTON_SIZE = (CALCULATOR_WIDTH - 60) / 4; // 4 columns with gaps
 
-export const colors = {
+export const darkColors = {
   background: '#0a0a0a',
   numButtonBg: ['#2a2a2a', '#1c1c1c'],
   numButtonBgPressed: ['#1a1a1a', '#0d0d0d'],
@@ -20,7 +20,36 @@ export const colors = {
   darkGray: '#5a5a5a',
   lightGray: '#666666',
   orange: '#f5a623',
+  displayText: '#ffffff',
+  shadowColor: 'rgba(255, 255, 255, 0.3)',
+  panelBg: '#1a1a1a',
+  iconButtonBg: 'rgba(255,255,255,0.1)',
 };
+
+export const lightColors = {
+  background: '#f5f5f5',
+  numButtonBg: ['#ffffff', '#e8e8e8'],
+  numButtonBgPressed: ['#e0e0e0', '#d0d0d0'],
+  funcButtonBg: ['#e0e0e0', '#d0d0d0'],
+  funcButtonBgPressed: ['#c8c8c8', '#b8b8b8'],
+  opButtonActive: ['#ffb347', '#ff6b35'],
+  opButtonPressed: ['#cc7a00', '#b36b00'],
+  equalsButton: ['#ff7b54', '#ff5733', '#c9302c'],
+  equalsButtonPressed: ['#cc5a3a', '#b34a2a'],
+  roastBubbleBg: ['rgba(255,255,255,0.98)', 'rgba(240,240,240,0.98)'],
+  white: '#1a1a1a',
+  gray: '#666666',
+  darkGray: '#888888',
+  lightGray: '#999999',
+  orange: '#f5a623',
+  displayText: '#1a1a1a',
+  shadowColor: 'rgba(0, 0, 0, 0.3)',
+  panelBg: '#ffffff',
+  iconButtonBg: 'rgba(0,0,0,0.08)',
+};
+
+// Default to dark colors for backward compatibility
+export const colors = darkColors;
 
 export const styles = StyleSheet.create({
   container: {
@@ -360,6 +389,7 @@ export const styles = StyleSheet.create({
   },
   settingsSection: {
     marginBottom: 25,
+    marginTop: 10,
   },
   settingsSectionTitle: {
     fontSize: 13,

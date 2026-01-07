@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import {
   View,
   Text,
@@ -14,32 +14,47 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import { RESPONSES, MOOD_LABELS } from './constants/responses';
 import { useAnimations } from './hooks/useAnimations';
-import { styles, colors, getFontSize, BUTTON_SIZE_EXPORT } from './styles/calculator';
+import { styles, darkColors, lightColors, getFontSize, BUTTON_SIZE_EXPORT } from './styles/calculator';
 import { BackspaceIcon } from './components/BackspaceIcon';
 import { HistoryIcon } from './components/HistoryIcon';
 
 const MOOD_EMOJIS = ['\u{1F60A}', '\u{1F610}', '\u{1F612}', '\u{1F624}', '\u{1F644}'];
 
 // Button Components
+interface ThemeColors {
+  numButtonBg: string[];
+  numButtonBgPressed: string[];
+  funcButtonBg: string[];
+  funcButtonBgPressed: string[];
+  opButtonActive: string[];
+  opButtonPressed: string[];
+  white: string;
+  gray: string;
+  orange: string;
+  equalsButton: string[];
+  equalsButtonPressed: string[];
+}
+
 interface NumButtonProps {
   value: string;
   onPress: () => void;
   pressed: boolean;
+  themeColors: ThemeColors;
 }
 
-const NumButton: React.FC<NumButtonProps> = ({ value, onPress, pressed }) => (
+const NumButton: React.FC<NumButtonProps> = ({ value, onPress, pressed, themeColors }) => (
   <TouchableOpacity
     onPress={onPress}
     activeOpacity={0.8}
     style={[styles.button, styles.buttonShadow, pressed && styles.buttonPressed]}
   >
     <LinearGradient
-      colors={pressed ? colors.numButtonBgPressed : colors.numButtonBg}
+      colors={pressed ? themeColors.numButtonBgPressed as [string, string] : themeColors.numButtonBg as [string, string]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
       style={styles.buttonGradient}
     >
-      <Text style={styles.numButtonText}>{value}</Text>
+      <Text style={[styles.numButtonText, { color: themeColors.white }]}>{value}</Text>
     </LinearGradient>
   </TouchableOpacity>
 );
@@ -49,21 +64,22 @@ interface FuncButtonProps {
   onPress: () => void;
   pressed: boolean;
   icon?: React.ReactNode;
+  themeColors: ThemeColors;
 }
 
-const FuncButton: React.FC<FuncButtonProps> = ({ value, onPress, pressed, icon }) => (
+const FuncButton: React.FC<FuncButtonProps> = ({ value, onPress, pressed, icon, themeColors }) => (
   <TouchableOpacity
     onPress={onPress}
     activeOpacity={0.8}
     style={[styles.button, styles.buttonShadow, pressed && styles.buttonPressed]}
   >
     <LinearGradient
-      colors={pressed ? colors.funcButtonBgPressed : colors.funcButtonBg}
+      colors={pressed ? themeColors.funcButtonBgPressed as [string, string] : themeColors.funcButtonBg as [string, string]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
       style={styles.buttonGradient}
     >
-      {icon || <Text style={styles.funcButtonText}>{value}</Text>}
+      {icon || <Text style={[styles.funcButtonText, { color: themeColors.gray }]}>{value}</Text>}
     </LinearGradient>
   </TouchableOpacity>
 );
@@ -74,9 +90,10 @@ interface OpButtonProps {
   onPress: () => void;
   pressed: boolean;
   isActive: boolean;
+  themeColors: ThemeColors;
 }
 
-const OpButton: React.FC<OpButtonProps> = ({ value, displayValue, onPress, pressed, isActive }) => (
+const OpButton: React.FC<OpButtonProps> = ({ value, displayValue, onPress, pressed, isActive, themeColors }) => (
   <TouchableOpacity
     onPress={onPress}
     activeOpacity={0.8}
@@ -88,7 +105,7 @@ const OpButton: React.FC<OpButtonProps> = ({ value, displayValue, onPress, press
   >
     {isActive ? (
       <LinearGradient
-        colors={colors.opButtonActive}
+        colors={themeColors.opButtonActive as [string, string]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.buttonGradient}
@@ -99,16 +116,16 @@ const OpButton: React.FC<OpButtonProps> = ({ value, displayValue, onPress, press
       </LinearGradient>
     ) : pressed ? (
       <LinearGradient
-        colors={colors.opButtonPressed}
+        colors={themeColors.opButtonPressed as [string, string]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.buttonGradient}
       >
-        <Text style={styles.opButtonText}>{displayValue || value}</Text>
+        <Text style={[styles.opButtonText, { color: themeColors.orange }]}>{displayValue || value}</Text>
       </LinearGradient>
     ) : (
       <View style={[styles.buttonGradient, { backgroundColor: 'transparent' }]}>
-        <Text style={styles.opButtonText}>{displayValue || value}</Text>
+        <Text style={[styles.opButtonText, { color: themeColors.orange }]}>{displayValue || value}</Text>
       </View>
     )}
   </TouchableOpacity>
@@ -161,6 +178,9 @@ export default function GaslighterCalculator() {
   const settingsSlideAnim = useRef(new Animated.Value(Dimensions.get('window').width * 0.8)).current;
   const [isDarkTheme, setIsDarkTheme] = useState(true);
   const [isPremium, setIsPremium] = useState(false);
+
+  // Theme colors
+  const colors = useMemo(() => isDarkTheme ? darkColors : lightColors, [isDarkTheme]);
 
   // Timer refs
   const hideTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -565,7 +585,7 @@ export default function GaslighterCalculator() {
   const fontSize = getFontSize(display.length);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       <Animated.View
         style={[
           styles.calculatorContainer,
@@ -581,13 +601,13 @@ export default function GaslighterCalculator() {
         {/* Top Bar */}
         <View style={styles.topBar}>
           {/* History Button - Left */}
-          <TouchableOpacity style={styles.iconButton} onPress={openHistory}>
+          <TouchableOpacity style={[styles.iconButton, { backgroundColor: colors.iconButtonBg }]} onPress={openHistory}>
             <HistoryIcon color={colors.gray} size={22} />
           </TouchableOpacity>
 
           {/* Mood Indicator - Center */}
           <View style={styles.moodContainer}>
-            <Text style={styles.moodLabel}>{MOOD_LABELS[mood]}</Text>
+            <Text style={[styles.moodLabel, { color: colors.lightGray }]}>{MOOD_LABELS[mood]}</Text>
             <Text
               style={[
                 styles.moodEmoji,
@@ -600,8 +620,8 @@ export default function GaslighterCalculator() {
           </View>
 
           {/* Settings Button - Right */}
-          <TouchableOpacity style={styles.iconButton} onPress={openSettings}>
-            <Text style={styles.iconText}>⚙</Text>
+          <TouchableOpacity style={[styles.iconButton, { backgroundColor: colors.iconButtonBg }]} onPress={openSettings}>
+            <Text style={[styles.iconText, { color: colors.gray }]}>⚙</Text>
           </TouchableOpacity>
         </View>
 
@@ -620,7 +640,7 @@ export default function GaslighterCalculator() {
             ]}
           >
             <LinearGradient
-              colors={['rgba(45,45,45,0.98)', 'rgba(25,25,25,0.98)']}
+              colors={colors.roastBubbleBg as [string, string]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={{
@@ -632,7 +652,7 @@ export default function GaslighterCalculator() {
                 borderRadius: 18,
               }}
             />
-            <Text style={styles.roastText}>{roast}</Text>
+            <Text style={[styles.roastText, { color: colors.white }]}>{roast}</Text>
           </Animated.View>
         )}
 
@@ -664,7 +684,7 @@ export default function GaslighterCalculator() {
                     fontSize,
                     fontWeight: '700',
                     letterSpacing: -1,
-                    color: `rgba(0, 0, 0, ${0.8 - i * 0.1})`,
+                    color: colors.shadowColor.replace('0.8', String(0.8 - i * 0.1)),
                     left: (i + 1) * 1.5,
                     top: (i + 1) * 2,
                   },
@@ -673,7 +693,7 @@ export default function GaslighterCalculator() {
                 {formatDisplay(display)}
               </Text>
             ))}
-            <Text style={[styles.displayText, { fontSize }]}>
+            <Text style={[styles.displayText, { fontSize, color: colors.displayText }]}>
               {formatDisplay(display)}
             </Text>
           </Animated.View>
@@ -683,70 +703,76 @@ export default function GaslighterCalculator() {
         <View style={styles.buttonGrid}>
           {/* Row 1 */}
           <View style={styles.buttonRow}>
-            <FuncButton value="C" onPress={clearAll} pressed={pressedButton === 'C'} />
-            <FuncButton value="%" onPress={handlePercent} pressed={pressedButton === '%'} />
+            <FuncButton value="C" onPress={clearAll} pressed={pressedButton === 'C'} themeColors={colors} />
+            <FuncButton value="%" onPress={handlePercent} pressed={pressedButton === '%'} themeColors={colors} />
             <FuncButton
               value="back"
               onPress={backspace}
               pressed={pressedButton === 'back'}
               icon={<BackspaceIcon color={colors.gray} />}
+              themeColors={colors}
             />
             <OpButton
               value={'\u00F7'}
               onPress={() => handleOperator('\u00F7')}
               pressed={pressedButton === '\u00F7'}
               isActive={operator === '\u00F7' && waitingForOperand}
+              themeColors={colors}
             />
           </View>
 
           {/* Row 2 */}
           <View style={styles.buttonRow}>
-            <NumButton value="7" onPress={() => inputDigit('7')} pressed={pressedButton === '7'} />
-            <NumButton value="8" onPress={() => inputDigit('8')} pressed={pressedButton === '8'} />
-            <NumButton value="9" onPress={() => inputDigit('9')} pressed={pressedButton === '9'} />
+            <NumButton value="7" onPress={() => inputDigit('7')} pressed={pressedButton === '7'} themeColors={colors} />
+            <NumButton value="8" onPress={() => inputDigit('8')} pressed={pressedButton === '8'} themeColors={colors} />
+            <NumButton value="9" onPress={() => inputDigit('9')} pressed={pressedButton === '9'} themeColors={colors} />
             <OpButton
               value={'\u00D7'}
               onPress={() => handleOperator('\u00D7')}
               pressed={pressedButton === '\u00D7'}
               isActive={operator === '\u00D7' && waitingForOperand}
+              themeColors={colors}
             />
           </View>
 
           {/* Row 3 */}
           <View style={styles.buttonRow}>
-            <NumButton value="4" onPress={() => inputDigit('4')} pressed={pressedButton === '4'} />
-            <NumButton value="5" onPress={() => inputDigit('5')} pressed={pressedButton === '5'} />
-            <NumButton value="6" onPress={() => inputDigit('6')} pressed={pressedButton === '6'} />
+            <NumButton value="4" onPress={() => inputDigit('4')} pressed={pressedButton === '4'} themeColors={colors} />
+            <NumButton value="5" onPress={() => inputDigit('5')} pressed={pressedButton === '5'} themeColors={colors} />
+            <NumButton value="6" onPress={() => inputDigit('6')} pressed={pressedButton === '6'} themeColors={colors} />
             <OpButton
               value="-"
               displayValue={'\u2212'}
               onPress={() => handleOperator('-')}
               pressed={pressedButton === '-'}
               isActive={operator === '-' && waitingForOperand}
+              themeColors={colors}
             />
           </View>
 
           {/* Row 4 */}
           <View style={styles.buttonRow}>
-            <NumButton value="1" onPress={() => inputDigit('1')} pressed={pressedButton === '1'} />
-            <NumButton value="2" onPress={() => inputDigit('2')} pressed={pressedButton === '2'} />
-            <NumButton value="3" onPress={() => inputDigit('3')} pressed={pressedButton === '3'} />
+            <NumButton value="1" onPress={() => inputDigit('1')} pressed={pressedButton === '1'} themeColors={colors} />
+            <NumButton value="2" onPress={() => inputDigit('2')} pressed={pressedButton === '2'} themeColors={colors} />
+            <NumButton value="3" onPress={() => inputDigit('3')} pressed={pressedButton === '3'} themeColors={colors} />
             <OpButton
               value="+"
               onPress={() => handleOperator('+')}
               pressed={pressedButton === '+'}
               isActive={operator === '+' && waitingForOperand}
+              themeColors={colors}
             />
           </View>
 
           {/* Row 5 */}
           <View style={styles.buttonRow}>
-            <NumButton value="0" onPress={() => inputDigit('0')} pressed={pressedButton === '0'} />
-            <NumButton value="." onPress={inputDecimal} pressed={pressedButton === '.'} />
+            <NumButton value="0" onPress={() => inputDigit('0')} pressed={pressedButton === '0'} themeColors={colors} />
+            <NumButton value="." onPress={inputDecimal} pressed={pressedButton === '.'} themeColors={colors} />
             <FuncButton
               value={'\u00B1'}
               onPress={toggleSign}
               pressed={pressedButton === '\u00B1'}
+              themeColors={colors}
             />
             <TouchableOpacity
               onPress={handleEquals}
@@ -760,8 +786,8 @@ export default function GaslighterCalculator() {
               <LinearGradient
                 colors={
                   pressedButton === '='
-                    ? colors.equalsButtonPressed
-                    : colors.equalsButton
+                    ? colors.equalsButtonPressed as [string, string, string]
+                    : colors.equalsButton as [string, string, string]
                 }
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
@@ -792,18 +818,19 @@ export default function GaslighterCalculator() {
       <Animated.View
         style={[
           styles.historyPanel,
+          { backgroundColor: colors.panelBg },
           { transform: [{ translateX: historySlideAnim }] },
         ]}
       >
         <View style={styles.historyHeader}>
-          <Text style={styles.historyTitle}>History</Text>
+          <Text style={[styles.historyTitle, { color: colors.white }]}>History</Text>
           <TouchableOpacity onPress={closeHistory} style={styles.historyCloseButton}>
-            <Text style={styles.historyCloseText}>✕</Text>
+            <Text style={[styles.historyCloseText, { color: colors.gray }]}>✕</Text>
           </TouchableOpacity>
         </View>
         <ScrollView style={styles.historyList} showsVerticalScrollIndicator={false}>
           {history.length === 0 ? (
-            <Text style={styles.historyEmpty}>No calculations yet</Text>
+            <Text style={[styles.historyEmpty, { color: colors.lightGray }]}>No calculations yet</Text>
           ) : (
             history.map((item, index) => (
               <TouchableOpacity
@@ -814,8 +841,8 @@ export default function GaslighterCalculator() {
                   closeHistory();
                 }}
               >
-                <Text style={styles.historyExpression}>{item.expression}</Text>
-                <Text style={styles.historyResult}>= {item.result}</Text>
+                <Text style={[styles.historyExpression, { color: colors.gray }]}>{item.expression}</Text>
+                <Text style={[styles.historyResult, { color: colors.white }]}>= {item.result}</Text>
               </TouchableOpacity>
             ))
           )}
@@ -835,22 +862,23 @@ export default function GaslighterCalculator() {
       <Animated.View
         style={[
           styles.settingsPanel,
+          { backgroundColor: colors.panelBg },
           { transform: [{ translateX: settingsSlideAnim }] },
         ]}
       >
         <View style={styles.settingsHeader}>
           <TouchableOpacity onPress={closeSettings} style={styles.historyCloseButton}>
-            <Text style={styles.historyCloseText}>✕</Text>
+            <Text style={[styles.historyCloseText, { color: colors.gray }]}>✕</Text>
           </TouchableOpacity>
-          <Text style={styles.historyTitle}>Settings</Text>
+          <Text style={[styles.historyTitle, { color: colors.white }]}>Settings</Text>
           <View style={{ width: 40 }} />
         </View>
         <ScrollView style={styles.historyList} showsVerticalScrollIndicator={false}>
           {/* Theme Toggle */}
           <View style={styles.settingsSection}>
-            <Text style={styles.settingsSectionTitle}>Appearance</Text>
+            <Text style={[styles.settingsSectionTitle, { color: colors.lightGray }]}>Appearance</Text>
             <View style={styles.settingsItem}>
-              <Text style={styles.settingsLabel}>Dark Theme</Text>
+              <Text style={[styles.settingsLabel, { color: colors.white }]}>Dark Theme</Text>
               <Switch
                 value={isDarkTheme}
                 onValueChange={setIsDarkTheme}
@@ -862,10 +890,10 @@ export default function GaslighterCalculator() {
 
           {/* Premium */}
           <View style={styles.settingsSection}>
-            <Text style={styles.settingsSectionTitle}>Premium</Text>
+            <Text style={[styles.settingsSectionTitle, { color: colors.lightGray }]}>Premium</Text>
             {isPremium ? (
               <View style={styles.settingsItem}>
-                <Text style={styles.settingsLabel}>Premium Active</Text>
+                <Text style={[styles.settingsLabel, { color: colors.white }]}>Premium Active</Text>
                 <Text style={styles.premiumBadge}>PRO</Text>
               </View>
             ) : (
@@ -883,17 +911,17 @@ export default function GaslighterCalculator() {
                 }}
               >
                 <Text style={styles.premiumButtonText}>Remove Ads - $2.99</Text>
-                <Text style={styles.premiumButtonSubtext}>Unlock premium features</Text>
+                <Text style={[styles.premiumButtonSubtext, { color: colors.gray }]}>Unlock premium features</Text>
               </TouchableOpacity>
             )}
           </View>
 
           {/* App Info */}
           <View style={styles.settingsSection}>
-            <Text style={styles.settingsSectionTitle}>App Info</Text>
+            <Text style={[styles.settingsSectionTitle, { color: colors.lightGray }]}>App Info</Text>
             <View style={styles.settingsItem}>
-              <Text style={styles.settingsLabel}>Version</Text>
-              <Text style={styles.settingsValue}>1.0.0</Text>
+              <Text style={[styles.settingsLabel, { color: colors.white }]}>Version</Text>
+              <Text style={[styles.settingsValue, { color: colors.gray }]}>1.0.0</Text>
             </View>
             <TouchableOpacity
               style={styles.settingsItem}
@@ -905,17 +933,17 @@ export default function GaslighterCalculator() {
                 );
               }}
             >
-              <Text style={styles.settingsLabel}>About</Text>
-              <Text style={styles.settingsValue}>→</Text>
+              <Text style={[styles.settingsLabel, { color: colors.white }]}>About</Text>
+              <Text style={[styles.settingsValue, { color: colors.gray }]}>→</Text>
             </TouchableOpacity>
           </View>
 
           {/* Data */}
           <View style={styles.settingsSection}>
-            <Text style={styles.settingsSectionTitle}>Data</Text>
+            <Text style={[styles.settingsSectionTitle, { color: colors.lightGray }]}>Data</Text>
             <View style={styles.settingsItem}>
-              <Text style={styles.settingsLabel}>Calculations Done</Text>
-              <Text style={styles.settingsValue}>{equalsCount}</Text>
+              <Text style={[styles.settingsLabel, { color: colors.white }]}>Calculations Done</Text>
+              <Text style={[styles.settingsValue, { color: colors.gray }]}>{equalsCount}</Text>
             </View>
             <TouchableOpacity
               style={styles.settingsButtonDanger}
