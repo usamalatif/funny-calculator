@@ -17,6 +17,7 @@ import { useAnimations } from './hooks/useAnimations';
 import { styles, darkColors, lightColors, getFontSize, BUTTON_SIZE_EXPORT } from './styles/calculator';
 import { BackspaceIcon } from './components/BackspaceIcon';
 import { HistoryIcon } from './components/HistoryIcon';
+import { UnitConverter } from './components/UnitConverter';
 
 const MOOD_EMOJIS = ['\u{1F60A}', '\u{1F610}', '\u{1F612}', '\u{1F624}', '\u{1F644}'];
 
@@ -179,12 +180,17 @@ export default function GaslighterCalculator() {
   const [isDarkTheme, setIsDarkTheme] = useState(true);
   const [isPremium, setIsPremium] = useState(false);
 
+  // Calculator mode
+  type CalculatorMode = 'calculator' | 'unit-converter';
+  const [calculatorMode, setCalculatorMode] = useState<CalculatorMode>('calculator');
+  const [modeMenuVisible, setModeMenuVisible] = useState(false);
+
   // Theme colors
   const colors = useMemo(() => isDarkTheme ? darkColors : lightColors, [isDarkTheme]);
 
   // Timer refs
-  const hideTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const clearTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const hideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const clearTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Animations
   const animations = useAnimations();
@@ -625,8 +631,8 @@ export default function GaslighterCalculator() {
           </TouchableOpacity>
         </View>
 
-        {/* Roast Bubble */}
-        {roast && (
+        {/* Roast Bubble - only show in calculator mode */}
+        {calculatorMode === 'calculator' && roast && (
           <Animated.View
             style={[
               styles.roastBubble,
@@ -656,148 +662,156 @@ export default function GaslighterCalculator() {
           </Animated.View>
         )}
 
-        {/* Display Area */}
-        <Animated.View
-          style={[
-            styles.displayContainer,
-            {
-              transform: [
-                { translateX: animations.glitchX },
-                { translateY: animations.glitchY },
-              ],
-            },
-          ]}
-        >
-          <Animated.View
-            style={[
-              styles.displayWrapper,
-              { transform: [{ scale: animations.displayPulse }] },
-            ]}
-          >
-            {/* Shadow layers for 3D effect */}
-            {Array.from({ length: 6 }).map((_, i) => (
-              <Text
-                key={i}
-                style={[
-                  styles.displayShadowLayer,
-                  {
-                    fontSize,
-                    fontWeight: '700',
-                    letterSpacing: -1,
-                    color: colors.shadowColor.replace('0.8', String(0.8 - i * 0.1)),
-                    left: (i + 1) * 1.5,
-                    top: (i + 1) * 2,
-                  },
-                ]}
-              >
-                {formatDisplay(display)}
-              </Text>
-            ))}
-            <Text style={[styles.displayText, { fontSize, color: colors.displayText }]}>
-              {formatDisplay(display)}
-            </Text>
-          </Animated.View>
-        </Animated.View>
-
-        {/* Button Grid */}
-        <View style={styles.buttonGrid}>
-          {/* Row 1 */}
-          <View style={styles.buttonRow}>
-            <FuncButton value="C" onPress={clearAll} pressed={pressedButton === 'C'} themeColors={colors} />
-            <FuncButton value="%" onPress={handlePercent} pressed={pressedButton === '%'} themeColors={colors} />
-            <FuncButton
-              value="back"
-              onPress={backspace}
-              pressed={pressedButton === 'back'}
-              icon={<BackspaceIcon color={colors.gray} />}
-              themeColors={colors}
-            />
-            <OpButton
-              value={'\u00F7'}
-              onPress={() => handleOperator('\u00F7')}
-              pressed={pressedButton === '\u00F7'}
-              isActive={operator === '\u00F7' && waitingForOperand}
-              themeColors={colors}
-            />
-          </View>
-
-          {/* Row 2 */}
-          <View style={styles.buttonRow}>
-            <NumButton value="7" onPress={() => inputDigit('7')} pressed={pressedButton === '7'} themeColors={colors} />
-            <NumButton value="8" onPress={() => inputDigit('8')} pressed={pressedButton === '8'} themeColors={colors} />
-            <NumButton value="9" onPress={() => inputDigit('9')} pressed={pressedButton === '9'} themeColors={colors} />
-            <OpButton
-              value={'\u00D7'}
-              onPress={() => handleOperator('\u00D7')}
-              pressed={pressedButton === '\u00D7'}
-              isActive={operator === '\u00D7' && waitingForOperand}
-              themeColors={colors}
-            />
-          </View>
-
-          {/* Row 3 */}
-          <View style={styles.buttonRow}>
-            <NumButton value="4" onPress={() => inputDigit('4')} pressed={pressedButton === '4'} themeColors={colors} />
-            <NumButton value="5" onPress={() => inputDigit('5')} pressed={pressedButton === '5'} themeColors={colors} />
-            <NumButton value="6" onPress={() => inputDigit('6')} pressed={pressedButton === '6'} themeColors={colors} />
-            <OpButton
-              value="-"
-              displayValue={'\u2212'}
-              onPress={() => handleOperator('-')}
-              pressed={pressedButton === '-'}
-              isActive={operator === '-' && waitingForOperand}
-              themeColors={colors}
-            />
-          </View>
-
-          {/* Row 4 */}
-          <View style={styles.buttonRow}>
-            <NumButton value="1" onPress={() => inputDigit('1')} pressed={pressedButton === '1'} themeColors={colors} />
-            <NumButton value="2" onPress={() => inputDigit('2')} pressed={pressedButton === '2'} themeColors={colors} />
-            <NumButton value="3" onPress={() => inputDigit('3')} pressed={pressedButton === '3'} themeColors={colors} />
-            <OpButton
-              value="+"
-              onPress={() => handleOperator('+')}
-              pressed={pressedButton === '+'}
-              isActive={operator === '+' && waitingForOperand}
-              themeColors={colors}
-            />
-          </View>
-
-          {/* Row 5 */}
-          <View style={styles.buttonRow}>
-            <NumButton value="0" onPress={() => inputDigit('0')} pressed={pressedButton === '0'} themeColors={colors} />
-            <NumButton value="." onPress={inputDecimal} pressed={pressedButton === '.'} themeColors={colors} />
-            <FuncButton
-              value={'\u00B1'}
-              onPress={toggleSign}
-              pressed={pressedButton === '\u00B1'}
-              themeColors={colors}
-            />
-            <TouchableOpacity
-              onPress={handleEquals}
-              activeOpacity={0.8}
+        {/* Calculator Mode Content */}
+        {calculatorMode === 'calculator' ? (
+          <>
+            {/* Display Area */}
+            <Animated.View
               style={[
-                styles.button,
-                styles.buttonShadow,
-                pressedButton === '=' && styles.buttonPressed,
+                styles.displayContainer,
+                {
+                  transform: [
+                    { translateX: animations.glitchX },
+                    { translateY: animations.glitchY },
+                  ],
+                },
               ]}
             >
-              <LinearGradient
-                colors={
-                  pressedButton === '='
-                    ? colors.equalsButtonPressed as [string, string, string]
-                    : colors.equalsButton as [string, string, string]
-                }
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.buttonGradient}
+              <Animated.View
+                style={[
+                  styles.displayWrapper,
+                  { transform: [{ scale: animations.displayPulse }] },
+                ]}
               >
-                <Text style={styles.equalsButtonText}>=</Text>
-              </LinearGradient>
-            </TouchableOpacity>
-          </View>
-        </View>
+                {/* Shadow layers for 3D effect */}
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <Text
+                    key={i}
+                    style={[
+                      styles.displayShadowLayer,
+                      {
+                        fontSize,
+                        fontWeight: '700',
+                        letterSpacing: -1,
+                        color: colors.shadowColor.replace('0.8', String(0.8 - i * 0.1)),
+                        left: (i + 1) * 1.5,
+                        top: (i + 1) * 2,
+                      },
+                    ]}
+                  >
+                    {formatDisplay(display)}
+                  </Text>
+                ))}
+                <Text style={[styles.displayText, { fontSize, color: colors.displayText }]}>
+                  {formatDisplay(display)}
+                </Text>
+              </Animated.View>
+            </Animated.View>
+
+            {/* Button Grid */}
+            <View style={styles.buttonGrid}>
+              {/* Row 1 */}
+              <View style={styles.buttonRow}>
+                <FuncButton value="C" onPress={clearAll} pressed={pressedButton === 'C'} themeColors={colors} />
+                <FuncButton value="%" onPress={handlePercent} pressed={pressedButton === '%'} themeColors={colors} />
+                <FuncButton
+                  value="back"
+                  onPress={backspace}
+                  pressed={pressedButton === 'back'}
+                  icon={<BackspaceIcon color={colors.gray} />}
+                  themeColors={colors}
+                />
+                <OpButton
+                  value={'\u00F7'}
+                  onPress={() => handleOperator('\u00F7')}
+                  pressed={pressedButton === '\u00F7'}
+                  isActive={operator === '\u00F7' && waitingForOperand}
+                  themeColors={colors}
+                />
+              </View>
+
+              {/* Row 2 */}
+              <View style={styles.buttonRow}>
+                <NumButton value="7" onPress={() => inputDigit('7')} pressed={pressedButton === '7'} themeColors={colors} />
+                <NumButton value="8" onPress={() => inputDigit('8')} pressed={pressedButton === '8'} themeColors={colors} />
+                <NumButton value="9" onPress={() => inputDigit('9')} pressed={pressedButton === '9'} themeColors={colors} />
+                <OpButton
+                  value={'\u00D7'}
+                  onPress={() => handleOperator('\u00D7')}
+                  pressed={pressedButton === '\u00D7'}
+                  isActive={operator === '\u00D7' && waitingForOperand}
+                  themeColors={colors}
+                />
+              </View>
+
+              {/* Row 3 */}
+              <View style={styles.buttonRow}>
+                <NumButton value="4" onPress={() => inputDigit('4')} pressed={pressedButton === '4'} themeColors={colors} />
+                <NumButton value="5" onPress={() => inputDigit('5')} pressed={pressedButton === '5'} themeColors={colors} />
+                <NumButton value="6" onPress={() => inputDigit('6')} pressed={pressedButton === '6'} themeColors={colors} />
+                <OpButton
+                  value="-"
+                  displayValue={'\u2212'}
+                  onPress={() => handleOperator('-')}
+                  pressed={pressedButton === '-'}
+                  isActive={operator === '-' && waitingForOperand}
+                  themeColors={colors}
+                />
+              </View>
+
+              {/* Row 4 */}
+              <View style={styles.buttonRow}>
+                <NumButton value="1" onPress={() => inputDigit('1')} pressed={pressedButton === '1'} themeColors={colors} />
+                <NumButton value="2" onPress={() => inputDigit('2')} pressed={pressedButton === '2'} themeColors={colors} />
+                <NumButton value="3" onPress={() => inputDigit('3')} pressed={pressedButton === '3'} themeColors={colors} />
+                <OpButton
+                  value="+"
+                  onPress={() => handleOperator('+')}
+                  pressed={pressedButton === '+'}
+                  isActive={operator === '+' && waitingForOperand}
+                  themeColors={colors}
+                />
+              </View>
+
+              {/* Row 5 */}
+              <View style={styles.buttonRow}>
+                <NumButton value="0" onPress={() => inputDigit('0')} pressed={pressedButton === '0'} themeColors={colors} />
+                <NumButton value="." onPress={inputDecimal} pressed={pressedButton === '.'} themeColors={colors} />
+                <FuncButton
+                  value={'\u00B1'}
+                  onPress={toggleSign}
+                  pressed={pressedButton === '\u00B1'}
+                  themeColors={colors}
+                />
+                <TouchableOpacity
+                  onPress={handleEquals}
+                  activeOpacity={0.8}
+                  style={[
+                    styles.button,
+                    styles.buttonShadow,
+                    pressedButton === '=' && styles.buttonPressed,
+                  ]}
+                >
+                  <LinearGradient
+                    colors={
+                      pressedButton === '='
+                        ? colors.equalsButtonPressed as [string, string, string]
+                        : colors.equalsButton as [string, string, string]
+                    }
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={styles.buttonGradient}
+                  >
+                    <Text style={styles.equalsButtonText}>=</Text>
+                  </LinearGradient>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </>
+        ) : (
+          /* Unit Converter Mode */
+          <UnitConverter colors={colors} />
+        )}
 
         {/* Footer */}
         {/* <View style={styles.footer}>
@@ -876,7 +890,7 @@ export default function GaslighterCalculator() {
         <ScrollView style={styles.historyList} showsVerticalScrollIndicator={false}>
           {/* Theme Toggle */}
           <View style={styles.settingsSection}>
-            <Text style={[styles.settingsSectionTitle, { color: colors.lightGray }]}>Appearance</Text>
+            <Text style={[styles.settingsSectionTitle, { color: colors.lightGray, marginTop: 10 }]}>Appearance</Text>
             <View style={styles.settingsItem}>
               <Text style={[styles.settingsLabel, { color: colors.white }]}>Dark Theme</Text>
               <Switch
@@ -886,6 +900,41 @@ export default function GaslighterCalculator() {
                 thumbColor={isDarkTheme ? '#ffffff' : '#888888'}
               />
             </View>
+          </View>
+
+          {/* Calculator Mode */}
+          <View style={styles.settingsSection}>
+            <Text style={[styles.settingsSectionTitle, { color: colors.lightGray }]}>Calculator Mode</Text>
+            <TouchableOpacity
+              style={[
+                styles.settingsItem,
+                calculatorMode === 'calculator' && { backgroundColor: 'rgba(245,166,35,0.15)', borderRadius: 8 },
+              ]}
+              onPress={() => {
+                setCalculatorMode('calculator');
+                closeSettings();
+              }}
+            >
+              <Text style={[styles.settingsLabel, { color: colors.white }]}>Standard Calculator</Text>
+              {calculatorMode === 'calculator' && (
+                <Text style={{ color: colors.orange, fontSize: 16 }}>✓</Text>
+              )}
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.settingsItem,
+                calculatorMode === 'unit-converter' && { backgroundColor: 'rgba(245,166,35,0.15)', borderRadius: 8 },
+              ]}
+              onPress={() => {
+                setCalculatorMode('unit-converter');
+                closeSettings();
+              }}
+            >
+              <Text style={[styles.settingsLabel, { color: colors.white }]}>Unit Converter</Text>
+              {calculatorMode === 'unit-converter' && (
+                <Text style={{ color: colors.orange, fontSize: 16 }}>✓</Text>
+              )}
+            </TouchableOpacity>
           </View>
 
           {/* Premium */}
