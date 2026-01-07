@@ -19,6 +19,7 @@ import { BackspaceIcon } from './components/BackspaceIcon';
 import { HistoryIcon } from './components/HistoryIcon';
 import { UnitConverter } from './components/UnitConverter';
 import { TipCalculator } from './components/TipCalculator';
+import { FuelCalculator } from './components/FuelCalculator';
 
 const MOOD_EMOJIS = ['\u{1F60A}', '\u{1F610}', '\u{1F612}', '\u{1F624}', '\u{1F644}'];
 
@@ -182,7 +183,7 @@ export default function GaslighterCalculator() {
   const [isPremium, setIsPremium] = useState(false);
 
   // Calculator mode
-  type CalculatorMode = 'calculator' | 'unit-converter' | 'tip-calculator';
+  type CalculatorMode = 'calculator' | 'unit-converter' | 'tip-calculator' | 'fuel-calculator';
   const [calculatorMode, setCalculatorMode] = useState<CalculatorMode>('calculator');
   const [modeMenuVisible, setModeMenuVisible] = useState(false);
 
@@ -812,9 +813,12 @@ export default function GaslighterCalculator() {
         ) : calculatorMode === 'unit-converter' ? (
           /* Unit Converter Mode */
           <UnitConverter colors={colors} />
-        ) : (
+        ) : calculatorMode === 'tip-calculator' ? (
           /* Tip Calculator Mode */
           <TipCalculator colors={colors} />
+        ) : (
+          /* Fuel Calculator Mode */
+          <FuelCalculator colors={colors} />
         )}
 
         {/* Footer */}
@@ -951,6 +955,21 @@ export default function GaslighterCalculator() {
             >
               <Text style={[styles.settingsLabel, { color: colors.white }]}>Tip Calculator</Text>
               {calculatorMode === 'tip-calculator' && (
+                <Text style={{ color: colors.orange, fontSize: 16 }}>✓</Text>
+              )}
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.settingsItem,
+                calculatorMode === 'fuel-calculator' && { backgroundColor: 'rgba(245,166,35,0.15)', borderRadius: 8 },
+              ]}
+              onPress={() => {
+                setCalculatorMode('fuel-calculator');
+                closeSettings();
+              }}
+            >
+              <Text style={[styles.settingsLabel, { color: colors.white }]}>Fuel Calculator</Text>
+              {calculatorMode === 'fuel-calculator' && (
                 <Text style={{ color: colors.orange, fontSize: 16 }}>✓</Text>
               )}
             </TouchableOpacity>
