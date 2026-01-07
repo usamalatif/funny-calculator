@@ -23,6 +23,7 @@ import { FuelCalculator } from './components/FuelCalculator';
 import { GPACalculator } from './components/GPACalculator';
 import { FuelEfficiencyCalculator } from './components/FuelEfficiencyCalculator';
 import { HealthCalculator } from './components/HealthCalculator';
+import { PercentageCalculator } from './components/PercentageCalculator';
 
 const MOOD_EMOJIS = ['\u{1F60A}', '\u{1F610}', '\u{1F612}', '\u{1F624}', '\u{1F644}'];
 
@@ -186,7 +187,7 @@ export default function GaslighterCalculator() {
   const [isPremium, setIsPremium] = useState(false);
 
   // Calculator mode
-  type CalculatorMode = 'calculator' | 'unit-converter' | 'tip-calculator' | 'fuel-calculator' | 'gpa-calculator' | 'fuel-efficiency' | 'health';
+  type CalculatorMode = 'calculator' | 'unit-converter' | 'tip-calculator' | 'fuel-calculator' | 'gpa-calculator' | 'fuel-efficiency' | 'health' | 'percentage';
   const [calculatorMode, setCalculatorMode] = useState<CalculatorMode>('calculator');
   const [modeMenuVisible, setModeMenuVisible] = useState(false);
 
@@ -828,9 +829,12 @@ export default function GaslighterCalculator() {
         ) : calculatorMode === 'fuel-efficiency' ? (
           /* Fuel Efficiency Calculator Mode */
           <FuelEfficiencyCalculator colors={colors} />
-        ) : (
+        ) : calculatorMode === 'health' ? (
           /* Health Calculator Mode */
           <HealthCalculator colors={colors} />
+        ) : (
+          /* Percentage Calculator Mode */
+          <PercentageCalculator colors={colors} />
         )}
 
         {/* Footer */}
@@ -1027,6 +1031,21 @@ export default function GaslighterCalculator() {
             >
               <Text style={[styles.settingsLabel, { color: colors.white }]}>Health Calculator</Text>
               {calculatorMode === 'health' && (
+                <Text style={{ color: colors.orange, fontSize: 16 }}>✓</Text>
+              )}
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.settingsItem,
+                calculatorMode === 'percentage' && { backgroundColor: 'rgba(245,166,35,0.15)', borderRadius: 8 },
+              ]}
+              onPress={() => {
+                setCalculatorMode('percentage');
+                closeSettings();
+              }}
+            >
+              <Text style={[styles.settingsLabel, { color: colors.white }]}>Percentage Calculator</Text>
+              {calculatorMode === 'percentage' && (
                 <Text style={{ color: colors.orange, fontSize: 16 }}>✓</Text>
               )}
             </TouchableOpacity>
