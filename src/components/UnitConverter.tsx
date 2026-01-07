@@ -22,6 +22,7 @@ interface UnitConverterProps {
     panelBg: string;
     iconButtonBg: string;
   };
+  onTaskComplete?: () => void;
 }
 
 type UnitCategory = 'length' | 'weight' | 'temp' | 'volume' | 'area' | 'speed';
@@ -86,7 +87,7 @@ const CATEGORIES: { label: string; icon: string; value: UnitCategory }[] = [
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
-export const UnitConverter: React.FC<UnitConverterProps> = ({ colors }) => {
+export const UnitConverter: React.FC<UnitConverterProps> = ({ colors, onTaskComplete }) => {
   const [category, setCategory] = useState<UnitCategory>('length');
   const [fromUnit, setFromUnit] = useState(0);
   const [toUnit, setToUnit] = useState(1);
@@ -111,6 +112,14 @@ export const UnitConverter: React.FC<UnitConverterProps> = ({ colors }) => {
   const swapUnits = () => {
     setFromUnit(toUnit);
     setToUnit(fromUnit);
+    onTaskComplete?.();
+  };
+
+  const handleInputChange = (text: string) => {
+    setInputValue(text);
+    if (text && parseFloat(text) > 0) {
+      onTaskComplete?.();
+    }
   };
 
   const styles = StyleSheet.create({
@@ -402,7 +411,7 @@ export const UnitConverter: React.FC<UnitConverterProps> = ({ colors }) => {
             <TextInput
               style={styles.valueInput}
               value={inputValue}
-              onChangeText={setInputValue}
+              onChangeText={handleInputChange}
               keyboardType="numeric"
               placeholder="0"
               placeholderTextColor={colors.gray}

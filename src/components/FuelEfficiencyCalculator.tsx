@@ -20,14 +20,22 @@ interface FuelEfficiencyCalculatorProps {
     panelBg: string;
     iconButtonBg: string;
   };
+  onTaskComplete?: () => void;
 }
 
 type UnitSystem = 'metric' | 'imperial';
 
-export const FuelEfficiencyCalculator: React.FC<FuelEfficiencyCalculatorProps> = ({ colors }) => {
+export const FuelEfficiencyCalculator: React.FC<FuelEfficiencyCalculatorProps> = ({ colors, onTaskComplete }) => {
   const [unitSystem, setUnitSystem] = useState<UnitSystem>('metric');
   const [distance, setDistance] = useState('');
   const [fuelUsed, setFuelUsed] = useState('');
+
+  const handleInputChange = (setter: (val: string) => void) => (text: string) => {
+    setter(text);
+    if (text && parseFloat(text) > 0) {
+      onTaskComplete?.();
+    }
+  };
 
   const distanceNum = parseFloat(distance) || 0;
   const fuelNum = parseFloat(fuelUsed) || 0;
@@ -286,7 +294,7 @@ export const FuelEfficiencyCalculator: React.FC<FuelEfficiencyCalculatorProps> =
             <TextInput
               style={styles.input}
               value={distance}
-              onChangeText={setDistance}
+              onChangeText={handleInputChange(setDistance)}
               keyboardType="numeric"
               placeholder="0"
               placeholderTextColor={colors.gray}
@@ -302,7 +310,7 @@ export const FuelEfficiencyCalculator: React.FC<FuelEfficiencyCalculatorProps> =
             <TextInput
               style={styles.input}
               value={fuelUsed}
-              onChangeText={setFuelUsed}
+              onChangeText={handleInputChange(setFuelUsed)}
               keyboardType="numeric"
               placeholder="0"
               placeholderTextColor={colors.gray}

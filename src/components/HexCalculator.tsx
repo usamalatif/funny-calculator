@@ -23,6 +23,7 @@ interface HexCalculatorProps {
     panelBg: string;
     iconButtonBg: string;
   };
+  onTaskComplete?: () => void;
 }
 
 type NumberBase = 'dec' | 'hex' | 'bin' | 'oct';
@@ -46,7 +47,7 @@ const NUM_KEYS = [
   ['0', '00', '.'],
 ];
 
-export const HexCalculator: React.FC<HexCalculatorProps> = ({ colors }) => {
+export const HexCalculator: React.FC<HexCalculatorProps> = ({ colors, onTaskComplete }) => {
   const [inputBase, setInputBase] = useState<NumberBase>('dec');
   const [inputValue, setInputValue] = useState('');
   const [copiedBase, setCopiedBase] = useState<string | null>(null);
@@ -122,6 +123,7 @@ export const HexCalculator: React.FC<HexCalculatorProps> = ({ colors }) => {
     } else if (key === '00') {
       if (inputValue !== '' && inputValue !== '0') {
         setInputValue(inputValue + '00');
+        onTaskComplete?.();
       }
     } else if (isKeyValid(key)) {
       if (inputValue === '0') {
@@ -129,6 +131,7 @@ export const HexCalculator: React.FC<HexCalculatorProps> = ({ colors }) => {
       } else {
         setInputValue(inputValue + key);
       }
+      onTaskComplete?.();
     }
   };
 

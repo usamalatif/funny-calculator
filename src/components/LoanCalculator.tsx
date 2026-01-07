@@ -21,6 +21,7 @@ interface LoanCalculatorProps {
     panelBg: string;
     iconButtonBg: string;
   };
+  onTaskComplete?: () => void;
 }
 
 type LoanType = 'personal' | 'mortgage' | 'auto' | 'student';
@@ -32,12 +33,19 @@ const LOAN_TYPES: { label: string; icon: string; value: LoanType; defaultRate: s
   { label: 'Student', icon: '🎓', value: 'student', defaultRate: '5', defaultTerm: '10' },
 ];
 
-export const LoanCalculator: React.FC<LoanCalculatorProps> = ({ colors }) => {
+export const LoanCalculator: React.FC<LoanCalculatorProps> = ({ colors, onTaskComplete }) => {
   const [loanType, setLoanType] = useState<LoanType>('personal');
   const [principal, setPrincipal] = useState('');
   const [interestRate, setInterestRate] = useState('10');
   const [termYears, setTermYears] = useState('3');
   const [termMonths, setTermMonths] = useState('');
+
+  const handleInputChange = (setter: (val: string) => void) => (text: string) => {
+    setter(text);
+    if (text && parseFloat(text) > 0) {
+      onTaskComplete?.();
+    }
+  };
 
   const principalNum = parseFloat(principal) || 0;
   const rateNum = parseFloat(interestRate) || 0;
@@ -341,7 +349,7 @@ export const LoanCalculator: React.FC<LoanCalculatorProps> = ({ colors }) => {
             <TextInput
               style={styles.input}
               value={principal}
-              onChangeText={setPrincipal}
+              onChangeText={handleInputChange(setPrincipal)}
               keyboardType="numeric"
               placeholder="0"
               placeholderTextColor={colors.gray}
@@ -356,7 +364,7 @@ export const LoanCalculator: React.FC<LoanCalculatorProps> = ({ colors }) => {
             <TextInput
               style={styles.input}
               value={interestRate}
-              onChangeText={setInterestRate}
+              onChangeText={handleInputChange(setInterestRate)}
               keyboardType="numeric"
               placeholder="0"
               placeholderTextColor={colors.gray}
@@ -373,7 +381,7 @@ export const LoanCalculator: React.FC<LoanCalculatorProps> = ({ colors }) => {
               <TextInput
                 style={styles.input}
                 value={termYears}
-                onChangeText={setTermYears}
+                onChangeText={handleInputChange(setTermYears)}
                 keyboardType="numeric"
                 placeholder="0"
                 placeholderTextColor={colors.gray}
@@ -384,7 +392,7 @@ export const LoanCalculator: React.FC<LoanCalculatorProps> = ({ colors }) => {
               <TextInput
                 style={styles.input}
                 value={termMonths}
-                onChangeText={setTermMonths}
+                onChangeText={handleInputChange(setTermMonths)}
                 keyboardType="numeric"
                 placeholder="0"
                 placeholderTextColor={colors.gray}

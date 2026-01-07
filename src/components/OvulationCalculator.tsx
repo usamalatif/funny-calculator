@@ -21,6 +21,7 @@ interface OvulationCalculatorProps {
     panelBg: string;
     iconButtonBg: string;
   };
+  onTaskComplete?: () => void;
 }
 
 const MONTHS = [
@@ -30,7 +31,7 @@ const MONTHS = [
 
 const CYCLE_LENGTHS = [21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35];
 
-export const OvulationCalculator: React.FC<OvulationCalculatorProps> = ({ colors }) => {
+export const OvulationCalculator: React.FC<OvulationCalculatorProps> = ({ colors, onTaskComplete }) => {
   const today = new Date();
   const [lastPeriodDay, setLastPeriodDay] = useState(String(today.getDate()));
   const [lastPeriodMonth, setLastPeriodMonth] = useState(today.getMonth());
@@ -38,6 +39,13 @@ export const OvulationCalculator: React.FC<OvulationCalculatorProps> = ({ colors
   const [cycleLength, setCycleLength] = useState(28);
   const [showMonthPicker, setShowMonthPicker] = useState(false);
   const [showCyclePicker, setShowCyclePicker] = useState(false);
+
+  const handleInputChange = (setter: (val: string) => void) => (text: string) => {
+    setter(text);
+    if (text && parseFloat(text) > 0) {
+      onTaskComplete?.();
+    }
+  };
 
   // Calculate dates
   const calculateDates = () => {
@@ -392,7 +400,7 @@ export const OvulationCalculator: React.FC<OvulationCalculatorProps> = ({ colors
               <TextInput
                 style={styles.input}
                 value={lastPeriodDay}
-                onChangeText={setLastPeriodDay}
+                onChangeText={handleInputChange(setLastPeriodDay)}
                 keyboardType="numeric"
                 placeholder="DD"
                 placeholderTextColor={colors.gray}
@@ -413,7 +421,7 @@ export const OvulationCalculator: React.FC<OvulationCalculatorProps> = ({ colors
               <TextInput
                 style={styles.input}
                 value={lastPeriodYear}
-                onChangeText={setLastPeriodYear}
+                onChangeText={handleInputChange(setLastPeriodYear)}
                 keyboardType="numeric"
                 placeholder="YYYY"
                 placeholderTextColor={colors.gray}

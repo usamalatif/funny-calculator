@@ -21,13 +21,14 @@ interface HealthCalculatorProps {
     panelBg: string;
     iconButtonBg: string;
   };
+  onTaskComplete?: () => void;
 }
 
 type UnitSystem = 'metric' | 'imperial';
 type Gender = 'male' | 'female';
 type CalculationType = 'bmi' | 'bmr' | 'water' | 'ideal';
 
-export const HealthCalculator: React.FC<HealthCalculatorProps> = ({ colors }) => {
+export const HealthCalculator: React.FC<HealthCalculatorProps> = ({ colors, onTaskComplete }) => {
   const [calcType, setCalcType] = useState<CalculationType>('bmi');
   const [unitSystem, setUnitSystem] = useState<UnitSystem>('metric');
   const [gender, setGender] = useState<Gender>('male');
@@ -36,6 +37,13 @@ export const HealthCalculator: React.FC<HealthCalculatorProps> = ({ colors }) =>
   const [heightFt, setHeightFt] = useState('');
   const [heightIn, setHeightIn] = useState('');
   const [weight, setWeight] = useState('');
+
+  const handleInputChange = (setter: (val: string) => void) => (text: string) => {
+    setter(text);
+    if (text && parseFloat(text) > 0) {
+      onTaskComplete?.();
+    }
+  };
 
   const weightNum = parseFloat(weight) || 0;
   const heightNum = parseFloat(height) || 0;
@@ -407,7 +415,7 @@ export const HealthCalculator: React.FC<HealthCalculatorProps> = ({ colors }) =>
             <TextInput
               style={styles.input}
               value={age}
-              onChangeText={setAge}
+              onChangeText={handleInputChange(setAge)}
               keyboardType="numeric"
               placeholder="25"
               placeholderTextColor={colors.gray}
@@ -425,7 +433,7 @@ export const HealthCalculator: React.FC<HealthCalculatorProps> = ({ colors }) =>
             <TextInput
               style={styles.input}
               value={height}
-              onChangeText={setHeight}
+              onChangeText={handleInputChange(setHeight)}
               keyboardType="numeric"
               placeholder="170"
               placeholderTextColor={colors.gray}
@@ -438,7 +446,7 @@ export const HealthCalculator: React.FC<HealthCalculatorProps> = ({ colors }) =>
               <TextInput
                 style={styles.input}
                 value={heightFt}
-                onChangeText={setHeightFt}
+                onChangeText={handleInputChange(setHeightFt)}
                 keyboardType="numeric"
                 placeholder="5"
                 placeholderTextColor={colors.gray}
@@ -449,7 +457,7 @@ export const HealthCalculator: React.FC<HealthCalculatorProps> = ({ colors }) =>
               <TextInput
                 style={[styles.input, { width: 60 }]}
                 value={heightIn}
-                onChangeText={setHeightIn}
+                onChangeText={handleInputChange(setHeightIn)}
                 keyboardType="numeric"
                 placeholder="10"
                 placeholderTextColor={colors.gray}
@@ -468,7 +476,7 @@ export const HealthCalculator: React.FC<HealthCalculatorProps> = ({ colors }) =>
             <TextInput
               style={styles.input}
               value={weight}
-              onChangeText={setWeight}
+              onChangeText={handleInputChange(setWeight)}
               keyboardType="numeric"
               placeholder="70"
               placeholderTextColor={colors.gray}

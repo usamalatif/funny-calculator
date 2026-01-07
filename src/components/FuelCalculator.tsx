@@ -20,15 +20,23 @@ interface FuelCalculatorProps {
     panelBg: string;
     iconButtonBg: string;
   };
+  onTaskComplete?: () => void;
 }
 
 type UnitSystem = 'metric' | 'imperial';
 
-export const FuelCalculator: React.FC<FuelCalculatorProps> = ({ colors }) => {
+export const FuelCalculator: React.FC<FuelCalculatorProps> = ({ colors, onTaskComplete }) => {
   const [unitSystem, setUnitSystem] = useState<UnitSystem>('metric');
   const [distance, setDistance] = useState('');
   const [fuelEfficiency, setFuelEfficiency] = useState('');
   const [fuelPrice, setFuelPrice] = useState('');
+
+  const handleInputChange = (setter: (val: string) => void) => (text: string) => {
+    setter(text);
+    if (text && parseFloat(text) > 0) {
+      onTaskComplete?.();
+    }
+  };
 
   const distanceNum = parseFloat(distance) || 0;
   const efficiencyNum = parseFloat(fuelEfficiency) || 0;
@@ -211,7 +219,7 @@ export const FuelCalculator: React.FC<FuelCalculatorProps> = ({ colors }) => {
             <TextInput
               style={styles.input}
               value={distance}
-              onChangeText={setDistance}
+              onChangeText={handleInputChange(setDistance)}
               keyboardType="numeric"
               placeholder="0"
               placeholderTextColor={colors.gray}
@@ -227,7 +235,7 @@ export const FuelCalculator: React.FC<FuelCalculatorProps> = ({ colors }) => {
             <TextInput
               style={styles.input}
               value={fuelEfficiency}
-              onChangeText={setFuelEfficiency}
+              onChangeText={handleInputChange(setFuelEfficiency)}
               keyboardType="numeric"
               placeholder="0"
               placeholderTextColor={colors.gray}
@@ -243,7 +251,7 @@ export const FuelCalculator: React.FC<FuelCalculatorProps> = ({ colors }) => {
             <TextInput
               style={styles.input}
               value={fuelPrice}
-              onChangeText={setFuelPrice}
+              onChangeText={handleInputChange(setFuelPrice)}
               keyboardType="numeric"
               placeholder="0.00"
               placeholderTextColor={colors.gray}

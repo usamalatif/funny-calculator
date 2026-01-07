@@ -21,6 +21,7 @@ interface PercentageCalculatorProps {
     panelBg: string;
     iconButtonBg: string;
   };
+  onTaskComplete?: () => void;
 }
 
 type CalcType = 'percentOf' | 'whatPercent' | 'change' | 'increase' | 'decrease';
@@ -33,10 +34,17 @@ const CALC_TYPES: { label: string; value: CalcType; desc: string }[] = [
   { label: '- %', value: 'decrease', desc: 'Decrease X by Y%' },
 ];
 
-export const PercentageCalculator: React.FC<PercentageCalculatorProps> = ({ colors }) => {
+export const PercentageCalculator: React.FC<PercentageCalculatorProps> = ({ colors, onTaskComplete }) => {
   const [calcType, setCalcType] = useState<CalcType>('percentOf');
   const [value1, setValue1] = useState('');
   const [value2, setValue2] = useState('');
+
+  const handleInputChange = (setter: (val: string) => void) => (text: string) => {
+    setter(text);
+    if (text && parseFloat(text) > 0) {
+      onTaskComplete?.();
+    }
+  };
 
   const num1 = parseFloat(value1) || 0;
   const num2 = parseFloat(value2) || 0;
@@ -341,7 +349,7 @@ export const PercentageCalculator: React.FC<PercentageCalculatorProps> = ({ colo
             <TextInput
               style={styles.input}
               value={value1}
-              onChangeText={setValue1}
+              onChangeText={handleInputChange(setValue1)}
               keyboardType="numeric"
               placeholder="0"
               placeholderTextColor={colors.gray}
@@ -359,7 +367,7 @@ export const PercentageCalculator: React.FC<PercentageCalculatorProps> = ({ colo
             <TextInput
               style={styles.input}
               value={value2}
-              onChangeText={setValue2}
+              onChangeText={handleInputChange(setValue2)}
               keyboardType="numeric"
               placeholder="0"
               placeholderTextColor={colors.gray}

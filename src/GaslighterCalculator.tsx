@@ -10,7 +10,10 @@ import {
   ScrollView,
   Switch,
   Alert,
+  Linking,
+  Modal,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import LinearGradient from 'react-native-linear-gradient';
 import { RESPONSES, MOOD_LABELS } from './constants/responses';
 import { useAnimations } from './hooks/useAnimations';
@@ -27,6 +30,9 @@ import { PercentageCalculator } from './components/PercentageCalculator';
 import { LoanCalculator } from './components/LoanCalculator';
 import { OvulationCalculator } from './components/OvulationCalculator';
 import { HexCalculator } from './components/HexCalculator';
+import { DiscountCalculator } from './components/DiscountCalculator';
+import { CurrencyConverter } from './components/CurrencyConverter';
+import { SavingsCalculator } from './components/SavingsCalculator';
 
 const MOOD_EMOJIS = ['\u{1F60A}', '\u{1F610}', '\u{1F612}', '\u{1F624}', '\u{1F644}'];
 
@@ -190,9 +196,19 @@ export default function GaslighterCalculator() {
   const [isPremium, setIsPremium] = useState(false);
 
   // Calculator mode
-  type CalculatorMode = 'calculator' | 'unit-converter' | 'tip-calculator' | 'fuel-calculator' | 'gpa-calculator' | 'fuel-efficiency' | 'health' | 'percentage' | 'loan' | 'ovulation' | 'hex';
+  type CalculatorMode = 'calculator' | 'unit-converter' | 'tip-calculator' | 'fuel-calculator' | 'gpa-calculator' | 'fuel-efficiency' | 'health' | 'percentage' | 'loan' | 'ovulation' | 'hex' | 'discount' | 'currency' | 'savings';
   const [calculatorMode, setCalculatorMode] = useState<CalculatorMode>('calculator');
   const [modeMenuVisible, setModeMenuVisible] = useState(false);
+
+  // Rating popup state
+  const [showRatingPopup, setShowRatingPopup] = useState(false);
+  const [hasRatedApp, setHasRatedApp] = useState(false);
+  const [dismissedThisSession, setDismissedThisSession] = useState(false);
+  const [taskCount, setTaskCount] = useState(0);
+
+  // Store URLs - Replace with your actual app store URLs
+  const APP_STORE_URL = 'https://apps.apple.com/app/idYOUR_APP_ID';
+  const PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=com.funnycalculator';
 
   // Theme colors
   const colors = useMemo(() => isDarkTheme ? darkColors : lightColors, [isDarkTheme]);
@@ -281,6 +297,68 @@ export default function GaslighterCalculator() {
       setSettingsVisible(false);
     });
   }, [settingsSlideAnim]);
+
+  // Load rating state from AsyncStorage
+  useEffect(() => {
+    const loadRatingState = async () => {
+      try {
+        const hasRated = await AsyncStorage.getItem('hasRatedApp');
+        if (hasRated === 'true') {
+          setHasRatedApp(true);
+        }
+      } catch (error) {
+        console.log('Error loading rating state:', error);
+      }
+    };
+    loadRatingState();
+  }, []);
+
+  // Check if should show rating popup after tasks
+  useEffect(() => {
+    // Show popup after 5 tasks, then every 10 tasks
+    const shouldShow = (taskCount === 5 || (taskCount > 5 && taskCount % 10 === 0));
+    if (shouldShow && !hasRatedApp && !dismissedThisSession && !showRatingPopup) {
+      // Delay showing popup slightly
+      setTimeout(() => {
+        setShowRatingPopup(true);
+      }, 500);
+    }
+  }, [taskCount, hasRatedApp, dismissedThisSession, showRatingPopup]);
+
+  // Handle rating popup dismiss (session only)
+  const handleDismissRating = useCallback(() => {
+    setShowRatingPopup(false);
+    setDismissedThisSession(true);
+  }, []);
+
+  // Handle rate app (permanent)
+  const handleRateApp = useCallback(async () => {
+    setShowRatingPopup(false);
+    setHasRatedApp(true);
+
+    // Save to AsyncStorage
+    try {
+      await AsyncStorage.setItem('hasRatedApp', 'true');
+    } catch (error) {
+      console.log('Error saving rating state:', error);
+    }
+
+    // Open store URL
+    const storeUrl = Platform.OS === 'ios' ? APP_STORE_URL : PLAY_STORE_URL;
+    try {
+      const canOpen = await Linking.canOpenURL(storeUrl);
+      if (canOpen) {
+        await Linking.openURL(storeUrl);
+      }
+    } catch (error) {
+      console.log('Error opening store:', error);
+    }
+  }, [APP_STORE_URL, PLAY_STORE_URL]);
+
+  // Increment task count (call this when user completes a task)
+  const incrementTaskCount = useCallback(() => {
+    setTaskCount(prev => prev + 1);
+  }, []);
 
   // First load shake
   useEffect(() => {
@@ -555,6 +633,9 @@ export default function GaslighterCalculator() {
     setPreviousValue(null);
     setOperator(null);
     setWaitingForOperand(true);
+
+    // Increment task count for rating popup
+    incrementTaskCount();
   };
 
   // PERCENTAGE
@@ -819,34 +900,43 @@ export default function GaslighterCalculator() {
           </>
         ) : calculatorMode === 'unit-converter' ? (
           /* Unit Converter Mode */
-          <UnitConverter colors={colors} />
+          <UnitConverter colors={colors} onTaskComplete={incrementTaskCount} />
         ) : calculatorMode === 'tip-calculator' ? (
           /* Tip Calculator Mode */
-          <TipCalculator colors={colors} />
+          <TipCalculator colors={colors} onTaskComplete={incrementTaskCount} />
         ) : calculatorMode === 'fuel-calculator' ? (
           /* Fuel Calculator Mode */
-          <FuelCalculator colors={colors} />
+          <FuelCalculator colors={colors} onTaskComplete={incrementTaskCount} />
         ) : calculatorMode === 'gpa-calculator' ? (
           /* GPA Calculator Mode */
-          <GPACalculator colors={colors} />
+          <GPACalculator colors={colors} onTaskComplete={incrementTaskCount} />
         ) : calculatorMode === 'fuel-efficiency' ? (
           /* Fuel Efficiency Calculator Mode */
-          <FuelEfficiencyCalculator colors={colors} />
+          <FuelEfficiencyCalculator colors={colors} onTaskComplete={incrementTaskCount} />
         ) : calculatorMode === 'health' ? (
           /* Health Calculator Mode */
-          <HealthCalculator colors={colors} />
+          <HealthCalculator colors={colors} onTaskComplete={incrementTaskCount} />
         ) : calculatorMode === 'percentage' ? (
           /* Percentage Calculator Mode */
-          <PercentageCalculator colors={colors} />
+          <PercentageCalculator colors={colors} onTaskComplete={incrementTaskCount} />
         ) : calculatorMode === 'loan' ? (
           /* Loan Calculator Mode */
-          <LoanCalculator colors={colors} />
+          <LoanCalculator colors={colors} onTaskComplete={incrementTaskCount} />
         ) : calculatorMode === 'ovulation' ? (
           /* Ovulation Calculator Mode */
-          <OvulationCalculator colors={colors} />
-        ) : (
+          <OvulationCalculator colors={colors} onTaskComplete={incrementTaskCount} />
+        ) : calculatorMode === 'hex' ? (
           /* Hex Calculator Mode */
-          <HexCalculator colors={colors} />
+          <HexCalculator colors={colors} onTaskComplete={incrementTaskCount} />
+        ) : calculatorMode === 'discount' ? (
+          /* Discount Calculator Mode */
+          <DiscountCalculator colors={colors} onTaskComplete={incrementTaskCount} />
+        ) : calculatorMode === 'currency' ? (
+          /* Currency Converter Mode */
+          <CurrencyConverter colors={colors} onTaskComplete={incrementTaskCount} />
+        ) : (
+          /* Savings Calculator Mode */
+          <SavingsCalculator colors={colors} onTaskComplete={incrementTaskCount} />
         )}
 
         {/* Footer */}
@@ -936,6 +1026,34 @@ export default function GaslighterCalculator() {
                 thumbColor={isDarkTheme ? '#ffffff' : '#888888'}
               />
             </View>
+          </View>
+
+          {/* Premium */}
+          <View style={styles.settingsSection}>
+            <Text style={[styles.settingsSectionTitle, { color: colors.lightGray }]}>Premium</Text>
+            {isPremium ? (
+              <View style={styles.settingsItem}>
+                <Text style={[styles.settingsLabel, { color: colors.white }]}>Premium Active</Text>
+                <Text style={styles.premiumBadge}>PRO</Text>
+              </View>
+            ) : (
+              <TouchableOpacity
+                style={styles.premiumButton}
+                onPress={() => {
+                  Alert.alert(
+                    'Go Premium',
+                    'Remove ads and unlock exclusive features!\n\nPrice: $2.99',
+                    [
+                      { text: 'Cancel', style: 'cancel' },
+                      { text: 'Buy Now', onPress: () => setIsPremium(true) },
+                    ]
+                  );
+                }}
+              >
+                <Text style={styles.premiumButtonText}>Remove Ads - $2.99</Text>
+                <Text style={[styles.premiumButtonSubtext, { color: colors.gray }]}>Unlock premium features</Text>
+              </TouchableOpacity>
+            )}
           </View>
 
           {/* Calculator Mode */}
@@ -1106,34 +1224,51 @@ export default function GaslighterCalculator() {
                 <Text style={{ color: colors.orange, fontSize: 16 }}>✓</Text>
               )}
             </TouchableOpacity>
-          </View>
-
-          {/* Premium */}
-          <View style={styles.settingsSection}>
-            <Text style={[styles.settingsSectionTitle, { color: colors.lightGray }]}>Premium</Text>
-            {isPremium ? (
-              <View style={styles.settingsItem}>
-                <Text style={[styles.settingsLabel, { color: colors.white }]}>Premium Active</Text>
-                <Text style={styles.premiumBadge}>PRO</Text>
-              </View>
-            ) : (
-              <TouchableOpacity
-                style={styles.premiumButton}
-                onPress={() => {
-                  Alert.alert(
-                    'Go Premium',
-                    'Remove ads and unlock exclusive features!\n\nPrice: $2.99',
-                    [
-                      { text: 'Cancel', style: 'cancel' },
-                      { text: 'Buy Now', onPress: () => setIsPremium(true) },
-                    ]
-                  );
-                }}
-              >
-                <Text style={styles.premiumButtonText}>Remove Ads - $2.99</Text>
-                <Text style={[styles.premiumButtonSubtext, { color: colors.gray }]}>Unlock premium features</Text>
-              </TouchableOpacity>
-            )}
+            <TouchableOpacity
+              style={[
+                styles.settingsItem,
+                calculatorMode === 'discount' && { backgroundColor: 'rgba(245,166,35,0.15)', borderRadius: 8 },
+              ]}
+              onPress={() => {
+                setCalculatorMode('discount');
+                closeSettings();
+              }}
+            >
+              <Text style={[styles.settingsLabel, { color: colors.white }]}>Discount Calculator</Text>
+              {calculatorMode === 'discount' && (
+                <Text style={{ color: colors.orange, fontSize: 16 }}>✓</Text>
+              )}
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.settingsItem,
+                calculatorMode === 'currency' && { backgroundColor: 'rgba(245,166,35,0.15)', borderRadius: 8 },
+              ]}
+              onPress={() => {
+                setCalculatorMode('currency');
+                closeSettings();
+              }}
+            >
+              <Text style={[styles.settingsLabel, { color: colors.white }]}>Currency Converter</Text>
+              {calculatorMode === 'currency' && (
+                <Text style={{ color: colors.orange, fontSize: 16 }}>✓</Text>
+              )}
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.settingsItem,
+                calculatorMode === 'savings' && { backgroundColor: 'rgba(245,166,35,0.15)', borderRadius: 8 },
+              ]}
+              onPress={() => {
+                setCalculatorMode('savings');
+                closeSettings();
+              }}
+            >
+              <Text style={[styles.settingsLabel, { color: colors.white }]}>Savings Calculator</Text>
+              {calculatorMode === 'savings' && (
+                <Text style={{ color: colors.orange, fontSize: 16 }}>✓</Text>
+              )}
+            </TouchableOpacity>
           </View>
 
           {/* App Info */}
@@ -1189,6 +1324,115 @@ export default function GaslighterCalculator() {
           </View>
         </ScrollView>
       </Animated.View>
+
+      {/* Rating Popup Modal */}
+      <Modal
+        visible={showRatingPopup}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={handleDismissRating}
+      >
+        <View style={{
+          flex: 1,
+          backgroundColor: 'rgba(0,0,0,0.7)',
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: 20,
+        }}>
+          <View style={{
+            backgroundColor: colors.panelBg,
+            borderRadius: 20,
+            padding: 24,
+            width: '90%',
+            maxWidth: 340,
+            alignItems: 'center',
+          }}>
+            {/* Close Button */}
+            <TouchableOpacity
+              style={{
+                position: 'absolute',
+                top: 12,
+                right: 12,
+                width: 30,
+                height: 30,
+                borderRadius: 15,
+                backgroundColor: colors.iconButtonBg,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+              onPress={handleDismissRating}
+            >
+              <Text style={{ color: colors.gray, fontSize: 16, fontWeight: '600' }}>✕</Text>
+            </TouchableOpacity>
+
+            {/* Stars Icon */}
+            <Text style={{ fontSize: 50, marginBottom: 16 }}>⭐</Text>
+
+            {/* Title */}
+            <Text style={{
+              fontSize: 22,
+              fontWeight: '700',
+              color: colors.white,
+              textAlign: 'center',
+              marginBottom: 8,
+            }}>
+              Enjoying the App?
+            </Text>
+
+            {/* Subtitle */}
+            <Text style={{
+              fontSize: 14,
+              color: colors.gray,
+              textAlign: 'center',
+              marginBottom: 24,
+              lineHeight: 20,
+            }}>
+              We'd love to hear your feedback! Please take a moment to rate us on the {Platform.OS === 'ios' ? 'App Store' : 'Play Store'}.
+            </Text>
+
+            {/* Rate Button */}
+            <TouchableOpacity
+              style={{
+                width: '100%',
+                backgroundColor: colors.orange,
+                borderRadius: 12,
+                paddingVertical: 14,
+                alignItems: 'center',
+                marginBottom: 12,
+              }}
+              onPress={handleRateApp}
+            >
+              <Text style={{
+                color: '#ffffff',
+                fontSize: 16,
+                fontWeight: '700',
+              }}>
+                Rate Now ⭐
+              </Text>
+            </TouchableOpacity>
+
+            {/* Maybe Later Button */}
+            <TouchableOpacity
+              style={{
+                width: '100%',
+                backgroundColor: colors.iconButtonBg,
+                borderRadius: 12,
+                paddingVertical: 14,
+                alignItems: 'center',
+              }}
+              onPress={handleDismissRating}
+            >
+              <Text style={{
+                color: colors.gray,
+                fontSize: 14,
+                fontWeight: '600',
+              }}>
+                Maybe Later
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }

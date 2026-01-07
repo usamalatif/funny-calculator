@@ -20,14 +20,22 @@ interface TipCalculatorProps {
     panelBg: string;
     iconButtonBg: string;
   };
+  onTaskComplete?: () => void;
 }
 
 const TIP_PRESETS = [10, 15, 18, 20, 25];
 
-export const TipCalculator: React.FC<TipCalculatorProps> = ({ colors }) => {
+export const TipCalculator: React.FC<TipCalculatorProps> = ({ colors, onTaskComplete }) => {
   const [billAmount, setBillAmount] = useState('');
   const [tipPercent, setTipPercent] = useState(15);
   const [splitCount, setSplitCount] = useState(1);
+
+  const handleBillChange = (text: string) => {
+    setBillAmount(text);
+    if (text && parseFloat(text) > 0) {
+      onTaskComplete?.();
+    }
+  };
 
   const bill = parseFloat(billAmount) || 0;
   const tipAmount = bill * (tipPercent / 100);
@@ -225,7 +233,7 @@ export const TipCalculator: React.FC<TipCalculatorProps> = ({ colors }) => {
             <TextInput
               style={styles.billInput}
               value={billAmount}
-              onChangeText={setBillAmount}
+              onChangeText={handleBillChange}
               keyboardType="numeric"
               placeholder="0.00"
               placeholderTextColor={colors.gray}

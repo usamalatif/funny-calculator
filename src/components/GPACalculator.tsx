@@ -21,6 +21,7 @@ interface GPACalculatorProps {
     panelBg: string;
     iconButtonBg: string;
   };
+  onTaskComplete?: () => void;
 }
 
 interface Course {
@@ -45,7 +46,7 @@ const GRADES: { label: string; value: number }[] = [
   { label: 'F', value: 0.0 },
 ];
 
-export const GPACalculator: React.FC<GPACalculatorProps> = ({ colors }) => {
+export const GPACalculator: React.FC<GPACalculatorProps> = ({ colors, onTaskComplete }) => {
   const [courses, setCourses] = useState<Course[]>([
     { id: 1, name: '', credits: '3', grade: 'A' },
   ]);
@@ -56,6 +57,7 @@ export const GPACalculator: React.FC<GPACalculatorProps> = ({ colors }) => {
       ...courses,
       { id: Date.now(), name: '', credits: '3', grade: 'A' },
     ]);
+    onTaskComplete?.();
   };
 
   const removeCourse = (id: number) => {
