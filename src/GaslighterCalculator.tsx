@@ -26,6 +26,7 @@ import { HealthCalculator } from './components/HealthCalculator';
 import { PercentageCalculator } from './components/PercentageCalculator';
 import { LoanCalculator } from './components/LoanCalculator';
 import { OvulationCalculator } from './components/OvulationCalculator';
+import { HexCalculator } from './components/HexCalculator';
 
 const MOOD_EMOJIS = ['\u{1F60A}', '\u{1F610}', '\u{1F612}', '\u{1F624}', '\u{1F644}'];
 
@@ -189,7 +190,7 @@ export default function GaslighterCalculator() {
   const [isPremium, setIsPremium] = useState(false);
 
   // Calculator mode
-  type CalculatorMode = 'calculator' | 'unit-converter' | 'tip-calculator' | 'fuel-calculator' | 'gpa-calculator' | 'fuel-efficiency' | 'health' | 'percentage' | 'loan' | 'ovulation';
+  type CalculatorMode = 'calculator' | 'unit-converter' | 'tip-calculator' | 'fuel-calculator' | 'gpa-calculator' | 'fuel-efficiency' | 'health' | 'percentage' | 'loan' | 'ovulation' | 'hex';
   const [calculatorMode, setCalculatorMode] = useState<CalculatorMode>('calculator');
   const [modeMenuVisible, setModeMenuVisible] = useState(false);
 
@@ -840,9 +841,12 @@ export default function GaslighterCalculator() {
         ) : calculatorMode === 'loan' ? (
           /* Loan Calculator Mode */
           <LoanCalculator colors={colors} />
-        ) : (
+        ) : calculatorMode === 'ovulation' ? (
           /* Ovulation Calculator Mode */
           <OvulationCalculator colors={colors} />
+        ) : (
+          /* Hex Calculator Mode */
+          <HexCalculator colors={colors} />
         )}
 
         {/* Footer */}
@@ -1084,6 +1088,21 @@ export default function GaslighterCalculator() {
             >
               <Text style={[styles.settingsLabel, { color: colors.white }]}>Ovulation Calculator</Text>
               {calculatorMode === 'ovulation' && (
+                <Text style={{ color: colors.orange, fontSize: 16 }}>✓</Text>
+              )}
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.settingsItem,
+                calculatorMode === 'hex' && { backgroundColor: 'rgba(245,166,35,0.15)', borderRadius: 8 },
+              ]}
+              onPress={() => {
+                setCalculatorMode('hex');
+                closeSettings();
+              }}
+            >
+              <Text style={[styles.settingsLabel, { color: colors.white }]}>Hex Calculator</Text>
+              {calculatorMode === 'hex' && (
                 <Text style={{ color: colors.orange, fontSize: 16 }}>✓</Text>
               )}
             </TouchableOpacity>
