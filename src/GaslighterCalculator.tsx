@@ -24,6 +24,7 @@ import { GPACalculator } from './components/GPACalculator';
 import { FuelEfficiencyCalculator } from './components/FuelEfficiencyCalculator';
 import { HealthCalculator } from './components/HealthCalculator';
 import { PercentageCalculator } from './components/PercentageCalculator';
+import { LoanCalculator } from './components/LoanCalculator';
 
 const MOOD_EMOJIS = ['\u{1F60A}', '\u{1F610}', '\u{1F612}', '\u{1F624}', '\u{1F644}'];
 
@@ -187,7 +188,7 @@ export default function GaslighterCalculator() {
   const [isPremium, setIsPremium] = useState(false);
 
   // Calculator mode
-  type CalculatorMode = 'calculator' | 'unit-converter' | 'tip-calculator' | 'fuel-calculator' | 'gpa-calculator' | 'fuel-efficiency' | 'health' | 'percentage';
+  type CalculatorMode = 'calculator' | 'unit-converter' | 'tip-calculator' | 'fuel-calculator' | 'gpa-calculator' | 'fuel-efficiency' | 'health' | 'percentage' | 'loan';
   const [calculatorMode, setCalculatorMode] = useState<CalculatorMode>('calculator');
   const [modeMenuVisible, setModeMenuVisible] = useState(false);
 
@@ -832,9 +833,12 @@ export default function GaslighterCalculator() {
         ) : calculatorMode === 'health' ? (
           /* Health Calculator Mode */
           <HealthCalculator colors={colors} />
-        ) : (
+        ) : calculatorMode === 'percentage' ? (
           /* Percentage Calculator Mode */
           <PercentageCalculator colors={colors} />
+        ) : (
+          /* Loan Calculator Mode */
+          <LoanCalculator colors={colors} />
         )}
 
         {/* Footer */}
@@ -1046,6 +1050,21 @@ export default function GaslighterCalculator() {
             >
               <Text style={[styles.settingsLabel, { color: colors.white }]}>Percentage Calculator</Text>
               {calculatorMode === 'percentage' && (
+                <Text style={{ color: colors.orange, fontSize: 16 }}>✓</Text>
+              )}
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.settingsItem,
+                calculatorMode === 'loan' && { backgroundColor: 'rgba(245,166,35,0.15)', borderRadius: 8 },
+              ]}
+              onPress={() => {
+                setCalculatorMode('loan');
+                closeSettings();
+              }}
+            >
+              <Text style={[styles.settingsLabel, { color: colors.white }]}>Loan Calculator</Text>
+              {calculatorMode === 'loan' && (
                 <Text style={{ color: colors.orange, fontSize: 16 }}>✓</Text>
               )}
             </TouchableOpacity>
