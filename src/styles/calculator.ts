@@ -1,8 +1,16 @@
 import { StyleSheet, Dimensions, Platform } from 'react-native';
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
-const CALCULATOR_WIDTH = Math.min(SCREEN_WIDTH - 40, 380);
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+// On phones the calculator stays a comfortable thumb-width; on tablets it
+// scales up with the screen instead of sitting phone-sized in empty space.
+const IS_TABLET = SCREEN_WIDTH >= 700;
+const CALCULATOR_MAX_WIDTH = IS_TABLET ? 620 : 380;
+const CALCULATOR_WIDTH = Math.min(SCREEN_WIDTH - 40, CALCULATOR_MAX_WIDTH);
 const BUTTON_SIZE = (CALCULATOR_WIDTH - 60) / 4; // 4 columns with gaps
+const BUTTON_ROW_HEIGHT = (IS_TABLET ? Math.min(BUTTON_SIZE, 88) : 58) + 10;
+// Height available for the display once the top bar and 5 button rows
+// are subtracted, so digits never overlap buttons.
+const DISPLAY_MAX_HEIGHT = Math.max(SCREEN_HEIGHT - 5 * BUTTON_ROW_HEIGHT - 140, 90);
 
 export const darkColors = {
   background: '#0a0a0a',
@@ -171,7 +179,7 @@ export const styles = StyleSheet.create({
   // Base button styles
   button: {
     width: BUTTON_SIZE,
-    height: 58,
+    height: IS_TABLET ? Math.min(BUTTON_SIZE, 88) : 58,
     borderRadius: 18,
     justifyContent: 'center',
     alignItems: 'center',
@@ -375,9 +383,16 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 18,
+    paddingVertical: 14,
+    paddingHorizontal: 14,
+    marginHorizontal: -14,
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(255,255,255,0.05)',
+  },
+  settingsItemActive: {
+    backgroundColor: 'rgba(245,166,35,0.12)',
+    borderRadius: 10,
+    borderBottomColor: 'transparent',
   },
   settingsLabel: {
     fontSize: 16,
@@ -442,14 +457,17 @@ export const styles = StyleSheet.create({
   },
 });
 
-// Dynamic font size based on display length
+// Dynamic font size based on display length, capped so it always fits
+// above the button grid regardless of screen height.
 export const getFontSize = (displayLength: number): number => {
-  if (displayLength <= 1) return 180;
-  if (displayLength <= 2) return 150;
-  if (displayLength <= 3) return 120;
-  if (displayLength <= 5) return 90;
-  if (displayLength <= 7) return 70;
-  return 55;
+  let size = 180;
+  if (displayLength <= 1) size = 180;
+  else if (displayLength <= 2) size = 150;
+  else if (displayLength <= 3) size = 120;
+  else if (displayLength <= 5) size = 90;
+  else if (displayLength <= 7) size = 70;
+  else size = 55;
+  return Math.min(size, DISPLAY_MAX_HEIGHT);
 };
 
 export const BUTTON_SIZE_EXPORT = BUTTON_SIZE;

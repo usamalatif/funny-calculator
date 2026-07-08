@@ -8,6 +8,7 @@ import {
   StyleSheet,
   Dimensions,
 } from 'react-native';
+import Svg, { Path, Circle, Line, Rect } from 'react-native-svg';
 
 interface UnitConverterProps {
   colors: {
@@ -76,13 +77,75 @@ const UNITS: Record<UnitCategory, UnitOption[]> = {
   ],
 };
 
-const CATEGORIES: { label: string; icon: string; value: UnitCategory }[] = [
-  { label: 'Length', icon: '📏', value: 'length' },
-  { label: 'Weight', icon: '⚖️', value: 'weight' },
-  { label: 'Temp', icon: '🌡️', value: 'temp' },
-  { label: 'Volume', icon: '🧪', value: 'volume' },
-  { label: 'Area', icon: '📐', value: 'area' },
-  { label: 'Speed', icon: '🚀', value: 'speed' },
+interface IconProps {
+  color: string;
+  size: number;
+}
+
+const LengthIcon: React.FC<IconProps> = ({ color, size }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <Rect x="2" y="9" width="20" height="6" rx="1.5" stroke={color} strokeWidth={1.8} />
+    <Line x1="6" y1="9" x2="6" y2="12" stroke={color} strokeWidth={1.8} />
+    <Line x1="10" y1="9" x2="10" y2="12" stroke={color} strokeWidth={1.8} />
+    <Line x1="14" y1="9" x2="14" y2="12" stroke={color} strokeWidth={1.8} />
+    <Line x1="18" y1="9" x2="18" y2="12" stroke={color} strokeWidth={1.8} />
+  </Svg>
+);
+
+const WeightIcon: React.FC<IconProps> = ({ color, size }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <Line x1="12" y1="4" x2="12" y2="18" stroke={color} strokeWidth={1.8} />
+    <Line x1="5" y1="7" x2="19" y2="7" stroke={color} strokeWidth={1.8} />
+    <Path d="M2 7 L5 13 L8 7 Z" stroke={color} strokeWidth={1.8} strokeLinejoin="round" />
+    <Path d="M16 7 L19 13 L22 7 Z" stroke={color} strokeWidth={1.8} strokeLinejoin="round" />
+    <Path d="M8 20 H16" stroke={color} strokeWidth={1.8} strokeLinecap="round" />
+    <Path d="M9 18 H15 L14 20 H10 Z" stroke={color} strokeWidth={1.8} strokeLinejoin="round" />
+  </Svg>
+);
+
+const TempIcon: React.FC<IconProps> = ({ color, size }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <Path
+      d="M13 15.5V4.5a1.5 1.5 0 0 0-3 0v11a3.5 3.5 0 1 0 3 0Z"
+      stroke={color}
+      strokeWidth={1.8}
+      strokeLinejoin="round"
+    />
+    <Circle cx="11.5" cy="17" r="1.4" fill={color} />
+  </Svg>
+);
+
+const VolumeIcon: React.FC<IconProps> = ({ color, size }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <Path d="M8 3 H16 L15 20 a1 1 0 0 1 -1 1 H10 a1 1 0 0 1 -1 -1 Z" stroke={color} strokeWidth={1.8} strokeLinejoin="round" />
+    <Line x1="7.5" y1="9" x2="16.5" y2="9" stroke={color} strokeWidth={1.8} />
+  </Svg>
+);
+
+const AreaIcon: React.FC<IconProps> = ({ color, size }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <Rect x="4" y="4" width="16" height="16" rx="1.5" stroke={color} strokeWidth={1.8} />
+    <Line x1="4" y1="16" x2="8" y2="16" stroke={color} strokeWidth={1.8} />
+    <Line x1="16" y1="4" x2="16" y2="8" stroke={color} strokeWidth={1.8} />
+  </Svg>
+);
+
+const SpeedIcon: React.FC<IconProps> = ({ color, size }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <Circle cx="12" cy="13" r="8" stroke={color} strokeWidth={1.8} />
+    <Path d="M12 13 L16 9" stroke={color} strokeWidth={1.8} strokeLinecap="round" />
+    <Circle cx="12" cy="13" r="1.3" fill={color} />
+    <Line x1="12" y1="3" x2="12" y2="5" stroke={color} strokeWidth={1.8} strokeLinecap="round" />
+  </Svg>
+);
+
+const CATEGORIES: { label: string; Icon: React.FC<IconProps>; value: UnitCategory }[] = [
+  { label: 'Length', Icon: LengthIcon, value: 'length' },
+  { label: 'Weight', Icon: WeightIcon, value: 'weight' },
+  { label: 'Temp', Icon: TempIcon, value: 'temp' },
+  { label: 'Volume', Icon: VolumeIcon, value: 'volume' },
+  { label: 'Area', Icon: AreaIcon, value: 'area' },
+  { label: 'Speed', Icon: SpeedIcon, value: 'speed' },
 ];
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -149,7 +212,6 @@ export const UnitConverter: React.FC<UnitConverterProps> = ({ colors, onTaskComp
       backgroundColor: colors.iconButtonBg,
     },
     categoryIcon: {
-      fontSize: 18,
       marginBottom: 4,
     },
     categoryLabel: {
@@ -377,7 +439,12 @@ export const UnitConverter: React.FC<UnitConverterProps> = ({ colors, onTaskComp
               setToUnit(1);
             }}
           >
-            <Text style={styles.categoryIcon}>{cat.icon}</Text>
+            <View style={styles.categoryIcon}>
+              <cat.Icon
+                color={category === cat.value ? '#ffffff' : colors.gray}
+                size={20}
+              />
+            </View>
             <Text
               style={[
                 styles.categoryLabel,

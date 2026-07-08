@@ -9,7 +9,8 @@ export const RESPONSES = {
     // Third time (annoyed)
     ["You really like that button.", "Commitment issues?", "Can't make up your mind?", "Are we ever going to do actual math?"],
     // Fourth+ time (savage)
-    ["Deleting the evidence? Typical.", "AC stands for 'Avoiding Consequences', right?", "Running from your mistakes again?", "At this point, I'm the one being cleared.", "This is getting ridiculous.", "Wiping the slate won't fix you."],
+    ["Deleting the evidence? Typical.", "AC stands for 'Avoiding Consequences', right?", "Running from your mistakes again?", "At this point, I'm the one being cleared.", "This is getting ridiculous.", "Wiping the slate won't fix you.",
+      "You hit Clear more than you hit your goals.", "There's a support group for this. I'd link it, but you'd probably clear that too.", "Witness protection called, they want tips.", "I've seen breakups with less commitment issues than this.", "New personal record for erasing your own effort."],
   ],
 
   // BACKSPACE - Escalates each press
@@ -17,7 +18,8 @@ export const RESPONSES = {
     ["Got it, fixing that for you!", "No worries, removed it.", "Oops? I'll delete that.", "Done! Typo fixed."],
     ["Another mistake? Okay.", "Fixing again...", "Backspace again, sure.", "Still adjusting, huh?"],
     ["Your typing needs work.", "Maybe slow down a bit?", "Fat fingers today?", "This is becoming a pattern."],
-    ["At this point, just use Clear.", "I'm not your delete key therapist.", "Every digit is a struggle for you.", "Have you considered voice input?", "My backspace is getting worn out."],
+    ["At this point, just use Clear.", "I'm not your delete key therapist.", "Every digit is a struggle for you.", "Have you considered voice input?", "My backspace is getting worn out.",
+      "Your fingers and your brain are clearly not on speaking terms.", "This backspace button has seen more action than your gym membership.", "I'd suggest a keyboard class, but let's be honest, that's a whole semester.", "At this rate you'll type '5' by next Tuesday.", "Autocorrect gave up on you and I'm starting to understand why."],
   ],
 
   // DECIMAL POINT
@@ -25,7 +27,8 @@ export const RESPONSES = {
     ["Ooh, decimals! Getting precise.", "Going fractional, nice!", "Decimal point - fancy!", "Look at you being exact!"],
     ["More decimals? Okay, mathematician.", "Precise again, I see.", "You really like accuracy.", "Decimal person, got it."],
     ["Okay we get it, you know decimals exist.", "Yes, numbers can have points.", "Showing off your decimal skills?", "Point made. Literally."],
-    ["Decimal obsession detected.", "Is this a decimal fetish?", "We're not calculating pi here.", "You and decimals need couples therapy."],
+    ["Decimal obsession detected.", "Is this a decimal fetish?", "We're not calculating pi here.", "You and decimals need couples therapy.",
+      "You've used more decimal points than actual personality traits.", "Precision this intense, and yet somehow your life's still a mess.", "At this point you're basically flirting with the decimal key.", "Somewhere, a math teacher felt a chill and doesn't know why."],
   ],
 
   // PERCENTAGE
@@ -33,7 +36,8 @@ export const RESPONSES = {
     ["Calculating percentages! Smart.", "Percentage time!", "Breaking it down to percent, nice.", "Going with % - solid choice."],
     ["Another percentage? Sure.", "% again, okay.", "You like percentages, huh?", "Percentage person, noted."],
     ["Are you a banker?", "Lots of percent calculations today.", "Calculating tips or just showing off?", "% button getting a workout."],
-    ["Just pay the full bill, cheapskate.", "The math of disappointment.", "Discount hunter detected.", "Everything's always 'on sale' for you, huh?"],
+    ["Just pay the full bill, cheapskate.", "The math of disappointment.", "Discount hunter detected.", "Everything's always 'on sale' for you, huh?",
+      "You calculate tips the way you calculate effort: minimally.", "Somewhere a waiter just felt a disturbance in the force.", "You've done more percentage math than actual budgeting, I bet.", "Cheap is a lifestyle for you at this point, isn't it."],
   ],
 
   // PLUS/MINUS TOGGLE
@@ -41,7 +45,8 @@ export const RESPONSES = {
     ["Flipping the sign!", "Going negative? Okay!", "Switching polarity!", "Plus to minus, done!"],
     ["Changing sign again?", "Back and forth we go.", "Make up your mind!", "Positive? Negative? Pick one."],
     ["Indecisive much?", "The sign is confused. So am I.", "This is giving mood swings.", "Commitment issues with numbers too?"],
-    ["You're mathematically bipolar.", "Even your numbers can't decide.", "This is chaos.", "I'm getting dizzy watching you."],
+    ["You're mathematically bipolar.", "Even your numbers can't decide.", "This is chaos.", "I'm getting dizzy watching you.",
+      "Your numbers have more emotional range than most soap operas.", "Positive, negative, positive, negative - are we doing math or reading your ex's texts?", "I've seen more stability in a Jenga tower.", "Even the number line is confused about where you stand."],
   ],
 
   // OPERATORS
@@ -139,22 +144,58 @@ export const RESPONSES = {
   // EQUALS - Result reactions
   equals: {
     firstTime: ["Here's your answer!", "Done! There you go.", "Calculated!", "Ta-da!"],
-    simple: ["Really needed me for that?", "I went to calculator college for this?", "A toddler could've done that.", "My circuits are yawning."],
-    verySimple: ["1+1? Are you five?", "This is elementary school level.", "Did you seriously need me?", "Even my sleep mode is harder."],
-    negative: ["Going negative! Like your bank account.", "Into the red we go.", "Oof, negative. Story of life?", "Below zero, fitting."],
-    large: ["Big spender alert!", "Planning world domination?", "Whoa, saving for a spaceship?", "Somebody's dreaming big."],
-    divideByZero: ["Nice try, chaos agent.", "I'm not destroying the universe for you.", "The universe said no.", "Error 404: My respect not found."],
-    correct: ["...wait, let me double-check that.", "Are you sure? Use your fingers.", "I mean, technically yes...", "Right, but don't get cocky."],
-    wrong: ["Trust me on this one.", "I'm confident about this.", "The answer is what I say it is.", "Don't bother verifying."],
-    repeated: ["Didn't we just do this?", "Same calculation twice? Really?", "Deja vu.", "Groundhog Day math."],
+    simple: [
+      "Really needed me for that?", "I went to calculator college for this?", "A toddler could've done that.", "My circuits are yawning.",
+      "You could've counted on your fingers. Slower, but same result.", "I have a processor for this? Truly an honor.", "Groundbreaking. Someone call the math department.", "I'm a supercomputer's cousin, and you're using me for that.",
+    ],
+    verySimple: [
+      "1+1? Are you five?", "This is elementary school level.", "Did you seriously need me?", "Even my sleep mode is harder.",
+      "I felt my IQ drop just processing that.", "Kindergarten called, they want their worksheet back.", "This is why I judge you.", "Somewhere, a calculus textbook just cried.",
+    ],
+    negative: [
+      "Going negative! Like your bank account.", "Into the red we go.", "Oof, negative. Story of life?", "Below zero, fitting.",
+      "Negative numbers, negative vibes, same energy as you.", "This result and your savings account have a lot in common.", "Below zero. Bold of you to keep going.", "Debt called, it wants a rematch.",
+    ],
+    large: [
+      "Big spender alert!", "Planning world domination?", "Whoa, saving for a spaceship?", "Somebody's dreaming big.",
+      "That's a lot of zeros for someone who forgot their PIN twice today.", "Big number, bigger delusions.", "Are we buying a country now?", "Compensating for something with all these digits?",
+    ],
+    divideByZero: [
+      "Nice try, chaos agent.", "I'm not destroying the universe for you.", "The universe said no.", "Error 404: My respect not found.",
+      "Dividing by zero? Bold of you to try to break math and me in one tap.", "That's not a number, that's a cry for help.", "Even I have boundaries.", "Congratulations, you've discovered the one thing I refuse to do.",
+    ],
+    correct: [
+      "...wait, let me double-check that.", "Are you sure? Use your fingers.", "I mean, technically yes...", "Right, but don't get cocky.",
+      "Correct. Don't let it go to your head.", "Wow, you got one right. Mark the calendar.", "Yes, and I'm as surprised as you are.", "Accurate. I'll allow it, this once.",
+    ],
+    wrong: [
+      "Trust me on this one.", "I'm confident about this.", "The answer is what I say it is.", "Don't bother verifying.",
+      "That's the answer. Arguing with a calculator is a special kind of confidence.", "I'm never wrong. You're just checking my work for fun, apparently.", "Sure, question the machine built to compute. Bold strategy.", "Correct is what I decide it is today.",
+    ],
+    repeated: [
+      "Didn't we just do this?", "Same calculation twice? Really?", "Deja vu.", "Groundhog Day math.",
+      "Same math, same result, same disappointment.", "I already told you the answer. Were you not listening, or just testing my patience?", "Round two of the exact same thing. Riveting.", "This isn't a democracy, the answer doesn't change on a recount.",
+    ],
   } as Record<string, string[]>,
 
   // SPECIFIC PATTERNS
   patterns: {
-    plusZero: ["Adding zero? That changes... nothing.", "Congratulations, same number.", "+0? Revolutionary.", "The participation trophy of math."],
-    timesOne: ["x1? Groundbreaking stuff.", "The number stays the same. Magic.", "Identity crisis averted.", "Multiply by 1, achieve nothing new."],
-    divideByOne: ["/1? Bold strategy.", "Divided by one. Still the same.", "Why though?", "That's just the number with extra steps."],
-    timesZero: ["Everything becomes nothing!", "Poof! Zero!", "Into the void!", "And it's all gone."],
+    plusZero: [
+      "Adding zero? That changes... nothing.", "Congratulations, same number.", "+0? Revolutionary.", "The participation trophy of math.",
+      "Zero effort, zero change, very on-brand.", "You added nothing and somehow still feel accomplished.", "+0 is the mathematical equivalent of a shrug.", "Bold of you to press a button for absolutely no reason.",
+    ],
+    timesOne: [
+      "x1? Groundbreaking stuff.", "The number stays the same. Magic.", "Identity crisis averted.", "Multiply by 1, achieve nothing new.",
+      "Multiplying by one is the math version of talking to yourself.", "A whole button press for zero impact. Efficient, in the worst way.", "You just spent effort to do absolutely nothing.", "This is the laziest flex I've ever witnessed.",
+    ],
+    divideByOne: [
+      "/1? Bold strategy.", "Divided by one. Still the same.", "Why though?", "That's just the number with extra steps.",
+      "Dividing by one is just typing the number twice for fun.", "Congratulations, you've invented redundancy.", "That button press was purely decorative.", "You really wanted to press something, didn't you.",
+    ],
+    timesZero: [
+      "Everything becomes nothing!", "Poof! Zero!", "Into the void!", "And it's all gone.",
+      "Just like your motivation, it's all zero now.", "You annihilated that number. Savage.", "One tap and it's like it never existed. Ruthless.", "Zero. Just like your chances of catching me being wrong.",
+    ],
   } as Record<string, string[]>,
 
   // IDLE RETURN
@@ -165,6 +206,12 @@ export const RESPONSES = {
     "Did you miss me?",
     "Welcome back to disappointment.",
     "I was napping. You're being aggressive.",
+    "Missed me? Or just ran out of fingers to count on?",
+    "You left, I judged, you're back, I'm still judging.",
+    "Oh look, my favorite recurring disappointment.",
+    "I blinked and you were gone. Then I remembered I don't have eyes and neither do you have a plan.",
+    "Back again? At this point we should get matching friendship bracelets. Ironic ones.",
+    "You return to me the way bad decisions return to haunt you: reliably.",
   ],
 
   // FIRST LOAD
@@ -174,6 +221,11 @@ export const RESPONSES = {
     "The Gaslighter is ready. Are you?",
     "Let's calculate! (I'll be watching.)",
     "Fresh calculator, same judgment.",
+    "New session, same me, unfortunately for you.",
+    "I've been sitting here loading, and already I have concerns about your math.",
+    "Welcome. Leave your dignity at the door, you'll need less of it here.",
+    "Booted up and ready to emotionally overcharge you for basic arithmetic.",
+    "Hi. I'm judgmental, mildly unhinged, and technically required for this app to function.",
   ],
 
   // AFTER MANY CALCULATIONS
@@ -184,6 +236,12 @@ export const RESPONSES = {
     "This is a marathon of mediocrity.",
     "My circuits need a break. So do you.",
     "At this point, we're in a relationship. A toxic one.",
+    "We've spent more time together than you have with actual friends today.",
+    "I've calculated more of your numbers than you've calculated your life choices.",
+    "This is less 'using a calculator' and more 'emotional dependency' at this point.",
+    "If we keep this up, I'm putting you in my will.",
+    "Somewhere, your unfinished to-do list is crying.",
+    "You and I both know this isn't about math anymore.",
   ],
 };
 

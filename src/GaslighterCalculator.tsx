@@ -12,6 +12,7 @@ import {
   Alert,
   Linking,
   Modal,
+  StatusBar,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import LinearGradient from 'react-native-linear-gradient';
@@ -20,6 +21,7 @@ import { useAnimations } from './hooks/useAnimations';
 import { styles, darkColors, lightColors, getFontSize, BUTTON_SIZE_EXPORT } from './styles/calculator';
 import { BackspaceIcon } from './components/BackspaceIcon';
 import { HistoryIcon } from './components/HistoryIcon';
+import { SettingsIcon } from './components/SettingsIcon';
 import { UnitConverter } from './components/UnitConverter';
 import { TipCalculator } from './components/TipCalculator';
 import { FuelCalculator } from './components/FuelCalculator';
@@ -147,7 +149,11 @@ const OpButton: React.FC<OpButtonProps> = ({ value, displayValue, onPress, press
   </TouchableOpacity>
 );
 
-export default function GaslighterCalculator() {
+interface GaslighterCalculatorProps {
+  onSurfaceColorChange?: (color: string) => void;
+}
+
+export default function GaslighterCalculator({ onSurfaceColorChange }: GaslighterCalculatorProps) {
   // Calculator state
   const [display, setDisplay] = useState('0');
   const [previousValue, setPreviousValue] = useState<number | null>(null);
@@ -213,6 +219,13 @@ export default function GaslighterCalculator() {
   // Theme colors
   const colors = useMemo(() => isDarkTheme ? darkColors : lightColors, [isDarkTheme]);
 
+  // Report the currently visible surface color so the outer safe-area
+  // insets (owned by App.tsx, above this component) can match it.
+  useEffect(() => {
+    const surfaceColor = settingsVisible || historyVisible ? colors.panelBg : colors.background;
+    onSurfaceColorChange?.(surfaceColor);
+  }, [colors, settingsVisible, historyVisible, onSurfaceColorChange]);
+
   // Timer refs
   const hideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const clearTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -221,14 +234,29 @@ export default function GaslighterCalculator() {
   const animations = useAnimations();
 
   // Helper functions
+  // Remembers the last index picked per response pool so the same line
+  // never shows twice in a row, even though selection is otherwise random.
+  const lastPickRef = useRef(new WeakMap<string[], number>());
+
+  const pickWithoutRepeat = (pool: string[]): string => {
+    if (pool.length === 1) return pool[0];
+    const lastIndex = lastPickRef.current.get(pool);
+    let index = Math.floor(Math.random() * pool.length);
+    if (index === lastIndex) {
+      index = (index + 1 + Math.floor(Math.random() * (pool.length - 1))) % pool.length;
+    }
+    lastPickRef.current.set(pool, index);
+    return pool[index];
+  };
+
   const getEscalatingResponse = (responses: string[][], count: number): string => {
     const tierIndex = Math.min(count, responses.length - 1);
     const tier = responses[tierIndex];
-    return tier[Math.floor(Math.random() * tier.length)];
+    return pickWithoutRepeat(tier);
   };
 
   const getRandomResponse = (pool: string[]): string => {
-    return pool[Math.floor(Math.random() * pool.length)];
+    return pickWithoutRepeat(pool);
   };
 
   const showRoast = useCallback((message: string) => {
@@ -682,6 +710,10 @@ export default function GaslighterCalculator() {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <StatusBar
+        barStyle={isDarkTheme ? 'light-content' : 'dark-content'}
+        backgroundColor={colors.background}
+      />
       <Animated.View
         style={[
           styles.calculatorContainer,
@@ -717,7 +749,7 @@ export default function GaslighterCalculator() {
 
           {/* Settings Button - Right */}
           <TouchableOpacity style={[styles.iconButton, { backgroundColor: colors.iconButtonBg }]} onPress={openSettings}>
-            <Text style={[styles.iconText, { color: colors.gray }]}>⚙</Text>
+            <SettingsIcon color={colors.gray} size={22} />
           </TouchableOpacity>
         </View>
 
@@ -1062,7 +1094,7 @@ export default function GaslighterCalculator() {
             <TouchableOpacity
               style={[
                 styles.settingsItem,
-                calculatorMode === 'calculator' && { backgroundColor: 'rgba(245,166,35,0.15)', borderRadius: 8 },
+                calculatorMode === 'calculator' && styles.settingsItemActive,
               ]}
               onPress={() => {
                 setCalculatorMode('calculator');
@@ -1077,7 +1109,7 @@ export default function GaslighterCalculator() {
             <TouchableOpacity
               style={[
                 styles.settingsItem,
-                calculatorMode === 'unit-converter' && { backgroundColor: 'rgba(245,166,35,0.15)', borderRadius: 8 },
+                calculatorMode === 'unit-converter' && styles.settingsItemActive,
               ]}
               onPress={() => {
                 setCalculatorMode('unit-converter');
@@ -1092,7 +1124,7 @@ export default function GaslighterCalculator() {
             <TouchableOpacity
               style={[
                 styles.settingsItem,
-                calculatorMode === 'tip-calculator' && { backgroundColor: 'rgba(245,166,35,0.15)', borderRadius: 8 },
+                calculatorMode === 'tip-calculator' && styles.settingsItemActive,
               ]}
               onPress={() => {
                 setCalculatorMode('tip-calculator');
@@ -1107,7 +1139,7 @@ export default function GaslighterCalculator() {
             <TouchableOpacity
               style={[
                 styles.settingsItem,
-                calculatorMode === 'fuel-calculator' && { backgroundColor: 'rgba(245,166,35,0.15)', borderRadius: 8 },
+                calculatorMode === 'fuel-calculator' && styles.settingsItemActive,
               ]}
               onPress={() => {
                 setCalculatorMode('fuel-calculator');
@@ -1122,7 +1154,7 @@ export default function GaslighterCalculator() {
             <TouchableOpacity
               style={[
                 styles.settingsItem,
-                calculatorMode === 'gpa-calculator' && { backgroundColor: 'rgba(245,166,35,0.15)', borderRadius: 8 },
+                calculatorMode === 'gpa-calculator' && styles.settingsItemActive,
               ]}
               onPress={() => {
                 setCalculatorMode('gpa-calculator');
@@ -1137,7 +1169,7 @@ export default function GaslighterCalculator() {
             <TouchableOpacity
               style={[
                 styles.settingsItem,
-                calculatorMode === 'fuel-efficiency' && { backgroundColor: 'rgba(245,166,35,0.15)', borderRadius: 8 },
+                calculatorMode === 'fuel-efficiency' && styles.settingsItemActive,
               ]}
               onPress={() => {
                 setCalculatorMode('fuel-efficiency');
@@ -1152,7 +1184,7 @@ export default function GaslighterCalculator() {
             <TouchableOpacity
               style={[
                 styles.settingsItem,
-                calculatorMode === 'health' && { backgroundColor: 'rgba(245,166,35,0.15)', borderRadius: 8 },
+                calculatorMode === 'health' && styles.settingsItemActive,
               ]}
               onPress={() => {
                 setCalculatorMode('health');
@@ -1167,7 +1199,7 @@ export default function GaslighterCalculator() {
             <TouchableOpacity
               style={[
                 styles.settingsItem,
-                calculatorMode === 'percentage' && { backgroundColor: 'rgba(245,166,35,0.15)', borderRadius: 8 },
+                calculatorMode === 'percentage' && styles.settingsItemActive,
               ]}
               onPress={() => {
                 setCalculatorMode('percentage');
@@ -1182,7 +1214,7 @@ export default function GaslighterCalculator() {
             <TouchableOpacity
               style={[
                 styles.settingsItem,
-                calculatorMode === 'loan' && { backgroundColor: 'rgba(245,166,35,0.15)', borderRadius: 8 },
+                calculatorMode === 'loan' && styles.settingsItemActive,
               ]}
               onPress={() => {
                 setCalculatorMode('loan');
@@ -1197,7 +1229,7 @@ export default function GaslighterCalculator() {
             <TouchableOpacity
               style={[
                 styles.settingsItem,
-                calculatorMode === 'ovulation' && { backgroundColor: 'rgba(245,166,35,0.15)', borderRadius: 8 },
+                calculatorMode === 'ovulation' && styles.settingsItemActive,
               ]}
               onPress={() => {
                 setCalculatorMode('ovulation');
@@ -1212,7 +1244,7 @@ export default function GaslighterCalculator() {
             <TouchableOpacity
               style={[
                 styles.settingsItem,
-                calculatorMode === 'hex' && { backgroundColor: 'rgba(245,166,35,0.15)', borderRadius: 8 },
+                calculatorMode === 'hex' && styles.settingsItemActive,
               ]}
               onPress={() => {
                 setCalculatorMode('hex');
@@ -1227,7 +1259,7 @@ export default function GaslighterCalculator() {
             <TouchableOpacity
               style={[
                 styles.settingsItem,
-                calculatorMode === 'discount' && { backgroundColor: 'rgba(245,166,35,0.15)', borderRadius: 8 },
+                calculatorMode === 'discount' && styles.settingsItemActive,
               ]}
               onPress={() => {
                 setCalculatorMode('discount');
@@ -1242,7 +1274,7 @@ export default function GaslighterCalculator() {
             <TouchableOpacity
               style={[
                 styles.settingsItem,
-                calculatorMode === 'currency' && { backgroundColor: 'rgba(245,166,35,0.15)', borderRadius: 8 },
+                calculatorMode === 'currency' && styles.settingsItemActive,
               ]}
               onPress={() => {
                 setCalculatorMode('currency');
@@ -1257,7 +1289,7 @@ export default function GaslighterCalculator() {
             <TouchableOpacity
               style={[
                 styles.settingsItem,
-                calculatorMode === 'savings' && { backgroundColor: 'rgba(245,166,35,0.15)', borderRadius: 8 },
+                calculatorMode === 'savings' && styles.settingsItemActive,
               ]}
               onPress={() => {
                 setCalculatorMode('savings');

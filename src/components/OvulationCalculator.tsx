@@ -6,6 +6,7 @@ import {
   TextInput,
   StyleSheet,
   ScrollView,
+  Linking,
 } from 'react-native';
 
 interface OvulationCalculatorProps {
@@ -303,6 +304,10 @@ export const OvulationCalculator: React.FC<OvulationCalculatorProps> = ({ colors
       textAlign: 'center',
       lineHeight: 16,
     },
+    sourceLink: {
+      color: colors.orange,
+      textDecorationLine: 'underline',
+    },
     // Picker Modal
     pickerOverlay: {
       position: 'absolute',
@@ -521,8 +526,15 @@ export const OvulationCalculator: React.FC<OvulationCalculatorProps> = ({ colors
       {/* Disclaimer */}
       <View style={styles.disclaimer}>
         <Text style={styles.disclaimerText}>
-          This calculator provides estimates only. Results may vary based on individual cycles.
-          Consult a healthcare provider for medical advice.
+          This calculator provides estimates only using the standard calendar method
+          (ovulation ≈ 14 days before the next period). Results may vary based on individual
+          cycles. Consult a healthcare provider for medical advice.{' '}
+          <Text
+            style={styles.sourceLink}
+            onPress={() => Linking.openURL('https://www.acog.org/womens-health/faqs/fertility-awareness-based-methods-of-family-planning')}
+          >
+            Source: ACOG
+          </Text>
         </Text>
       </View>
 

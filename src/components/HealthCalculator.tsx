@@ -6,6 +6,7 @@ import {
   TextInput,
   StyleSheet,
   ScrollView,
+  Linking,
 } from 'react-native';
 
 interface HealthCalculatorProps {
@@ -142,6 +143,37 @@ export const HealthCalculator: React.FC<HealthCalculatorProps> = ({ colors, onTa
     { label: 'Water', icon: '💧', value: 'water' },
     { label: 'Ideal', icon: '🎯', value: 'ideal' },
   ];
+
+  const SOURCES: Record<CalculationType, { label: string; url: string }> = {
+    bmi: {
+      label: 'WHO: Body mass index (BMI)',
+      url: 'https://www.who.int/europe/news-room/fact-sheets/item/a-healthy-lifestyle---who-recommendations',
+    },
+    bmr: {
+      label: 'Mifflin MD, et al. (1990), Am J Clin Nutr',
+      url: 'https://pubmed.ncbi.nlm.nih.gov/2305711/',
+    },
+    water: {
+      label: 'National Academies: Dietary Reference Intakes for Water',
+      url: 'https://www.ncbi.nlm.nih.gov/books/NBK56068/',
+    },
+    ideal: {
+      label: 'Devine BJ (1974), Clin Pharm',
+      url: 'https://pubmed.ncbi.nlm.nih.gov/4790637/',
+    },
+  };
+
+  const renderSourceNote = () => {
+    const source = SOURCES[calcType];
+    return (
+      <Text style={styles.sourceNote}>
+        Estimate only, not medical advice. Source: {' '}
+        <Text style={styles.sourceLink} onPress={() => Linking.openURL(source.url)}>
+          {source.label}
+        </Text>
+      </Text>
+    );
+  };
 
   const styles = StyleSheet.create({
     container: {
@@ -360,6 +392,18 @@ export const HealthCalculator: React.FC<HealthCalculatorProps> = ({ colors, onTa
       color: colors.white,
       fontWeight: '600',
       textAlign: 'center',
+    },
+    sourceNote: {
+      fontSize: 11,
+      color: colors.lightGray,
+      textAlign: 'center',
+      marginTop: 16,
+      marginBottom: 8,
+      lineHeight: 16,
+    },
+    sourceLink: {
+      color: colors.orange,
+      textDecorationLine: 'underline',
     },
   });
 
@@ -626,6 +670,8 @@ export const HealthCalculator: React.FC<HealthCalculatorProps> = ({ colors, onTa
       {calcType === 'bmr' && renderBMRResult()}
       {calcType === 'water' && renderWaterResult()}
       {calcType === 'ideal' && renderIdealResult()}
+
+      {renderSourceNote()}
     </ScrollView>
   );
 };
