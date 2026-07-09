@@ -18,6 +18,7 @@ export const darkColors = {
   numButtonBgPressed: ['#1a1a1a', '#0d0d0d'],
   funcButtonBg: ['#3a3a3a', '#2a2a2a'],
   funcButtonBgPressed: ['#2a2a2a', '#1d1d1d'],
+  opButtonIdleBg: ['#2a2a2a', '#1c1c1c'],
   opButtonActive: ['#ffb347', '#ff6b35'],
   opButtonPressed: ['#cc7a00', '#b36b00'],
   equalsButton: ['#ff7b54', '#ff5733', '#c9302c'],
@@ -40,6 +41,7 @@ export const lightColors = {
   numButtonBgPressed: ['#e0e0e0', '#d0d0d0'],
   funcButtonBg: ['#e0e0e0', '#d0d0d0'],
   funcButtonBgPressed: ['#c8c8c8', '#b8b8b8'],
+  opButtonIdleBg: ['#ffffff', '#e8e8e8'],
   opButtonActive: ['#ffb347', '#ff6b35'],
   opButtonPressed: ['#cc7a00', '#b36b00'],
   equalsButton: ['#ff7b54', '#ff5733', '#c9302c'],
@@ -183,7 +185,6 @@ export const styles = StyleSheet.create({
     borderRadius: 18,
     justifyContent: 'center',
     alignItems: 'center',
-    overflow: 'hidden',
   },
   buttonGradient: {
     width: '100%',
@@ -232,12 +233,12 @@ export const styles = StyleSheet.create({
     ...Platform.select({
       ios: {
         shadowColor: '#000',
-        shadowOffset: { width: 4, height: 4 },
-        shadowOpacity: 0.5,
-        shadowRadius: 10,
+        shadowOffset: { width: 1, height: 1 },
+        shadowOpacity: 0.22,
+        shadowRadius: 2,
       },
       android: {
-        elevation: 8,
+        elevation: 2,
       },
     }),
   },

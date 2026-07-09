@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "559754098362",
+    "project_id": "calculatude",
+    "storage_bucket": "calculatude.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:559754098362:android:9e3c2ed21238912facf483",
+        "android_client_info": {
+          "package_name": "com.weiblocks.calculatude"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCE-TFv7S7aPxUXoPQva7UbWiJL_ycGvLE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

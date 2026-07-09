@@ -3,6 +3,7 @@ import { Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ErrorCode, useIAP } from 'react-native-iap';
 import { REMOVE_ADS_SKU } from './productIds';
+import { logPremiumPurchase } from '../utils/analytics';
 
 const PREMIUM_STORAGE_KEY = 'isPremium';
 // StoreKit/Play Billing can silently drop a purchase request (backgrounding,
@@ -44,6 +45,7 @@ export const usePremium = () => {
       clearPurchaseTimeout();
       if (purchase.productId === REMOVE_ADS_SKU) {
         persistPremium(true);
+        logPremiumPurchase(purchase.productId);
         try {
           await finishTransaction({ purchase, isConsumable: false });
         } catch (error) {

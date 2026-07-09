@@ -77,6 +77,11 @@ export const TipCalculator: React.FC<TipCalculatorProps> = ({ colors, onTaskComp
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'flex-start',
+      flexWrap: 'wrap',
+    },
+    heroMain: {
+      flexShrink: 1,
+      marginRight: 10,
     },
     heroLabel: {
       fontSize: 12,
@@ -89,24 +94,7 @@ export const TipCalculator: React.FC<TipCalculatorProps> = ({ colors, onTaskComp
       fontSize: 40,
       color: colors.orange,
       fontWeight: '700',
-    },
-    heroSubStats: {
-      alignItems: 'flex-end',
-    },
-    heroSubStatRow: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      marginBottom: 4,
-    },
-    heroSubLabel: {
-      fontSize: 12,
-      color: colors.gray,
-      marginRight: 6,
-    },
-    heroSubValue: {
-      fontSize: 14,
-      color: colors.white,
-      fontWeight: '600',
+      flexShrink: 1,
     },
     twoColRow: {
       flexDirection: 'row',
@@ -284,19 +272,16 @@ export const TipCalculator: React.FC<TipCalculatorProps> = ({ colors, onTaskComp
 
       <View style={styles.heroCard}>
         <View style={styles.heroTopRow}>
-          <View>
+          <View style={styles.heroMain}>
             <Text style={styles.heroLabel}>Per Person</Text>
-            <Text style={styles.heroValue}>${perPerson.toFixed(2)}</Text>
-          </View>
-          <View style={styles.heroSubStats}>
-            <View style={styles.heroSubStatRow}>
-              <Text style={styles.heroSubLabel}>Tip</Text>
-              <Text style={styles.heroSubValue}>${tipAmount.toFixed(2)}</Text>
-            </View>
-            <View style={styles.heroSubStatRow}>
-              <Text style={styles.heroSubLabel}>Total</Text>
-              <Text style={styles.heroSubValue}>${totalAmount.toFixed(2)}</Text>
-            </View>
+            <Text
+              style={styles.heroValue}
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              minimumFontScale={0.4}
+            >
+              ${perPerson.toFixed(2)}
+            </Text>
           </View>
         </View>
       </View>

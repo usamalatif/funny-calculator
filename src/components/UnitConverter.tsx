@@ -189,7 +189,7 @@ export const UnitConverter: React.FC<UnitConverterProps> = ({ colors, onTaskComp
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      paddingHorizontal: 16,
+      paddingHorizontal: 0,
       marginTop: 24,
     },
     // Header
@@ -221,14 +221,15 @@ export const UnitConverter: React.FC<UnitConverterProps> = ({ colors, onTaskComp
       flexDirection: 'row',
       alignItems: 'center',
       paddingBottom: 4,
+      paddingRight: 16,
     },
     categoryItem: {
       flexDirection: 'row',
       alignItems: 'center',
       paddingVertical: 8,
-      paddingHorizontal: 12,
+      paddingHorizontal: 8,
       borderRadius: 20,
-      marginRight: 8,
+      marginRight: 6,
     },
     categoryItemActive: {
       backgroundColor: colors.orange,
@@ -237,10 +238,10 @@ export const UnitConverter: React.FC<UnitConverterProps> = ({ colors, onTaskComp
       backgroundColor: colors.iconButtonBg,
     },
     categoryIcon: {
-      marginRight: 6,
+      marginRight: 4,
     },
     categoryLabel: {
-      fontSize: 12,
+      fontSize: 11,
       fontWeight: '600',
     },
     categoryLabelActive: {

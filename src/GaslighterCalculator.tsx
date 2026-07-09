@@ -5,7 +5,6 @@ import {
   TouchableOpacity,
   Animated,
   Platform,
-  Vibration,
   Dimensions,
   ScrollView,
   Switch,
@@ -19,6 +18,8 @@ import LinearGradient from 'react-native-linear-gradient';
 import { RESPONSES, MOOD_LABELS } from './constants/responses';
 import { useAnimations } from './hooks/useAnimations';
 import { styles, darkColors, lightColors, getFontSize, BUTTON_SIZE_EXPORT } from './styles/calculator';
+import { hapticKeyPress, hapticEquals } from './utils/haptics';
+import { logCalculatorEquals, logModeSwitch, logModeLocked, logRewardedAdEarned, logThemeChange } from './utils/analytics';
 import { AdBanner } from './ads/AdBanner';
 import { useRewardedAd } from './ads/useRewardedAd';
 import { usePremium } from './iap/PremiumContext';
@@ -47,6 +48,7 @@ interface ThemeColors {
   numButtonBgPressed: string[];
   funcButtonBg: string[];
   funcButtonBgPressed: string[];
+  opButtonIdleBg: string[];
   opButtonActive: string[];
   opButtonPressed: string[];
   white: string;
@@ -54,6 +56,7 @@ interface ThemeColors {
   orange: string;
   equalsButton: string[];
   equalsButtonPressed: string[];
+  shadowColor: string;
 }
 
 interface NumButtonProps {
@@ -67,7 +70,7 @@ const NumButton: React.FC<NumButtonProps> = ({ value, onPress, pressed, themeCol
   <TouchableOpacity
     onPress={onPress}
     activeOpacity={0.8}
-    style={[styles.button, styles.buttonShadow, pressed && styles.buttonPressed]}
+    style={[styles.button, styles.buttonShadow, { shadowColor: themeColors.shadowColor, shadowOpacity: 1 }, pressed && styles.buttonPressed]}
   >
     <LinearGradient
       colors={pressed ? themeColors.numButtonBgPressed as [string, string] : themeColors.numButtonBg as [string, string]}
@@ -92,7 +95,7 @@ const FuncButton: React.FC<FuncButtonProps> = ({ value, onPress, pressed, icon, 
   <TouchableOpacity
     onPress={onPress}
     activeOpacity={0.8}
-    style={[styles.button, styles.buttonShadow, pressed && styles.buttonPressed]}
+    style={[styles.button, styles.buttonShadow, { shadowColor: themeColors.shadowColor, shadowOpacity: 1 }, pressed && styles.buttonPressed]}
   >
     <LinearGradient
       colors={pressed ? themeColors.funcButtonBgPressed as [string, string] : themeColors.funcButtonBg as [string, string]}
@@ -120,6 +123,8 @@ const OpButton: React.FC<OpButtonProps> = ({ value, displayValue, onPress, press
     activeOpacity={0.8}
     style={[
       styles.button,
+      (isActive || pressed) ? styles.buttonShadow : {},
+      { shadowColor: themeColors.orange },
       isActive ? styles.buttonShadowActive : {},
       pressed && styles.buttonPressed,
     ]}
@@ -381,9 +386,34 @@ export default function GaslighterCalculator({ onSurfaceColorChange }: Gaslighte
     loadUnlockedModes();
   }, []);
 
+  // Load saved theme preference from AsyncStorage
+  useEffect(() => {
+    const loadTheme = async () => {
+      try {
+        const stored = await AsyncStorage.getItem('isDarkTheme');
+        if (stored !== null) {
+          setIsDarkTheme(stored === 'true');
+        }
+      } catch (error) {
+        console.log('Error loading theme:', error);
+      }
+    };
+    loadTheme();
+  }, []);
+
+  // Toggle theme and persist the choice
+  const handleThemeChange = useCallback((value: boolean) => {
+    setIsDarkTheme(value);
+    logThemeChange(value);
+    AsyncStorage.setItem('isDarkTheme', value ? 'true' : 'false').catch((error) =>
+      console.log('Error saving theme:', error)
+    );
+  }, []);
+
   const handleUnlockEarned = useCallback(() => {
     setPendingUnlockMode((mode) => {
       if (!mode) return mode;
+      logRewardedAdEarned(mode);
       setUnlockedModes((prev) => {
         if (prev.includes(mode)) return prev;
         const next = [...prev, mode];
@@ -404,9 +434,11 @@ export default function GaslighterCalculator({ onSurfaceColorChange }: Gaslighte
     const isLocked = LOCKED_MODES.includes(mode) && !unlockedModes.includes(mode);
     if (!isLocked) {
       setCalculatorMode(mode);
+      logModeSwitch(mode);
       closeSettings();
       return;
     }
+    logModeLocked(mode);
     const modeLabel = CALCULATOR_MODES.find((m) => m.mode === mode)?.label ?? 'this calculator';
     Alert.alert(
       'Locked Calculator',
@@ -416,8 +448,12 @@ export default function GaslighterCalculator({ onSurfaceColorChange }: Gaslighte
         {
           text: 'Watch Ad',
           onPress: () => {
-            setPendingUnlockMode(mode);
-            rewardedAd.show();
+            const started = rewardedAd.show();
+            if (started) {
+              setPendingUnlockMode(mode);
+            } else {
+              Alert.alert('Ad Not Ready', 'The ad is still loading. Please try again in a few seconds.');
+            }
           },
         },
       ]
@@ -502,6 +538,7 @@ export default function GaslighterCalculator({ onSurfaceColorChange }: Gaslighte
     setPressedButton(id);
     setTimeout(() => setPressedButton(null), 150);
     setLastInteraction(Date.now());
+    hapticKeyPress();
   };
 
   // DIGIT INPUT
@@ -635,11 +672,13 @@ export default function GaslighterCalculator({ onSurfaceColorChange }: Gaslighte
 
   // EQUALS
   const handleEquals = () => {
-    handleButtonPress('=');
+    setPressedButton('=');
+    setTimeout(() => setPressedButton(null), 150);
+    setLastInteraction(Date.now());
 
-    // Shake and vibrate on equals press
+    // Shake and strong haptic on equals press
     animations.shake();
-    Vibration.vibrate(50);
+    hapticEquals();
 
     if (operator === null || waitingForOperand) {
       showRoast('Press some numbers first!');
@@ -650,6 +689,7 @@ export default function GaslighterCalculator({ onSurfaceColorChange }: Gaslighte
     const result = performCalculation();
     const calcKey = `${previousValue}${operator}${inputValue}`;
 
+    logCalculatorEquals(operator);
     setEqualsCount((prev) => prev + 1);
 
     // Check for fatigue
@@ -786,8 +826,14 @@ export default function GaslighterCalculator({ onSurfaceColorChange }: Gaslighte
     if (value === 'Error') return value;
     const num = parseFloat(value);
     if (isNaN(num)) return '0';
-    if (Math.abs(num) >= 1e9) return num.toExponential(2);
-    return value;
+    // Show up to 10 significant digits before falling back to scientific
+    // notation for numbers too large/small to fit the display.
+    const abs = Math.abs(num);
+    if (abs !== 0 && (abs >= 1e10 || abs < 1e-9)) {
+      return num.toExponential(3);
+    }
+    // Trim to at most 10 significant digits, dropping trailing zeros.
+    return String(parseFloat(num.toPrecision(10)));
   };
 
   const fontSize = getFontSize(display.length);
@@ -843,6 +889,9 @@ export default function GaslighterCalculator({ onSurfaceColorChange }: Gaslighte
             style={[
               styles.roastBubble,
               {
+                borderColor: isDarkTheme ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)',
+                shadowColor: colors.shadowColor,
+                shadowOpacity: 1,
                 opacity: animations.roastOpacity,
                 transform: [
                   { translateY: animations.roastTranslateY },
@@ -890,7 +939,7 @@ export default function GaslighterCalculator({ onSurfaceColorChange }: Gaslighte
                 ]}
               >
                 {/* Shadow layers for 3D effect */}
-                {Array.from({ length: 6 }).map((_, i) => (
+                {Array.from({ length: 3 }).map((_, i) => (
                   <Text
                     key={i}
                     style={[
@@ -899,9 +948,10 @@ export default function GaslighterCalculator({ onSurfaceColorChange }: Gaslighte
                         fontSize,
                         fontWeight: '700',
                         letterSpacing: -1,
-                        color: colors.shadowColor.replace('0.8', String(0.8 - i * 0.1)),
-                        left: (i + 1) * 1.5,
-                        top: (i + 1) * 2,
+                        fontVariant: ['tabular-nums'],
+                        color: colors.shadowColor.replace('0.3', String(0.14 - i * 0.04)),
+                        left: (i + 1) * 1.1,
+                        top: (i + 1) * 1.1,
                       },
                     ]}
                   >
@@ -995,6 +1045,7 @@ export default function GaslighterCalculator({ onSurfaceColorChange }: Gaslighte
                   style={[
                     styles.button,
                     styles.buttonShadow,
+                    { shadowColor: colors.shadowColor, shadowOpacity: 1 },
                     pressedButton === '=' && styles.buttonPressed,
                   ]}
                 >
@@ -1144,7 +1195,7 @@ export default function GaslighterCalculator({ onSurfaceColorChange }: Gaslighte
               <Text style={[styles.settingsLabel, { color: colors.white }]}>Dark Theme</Text>
               <Switch
                 value={isDarkTheme}
-                onValueChange={setIsDarkTheme}
+                onValueChange={handleThemeChange}
                 trackColor={{ false: '#3a3a3a', true: '#f5a623' }}
                 thumbColor={isDarkTheme ? '#ffffff' : '#888888'}
               />
@@ -1254,8 +1305,8 @@ export default function GaslighterCalculator({ onSurfaceColorChange }: Gaslighte
               style={styles.settingsItem}
               onPress={() => {
                 Alert.alert(
-                  'About The Gaslighter',
-                  'A calculator that judges your math skills.\n\nMade with love and sarcasm.\n\n© 2024 Funny Calculator',
+                  'About Calculatude',
+                  'Calculatude — the calculator with an attitude.\n\nA calculator that judges your math skills, made with love and sarcasm.\n\n© 2026 Calculatude',
                   [{ text: 'OK' }]
                 );
               }}

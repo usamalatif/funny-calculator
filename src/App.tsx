@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import mobileAds from 'react-native-google-mobile-ads';
+import analytics from '@react-native-firebase/analytics';
 import GaslighterCalculator from './GaslighterCalculator';
 import { PremiumProvider } from './iap/PremiumContext';
 
@@ -9,6 +10,7 @@ export default function App() {
 
   useEffect(() => {
     mobileAds().initialize();
+    analytics().logAppOpen().catch(() => {});
   }, []);
 
   return (

@@ -26,5 +26,17 @@ export const useRewardedAd = (onEarned: () => void) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isClosed]);
 
-  return { loaded: isLoaded, show: () => show() };
+  const safeShow = () => {
+    if (!isLoaded) {
+      return false;
+    }
+    try {
+      show();
+      return true;
+    } catch (e) {
+      return false;
+    }
+  };
+
+  return { loaded: isLoaded, show: safeShow };
 };
