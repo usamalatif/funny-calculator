@@ -6,6 +6,7 @@ import {
   TextInput,
   StyleSheet,
 } from 'react-native';
+import { AdBanner } from '../ads/AdBanner';
 
 interface FuelCalculatorProps {
   colors: {
@@ -67,12 +68,64 @@ export const FuelCalculator: React.FC<FuelCalculatorProps> = ({ colors, onTaskCo
       paddingHorizontal: 5,
       marginTop: 30,
     },
+    header: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'flex-start',
+      marginBottom: 16,
+    },
+    headerLeft: {
+      flex: 1,
+    },
+    eyebrow: {
+      fontSize: 11,
+      color: colors.lightGray,
+      textTransform: 'uppercase',
+      letterSpacing: 1,
+      marginBottom: 2,
+    },
     title: {
-      fontSize: 18,
-      fontWeight: '600',
+      fontSize: 20,
+      fontWeight: '700',
       color: colors.white,
+    },
+    // Hero cost block
+    heroCard: {
+      backgroundColor: colors.panelBg,
+      borderRadius: 18,
+      paddingVertical: 20,
+      paddingHorizontal: 18,
       marginBottom: 12,
-      textAlign: 'center',
+    },
+    heroLabel: {
+      fontSize: 12,
+      color: colors.gray,
+      textTransform: 'uppercase',
+      letterSpacing: 0.5,
+      marginBottom: 4,
+    },
+    heroRow: {
+      flexDirection: 'row',
+      alignItems: 'baseline',
+      justifyContent: 'space-between',
+    },
+    heroValue: {
+      fontSize: 40,
+      color: colors.orange,
+      fontWeight: '700',
+    },
+    heroSubStack: {
+      alignItems: 'flex-end',
+    },
+    heroSubValue: {
+      fontSize: 16,
+      color: colors.white,
+      fontWeight: '600',
+    },
+    heroSubLabel: {
+      fontSize: 11,
+      color: colors.lightGray,
+      marginTop: 2,
     },
     // Unit Toggle
     unitToggle: {
@@ -80,11 +133,11 @@ export const FuelCalculator: React.FC<FuelCalculatorProps> = ({ colors, onTaskCo
       backgroundColor: colors.iconButtonBg,
       borderRadius: 10,
       padding: 4,
-      marginBottom: 15,
+      marginBottom: 12,
     },
     unitButton: {
       flex: 1,
-      paddingVertical: 10,
+      paddingVertical: 8,
       borderRadius: 8,
       alignItems: 'center',
     },
@@ -92,7 +145,7 @@ export const FuelCalculator: React.FC<FuelCalculatorProps> = ({ colors, onTaskCo
       backgroundColor: colors.orange,
     },
     unitButtonText: {
-      fontSize: 13,
+      fontSize: 12,
       fontWeight: '600',
     },
     unitButtonTextActive: {
@@ -101,19 +154,25 @@ export const FuelCalculator: React.FC<FuelCalculatorProps> = ({ colors, onTaskCo
     unitButtonTextInactive: {
       color: colors.gray,
     },
-    // Card
-    card: {
-      backgroundColor: colors.panelBg,
-      borderRadius: 16,
-      padding: 16,
+    // Input grid
+    inputGrid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 10,
       marginBottom: 12,
     },
-    // Input Row
-    inputRow: {
-      marginBottom: 14,
+    inputCard: {
+      flexGrow: 1,
+      flexBasis: '47%',
+      backgroundColor: colors.panelBg,
+      borderRadius: 14,
+      padding: 12,
+    },
+    inputCardWide: {
+      flexBasis: '100%',
     },
     label: {
-      fontSize: 11,
+      fontSize: 10,
       color: colors.lightGray,
       marginBottom: 6,
       textTransform: 'uppercase',
@@ -127,63 +186,50 @@ export const FuelCalculator: React.FC<FuelCalculatorProps> = ({ colors, onTaskCo
     },
     input: {
       flex: 1,
-      fontSize: 20,
-      color: colors.white,
-      fontWeight: '600',
-      paddingVertical: 12,
-      paddingHorizontal: 14,
-    },
-    inputUnit: {
-      fontSize: 14,
-      color: colors.orange,
-      paddingRight: 14,
-      fontWeight: '500',
-    },
-    // Results
-    resultsCard: {
-      backgroundColor: colors.panelBg,
-      borderRadius: 16,
-      padding: 16,
-    },
-    resultRow: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      paddingVertical: 12,
-      borderBottomWidth: 1,
-      borderBottomColor: colors.iconButtonBg,
-    },
-    resultRowLast: {
-      borderBottomWidth: 0,
-      paddingTop: 14,
-    },
-    resultLabel: {
-      fontSize: 14,
-      color: colors.gray,
-    },
-    resultValue: {
       fontSize: 18,
       color: colors.white,
       fontWeight: '600',
+      paddingVertical: 10,
+      paddingHorizontal: 12,
     },
-    resultValueHighlight: {
-      fontSize: 26,
+    inputUnit: {
+      fontSize: 13,
       color: colors.orange,
-      fontWeight: '700',
+      paddingRight: 12,
+      fontWeight: '500',
     },
     // Info
     infoText: {
       fontSize: 11,
       color: colors.lightGray,
-      textAlign: 'center',
-      marginTop: 12,
+      textAlign: 'left',
+      marginTop: 4,
       fontStyle: 'italic',
     },
   });
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Fuel Cost Calculator</Text>
+      <View style={styles.header}>
+        <View style={styles.headerLeft}>
+          <Text style={styles.eyebrow}>Trip Estimate</Text>
+          <Text style={styles.title}>Fuel Cost</Text>
+        </View>
+      </View>
+
+      {/* Hero result */}
+      <View style={styles.heroCard}>
+        <Text style={styles.heroLabel}>Total Cost</Text>
+        <View style={styles.heroRow}>
+          <Text style={styles.heroValue}>${totalCost.toFixed(2)}</Text>
+          <View style={styles.heroSubStack}>
+            <Text style={styles.heroSubValue}>
+              {fuelNeeded.toFixed(2)} {unitSystem === 'metric' ? 'L' : 'gal'}
+            </Text>
+            <Text style={styles.heroSubLabel}>fuel needed</Text>
+          </View>
+        </View>
+      </View>
 
       {/* Unit System Toggle */}
       <View style={styles.unitToggle}>
@@ -211,9 +257,9 @@ export const FuelCalculator: React.FC<FuelCalculatorProps> = ({ colors, onTaskCo
         </TouchableOpacity>
       </View>
 
-      <View style={styles.card}>
-        {/* Distance */}
-        <View style={styles.inputRow}>
+      {/* Inputs grid */}
+      <View style={styles.inputGrid}>
+        <View style={styles.inputCard}>
           <Text style={styles.label}>Distance</Text>
           <View style={styles.inputContainer}>
             <TextInput
@@ -228,9 +274,8 @@ export const FuelCalculator: React.FC<FuelCalculatorProps> = ({ colors, onTaskCo
           </View>
         </View>
 
-        {/* Fuel Efficiency */}
-        <View style={styles.inputRow}>
-          <Text style={styles.label}>Fuel Efficiency</Text>
+        <View style={styles.inputCard}>
+          <Text style={styles.label}>Efficiency</Text>
           <View style={styles.inputContainer}>
             <TextInput
               style={styles.input}
@@ -244,8 +289,7 @@ export const FuelCalculator: React.FC<FuelCalculatorProps> = ({ colors, onTaskCo
           </View>
         </View>
 
-        {/* Fuel Price */}
-        <View style={[styles.inputRow, { marginBottom: 0 }]}>
+        <View style={[styles.inputCard, styles.inputCardWide]}>
           <Text style={styles.label}>Fuel Price</Text>
           <View style={styles.inputContainer}>
             <TextInput
@@ -261,25 +305,15 @@ export const FuelCalculator: React.FC<FuelCalculatorProps> = ({ colors, onTaskCo
         </View>
       </View>
 
-      {/* Results */}
-      <View style={styles.resultsCard}>
-        <View style={styles.resultRow}>
-          <Text style={styles.resultLabel}>Fuel Needed</Text>
-          <Text style={styles.resultValue}>
-            {fuelNeeded.toFixed(2)} {unitSystem === 'metric' ? 'L' : 'gal'}
-          </Text>
-        </View>
-        <View style={[styles.resultRow, styles.resultRowLast]}>
-          <Text style={styles.resultLabel}>Total Cost</Text>
-          <Text style={styles.resultValueHighlight}>${totalCost.toFixed(2)}</Text>
-        </View>
-      </View>
-
       <Text style={styles.infoText}>
         {unitSystem === 'metric'
           ? 'Enter consumption in Liters per 100 kilometers'
           : 'Enter efficiency in Miles per Gallon'}
       </Text>
+
+      <View style={{ marginTop: 16 }}>
+        <AdBanner size="banner" />
+      </View>
     </View>
   );
 };

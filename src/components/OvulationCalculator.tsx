@@ -8,6 +8,7 @@ import {
   ScrollView,
   Linking,
 } from 'react-native';
+import { AdBanner } from '../ads/AdBanner';
 
 interface OvulationCalculatorProps {
   colors: {
@@ -109,15 +110,70 @@ export const OvulationCalculator: React.FC<OvulationCalculatorProps> = ({ colors
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      paddingHorizontal: 5,
-      marginTop: 30,
+      paddingHorizontal: 14,
+      marginTop: 24,
+    },
+    headerRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 16,
+    },
+    headerIconBadge: {
+      width: 34,
+      height: 34,
+      borderRadius: 10,
+      backgroundColor: colors.iconButtonBg,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginRight: 10,
     },
     title: {
-      fontSize: 18,
-      fontWeight: '600',
+      fontSize: 16,
+      fontWeight: '700',
       color: colors.white,
-      marginBottom: 12,
-      textAlign: 'center',
+      textAlign: 'left',
+    },
+    // Hero
+    heroCard: {
+      backgroundColor: colors.panelBg,
+      borderRadius: 20,
+      paddingVertical: 22,
+      paddingHorizontal: 18,
+      marginBottom: 14,
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    heroIconWrap: {
+      width: 56,
+      height: 56,
+      borderRadius: 28,
+      backgroundColor: colors.iconButtonBg,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginRight: 16,
+    },
+    ovulationIcon: {
+      fontSize: 28,
+    },
+    heroTextBlock: {
+      flex: 1,
+    },
+    mainResultLabel: {
+      fontSize: 11,
+      color: colors.lightGray,
+      textTransform: 'uppercase',
+      letterSpacing: 0.5,
+    },
+    mainResultDate: {
+      fontSize: 30,
+      fontWeight: '800',
+      color: colors.orange,
+      marginTop: 2,
+    },
+    mainResultDays: {
+      fontSize: 13,
+      color: colors.gray,
+      marginTop: 3,
     },
     // Card
     card: {
@@ -133,6 +189,13 @@ export const OvulationCalculator: React.FC<OvulationCalculatorProps> = ({ colors
       letterSpacing: 0.5,
       marginBottom: 12,
     },
+    twoUp: {
+      flexDirection: 'row',
+      gap: 10,
+    },
+    twoUpItem: {
+      flex: 1,
+    },
     // Input Row
     inputRow: {
       marginBottom: 12,
@@ -146,36 +209,37 @@ export const OvulationCalculator: React.FC<OvulationCalculatorProps> = ({ colors
     },
     dateRow: {
       flexDirection: 'row',
+      gap: 8,
     },
     dateInput: {
       flex: 1,
-      marginRight: 8,
     },
     inputContainer: {
       flexDirection: 'row',
       alignItems: 'center',
       backgroundColor: colors.iconButtonBg,
-      borderRadius: 10,
+      borderRadius: 12,
     },
     input: {
       flex: 1,
       fontSize: 16,
       color: colors.white,
       fontWeight: '600',
-      paddingVertical: 10,
+      paddingVertical: 12,
       paddingHorizontal: 12,
       textAlign: 'center',
     },
     pickerButton: {
       flex: 1,
       backgroundColor: colors.iconButtonBg,
-      borderRadius: 10,
+      borderRadius: 12,
       paddingVertical: 12,
-      paddingHorizontal: 12,
+      paddingHorizontal: 10,
       alignItems: 'center',
+      justifyContent: 'center',
     },
     pickerButtonText: {
-      fontSize: 14,
+      fontSize: 13,
       color: colors.white,
       fontWeight: '500',
     },
@@ -183,105 +247,80 @@ export const OvulationCalculator: React.FC<OvulationCalculatorProps> = ({ colors
     cycleRow: {
       flexDirection: 'row',
       alignItems: 'center',
+      justifyContent: 'space-between',
     },
     cycleButton: {
-      width: 40,
-      height: 40,
-      borderRadius: 20,
+      width: 36,
+      height: 36,
+      borderRadius: 18,
       backgroundColor: colors.iconButtonBg,
       justifyContent: 'center',
       alignItems: 'center',
     },
     cycleButtonText: {
-      fontSize: 20,
+      fontSize: 18,
       color: colors.orange,
       fontWeight: '300',
     },
     cycleValue: {
-      flex: 1,
-      alignItems: 'center',
+      flexDirection: 'row',
+      alignItems: 'baseline',
     },
     cycleValueText: {
-      fontSize: 28,
+      fontSize: 26,
       color: colors.white,
       fontWeight: '700',
     },
     cycleValueLabel: {
       fontSize: 12,
       color: colors.gray,
-      marginTop: 2,
+      marginLeft: 4,
     },
     // Results
     resultsCard: {
       backgroundColor: colors.panelBg,
       borderRadius: 16,
-      padding: 16,
+      padding: 14,
       marginBottom: 12,
-    },
-    mainResult: {
-      alignItems: 'center',
-      paddingBottom: 14,
-      borderBottomWidth: 1,
-      borderBottomColor: colors.iconButtonBg,
-    },
-    ovulationIcon: {
-      fontSize: 32,
-      marginBottom: 8,
-    },
-    mainResultLabel: {
-      fontSize: 11,
-      color: colors.lightGray,
-      textTransform: 'uppercase',
-      letterSpacing: 0.5,
-    },
-    mainResultDate: {
-      fontSize: 24,
-      fontWeight: '700',
-      color: colors.orange,
-      marginTop: 4,
-    },
-    mainResultDays: {
-      fontSize: 13,
-      color: colors.gray,
-      marginTop: 4,
     },
     // Timeline
     timelineSection: {
-      paddingTop: 14,
+      gap: 8,
     },
     timelineItem: {
       flexDirection: 'row',
       alignItems: 'center',
-      paddingVertical: 10,
-      borderBottomWidth: 1,
-      borderBottomColor: colors.iconButtonBg,
+      paddingVertical: 8,
+      paddingHorizontal: 10,
+      borderRadius: 12,
+      backgroundColor: colors.iconButtonBg,
     },
     timelineItemLast: {
-      borderBottomWidth: 0,
+      marginBottom: 0,
     },
     timelineIcon: {
-      width: 36,
-      height: 36,
-      borderRadius: 18,
+      width: 32,
+      height: 32,
+      borderRadius: 10,
       justifyContent: 'center',
       alignItems: 'center',
-      marginRight: 12,
+      marginRight: 10,
     },
     timelineEmoji: {
-      fontSize: 18,
+      fontSize: 16,
     },
     timelineContent: {
       flex: 1,
     },
     timelineLabel: {
-      fontSize: 13,
+      fontSize: 12,
       color: colors.gray,
     },
     timelineDate: {
-      fontSize: 15,
+      fontSize: 14,
       color: colors.white,
       fontWeight: '600',
-      marginTop: 2,
+      marginTop: 1,
     },
     timelineBadge: {
       paddingVertical: 4,
@@ -294,14 +333,14 @@ export const OvulationCalculator: React.FC<OvulationCalculatorProps> = ({ colors
     },
     // Disclaimer
     disclaimer: {
-      backgroundColor: colors.panelBg,
       borderRadius: 12,
-      padding: 12,
+      paddingVertical: 10,
+      paddingHorizontal: 4,
     },
     disclaimerText: {
       fontSize: 11,
       color: colors.gray,
-      textAlign: 'center',
+      textAlign: 'left',
       lineHeight: 16,
     },
     sourceLink: {
@@ -394,9 +433,32 @@ export const OvulationCalculator: React.FC<OvulationCalculatorProps> = ({ colors
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      <Text style={styles.title}>Ovulation Calculator</Text>
+      <View style={styles.headerRow}>
+        <View style={styles.headerIconBadge}>
+          <Text style={{ fontSize: 16 }}>🥚</Text>
+        </View>
+        <Text style={styles.title}>Ovulation Calculator</Text>
+      </View>
 
-      {/* Last Period Input */}
+      {/* Hero result */}
+      <View style={styles.heroCard}>
+        <View style={styles.heroIconWrap}>
+          <Text style={styles.ovulationIcon}>🥚</Text>
+        </View>
+        <View style={styles.heroTextBlock}>
+          <Text style={styles.mainResultLabel}>Estimated Ovulation Day</Text>
+          <Text style={styles.mainResultDate}>{formatDate(dates.ovulationDay)}</Text>
+          <Text style={styles.mainResultDays}>
+            {ovulationDaysUntil > 0
+              ? `in ${ovulationDaysUntil} days`
+              : ovulationDaysUntil === 0
+              ? 'Today!'
+              : `${Math.abs(ovulationDaysUntil)} days ago`}
+          </Text>
+        </View>
+      </View>
+
+      {/* Inputs grouped in one card */}
       <View style={styles.card}>
         <Text style={styles.cardTitle}>First Day of Last Period</Text>
         <View style={styles.dateRow}>
@@ -414,14 +476,14 @@ export const OvulationCalculator: React.FC<OvulationCalculatorProps> = ({ colors
             </View>
           </View>
           <TouchableOpacity
-            style={[styles.pickerButton, { flex: 1.5, marginRight: 8 }]}
+            style={[styles.pickerButton, { flex: 1.5 }]}
             onPress={() => setShowMonthPicker(true)}
           >
             <Text style={styles.pickerButtonText}>
               {MONTHS[lastPeriodMonth]}
             </Text>
           </TouchableOpacity>
-          <View style={[styles.dateInput, { flex: 1, marginRight: 0 }]}>
+          <View style={[styles.dateInput, { flex: 1 }]}>
             <View style={styles.inputContainer}>
               <TextInput
                 style={styles.input}
@@ -435,10 +497,9 @@ export const OvulationCalculator: React.FC<OvulationCalculatorProps> = ({ colors
             </View>
           </View>
         </View>
-      </View>
 
-      {/* Cycle Length */}
-      <View style={styles.card}>
+        <View style={{ height: 14 }} />
+
         <Text style={styles.cardTitle}>Average Cycle Length</Text>
         <View style={styles.cycleRow}>
           <TouchableOpacity
@@ -460,21 +521,9 @@ export const OvulationCalculator: React.FC<OvulationCalculatorProps> = ({ colors
         </View>
       </View>
 
-      {/* Results */}
+      {/* Timeline */}
       <View style={styles.resultsCard}>
-        <View style={styles.mainResult}>
-          <Text style={styles.ovulationIcon}>🥚</Text>
-          <Text style={styles.mainResultLabel}>Estimated Ovulation Day</Text>
-          <Text style={styles.mainResultDate}>{formatDate(dates.ovulationDay)}</Text>
-          <Text style={styles.mainResultDays}>
-            {ovulationDaysUntil > 0
-              ? `in ${ovulationDaysUntil} days`
-              : ovulationDaysUntil === 0
-              ? 'Today!'
-              : `${Math.abs(ovulationDaysUntil)} days ago`}
-          </Text>
-        </View>
-
+        <Text style={styles.cardTitle}>Cycle Timeline</Text>
         <View style={styles.timelineSection}>
           {/* Fertile Window */}
           <View style={styles.timelineItem}>
@@ -539,6 +588,10 @@ export const OvulationCalculator: React.FC<OvulationCalculatorProps> = ({ colors
       </View>
 
       <MonthPicker />
+
+      <View style={{ marginTop: 16 }}>
+        <AdBanner size="banner" />
+      </View>
     </ScrollView>
   );
 };

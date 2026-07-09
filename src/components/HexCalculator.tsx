@@ -9,6 +9,7 @@ import {
   Alert,
 } from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
+import { AdBanner } from '../ads/AdBanner';
 
 interface HexCalculatorProps {
   colors: {
@@ -94,6 +95,8 @@ export const HexCalculator: React.FC<HexCalculatorProps> = ({ colors, onTaskComp
   };
 
   const conversions = getConversions();
+  const primaryConversion = conversions.find(c => c.value !== inputBase) || conversions[0];
+  const secondaryConversions = conversions.filter(c => c.value !== primaryConversion.value);
 
   // Check if key is valid for current base
   const isKeyValid = (key: string): boolean => {
@@ -158,34 +161,40 @@ export const HexCalculator: React.FC<HexCalculatorProps> = ({ colors, onTaskComp
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      paddingHorizontal: 5,
-      marginTop: 30,
+      paddingHorizontal: 14,
+      marginTop: 20,
+    },
+    headerRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginBottom: 14,
     },
     title: {
-      fontSize: 18,
-      fontWeight: '600',
-      color: colors.white,
-      marginBottom: 12,
-      textAlign: 'center',
+      fontSize: 15,
+      fontWeight: '700',
+      color: colors.lightGray,
+      textTransform: 'uppercase',
+      letterSpacing: 1,
     },
-    // Base Selector
+    // Base Selector - compact pill row anchored to header
     baseRow: {
       flexDirection: 'row',
-      marginBottom: 12,
+      backgroundColor: colors.iconButtonBg,
+      borderRadius: 20,
+      padding: 3,
     },
     baseButton: {
-      flex: 1,
-      paddingVertical: 12,
-      borderRadius: 10,
+      paddingVertical: 6,
+      paddingHorizontal: 12,
+      borderRadius: 16,
       alignItems: 'center',
-      marginHorizontal: 3,
-      backgroundColor: colors.iconButtonBg,
     },
     baseButtonActive: {
       backgroundColor: colors.orange,
     },
     baseLabel: {
-      fontSize: 14,
+      fontSize: 11,
       fontWeight: '700',
     },
     baseLabelActive: {
@@ -194,125 +203,161 @@ export const HexCalculator: React.FC<HexCalculatorProps> = ({ colors, onTaskComp
     baseLabelInactive: {
       color: colors.gray,
     },
-    // Input Card
-    inputCard: {
+    // Hero card: input + primary conversion combined
+    heroCard: {
       backgroundColor: colors.panelBg,
-      borderRadius: 16,
-      padding: 14,
-      marginBottom: 12,
+      borderRadius: 20,
+      paddingVertical: 18,
+      paddingHorizontal: 16,
+      marginBottom: 10,
+    },
+    heroTopRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'flex-start',
+      marginBottom: 4,
     },
     inputLabel: {
-      fontSize: 11,
+      fontSize: 10,
       color: colors.lightGray,
       textTransform: 'uppercase',
       letterSpacing: 0.5,
-      marginBottom: 8,
+    },
+    inputPrefixTag: {
+      fontSize: 11,
+      color: colors.orange,
+      fontWeight: '700',
     },
     inputContainer: {
       flexDirection: 'row',
       alignItems: 'center',
-      backgroundColor: colors.iconButtonBg,
-      borderRadius: 10,
     },
     inputPrefix: {
-      fontSize: 14,
+      fontSize: 20,
       color: colors.orange,
-      paddingLeft: 12,
       fontWeight: '600',
     },
     input: {
       flex: 1,
-      fontSize: 24,
+      fontSize: 34,
       color: colors.white,
-      fontWeight: '600',
-      paddingVertical: 12,
-      paddingHorizontal: 10,
+      fontWeight: '700',
+      paddingVertical: 4,
       fontFamily: 'monospace',
     },
-    // Results Card
-    resultsCard: {
-      backgroundColor: colors.panelBg,
-      borderRadius: 16,
-      padding: 14,
-      marginBottom: 12,
+    heroDivider: {
+      height: 1,
+      backgroundColor: colors.iconButtonBg,
+      marginVertical: 14,
     },
-    resultsTitle: {
-      fontSize: 11,
+    heroResultLabelRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 6,
+    },
+    heroResultLabel: {
+      fontSize: 10,
       color: colors.lightGray,
       textTransform: 'uppercase',
       letterSpacing: 0.5,
-      marginBottom: 10,
     },
-    resultRow: {
+    heroResultValueRow: {
       flexDirection: 'row',
-      alignItems: 'center',
-      paddingVertical: 10,
-      borderBottomWidth: 1,
-      borderBottomColor: colors.iconButtonBg,
+      alignItems: 'baseline',
     },
-    resultRowLast: {
-      borderBottomWidth: 0,
-    },
-    resultLabel: {
-      width: 50,
-      fontSize: 12,
-      color: colors.gray,
-      fontWeight: '600',
-    },
-    resultPrefix: {
-      fontSize: 12,
+    heroResultPrefix: {
+      fontSize: 16,
       color: colors.orange,
       marginRight: 4,
-    },
-    resultValue: {
-      flex: 1,
-      fontSize: 16,
-      color: colors.white,
       fontWeight: '600',
-      fontFamily: 'monospace',
     },
-    resultValueHighlight: {
+    heroResultValue: {
+      fontSize: 28,
       color: colors.orange,
+      fontWeight: '700',
+      fontFamily: 'monospace',
+      flexShrink: 1,
+    },
+    // Secondary conversions - horizontal chip grid
+    chipGrid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 8,
+      marginBottom: 14,
+    },
+    chip: {
+      flexGrow: 1,
+      flexBasis: '47%',
+      backgroundColor: colors.panelBg,
+      borderRadius: 14,
+      paddingVertical: 10,
+      paddingHorizontal: 12,
+    },
+    chipTopRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 4,
+    },
+    chipLabel: {
+      fontSize: 11,
+      color: colors.gray,
+      fontWeight: '700',
     },
     copyButton: {
-      paddingVertical: 6,
-      paddingHorizontal: 10,
+      paddingVertical: 3,
+      paddingHorizontal: 8,
       backgroundColor: colors.iconButtonBg,
-      borderRadius: 6,
-      minWidth: 50,
+      borderRadius: 8,
       alignItems: 'center',
     },
     copyButtonCopied: {
       backgroundColor: 'rgba(76, 175, 80, 0.2)',
     },
     copyButtonText: {
-      fontSize: 11,
+      fontSize: 10,
       color: colors.gray,
       fontWeight: '500',
     },
     copyButtonTextCopied: {
       color: '#4CAF50',
     },
+    chipValueRow: {
+      flexDirection: 'row',
+      alignItems: 'baseline',
+    },
+    chipPrefix: {
+      fontSize: 11,
+      color: colors.orange,
+      marginRight: 3,
+    },
+    chipValue: {
+      fontSize: 15,
+      color: colors.white,
+      fontWeight: '600',
+      fontFamily: 'monospace',
+    },
     // Keypad
     keypadCard: {
       backgroundColor: colors.panelBg,
-      borderRadius: 16,
+      borderRadius: 20,
       padding: 10,
     },
     keypadRow: {
       flexDirection: 'row',
       marginBottom: 8,
+      gap: 8,
     },
     keypadRowLast: {
       marginBottom: 0,
     },
     keyButton: {
       flex: 1,
-      height: 44,
-      borderRadius: 10,
+      height: 46,
+      borderRadius: 12,
       justifyContent: 'center',
       alignItems: 'center',
-      marginHorizontal: 3,
       backgroundColor: colors.iconButtonBg,
     },
     keyButtonDisabled: {
@@ -336,48 +381,55 @@ export const HexCalculator: React.FC<HexCalculatorProps> = ({ colors, onTaskComp
     hexRow: {
       flexDirection: 'row',
       marginBottom: 8,
+      gap: 8,
     },
   });
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      <Text style={styles.title}>Hex Calculator</Text>
-
-      {/* Base Selector */}
-      <View style={styles.baseRow}>
-        {BASES.map((base) => (
-          <TouchableOpacity
-            key={base.value}
-            style={[
-              styles.baseButton,
-              inputBase === base.value && styles.baseButtonActive,
-            ]}
-            onPress={() => {
-              // Convert current value to new base
-              const newValue = convertFromDecimal(decimalValue, base.value);
-              setInputBase(base.value);
-              setInputValue(newValue === '0' && inputValue === '' ? '' : newValue);
-            }}
-          >
-            <Text
+      {/* Header */}
+      <View style={styles.headerRow}>
+        <Text style={styles.title}>Hex Calc</Text>
+        <View style={styles.baseRow}>
+          {BASES.map((base) => (
+            <TouchableOpacity
+              key={base.value}
               style={[
-                styles.baseLabel,
-                inputBase === base.value
-                  ? styles.baseLabelActive
-                  : styles.baseLabelInactive,
+                styles.baseButton,
+                inputBase === base.value && styles.baseButtonActive,
               ]}
+              onPress={() => {
+                // Convert current value to new base
+                const newValue = convertFromDecimal(decimalValue, base.value);
+                setInputBase(base.value);
+                setInputValue(newValue === '0' && inputValue === '' ? '' : newValue);
+              }}
             >
-              {base.label}
-            </Text>
-          </TouchableOpacity>
-        ))}
+              <Text
+                style={[
+                  styles.baseLabel,
+                  inputBase === base.value
+                    ? styles.baseLabelActive
+                    : styles.baseLabelInactive,
+                ]}
+              >
+                {base.label}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
       </View>
 
-      {/* Input */}
-      <View style={styles.inputCard}>
-        <Text style={styles.inputLabel}>
-          Enter {BASES.find(b => b.value === inputBase)?.label} Value
-        </Text>
+      {/* Hero: Input + primary result */}
+      <View style={styles.heroCard}>
+        <View style={styles.heroTopRow}>
+          <Text style={styles.inputLabel}>
+            {BASES.find(b => b.value === inputBase)?.label} Input
+          </Text>
+          <Text style={styles.inputPrefixTag}>
+            {BASES.find(b => b.value === inputBase)?.prefix || '—'}
+          </Text>
+        </View>
         <View style={styles.inputContainer}>
           <Text style={styles.inputPrefix}>
             {BASES.find(b => b.value === inputBase)?.prefix}
@@ -392,45 +444,63 @@ export const HexCalculator: React.FC<HexCalculatorProps> = ({ colors, onTaskComp
             autoCorrect={false}
           />
         </View>
-      </View>
 
-      {/* Results */}
-      <View style={styles.resultsCard}>
-        <Text style={styles.resultsTitle}>Conversions</Text>
-        {conversions.map((conv, index) => (
-          <View
-            key={conv.value}
+        <View style={styles.heroDivider} />
+
+        <View style={styles.heroResultLabelRow}>
+          <Text style={styles.heroResultLabel}>{primaryConversion.label} Result</Text>
+          <TouchableOpacity
             style={[
-              styles.resultRow,
-              index === conversions.length - 1 && styles.resultRowLast,
+              styles.copyButton,
+              copiedBase === primaryConversion.value && styles.copyButtonCopied,
             ]}
+            onPress={() =>
+              copyToClipboard(primaryConversion.result || '0', primaryConversion.prefix, primaryConversion.value)
+            }
           >
-            <Text style={styles.resultLabel}>{conv.label}</Text>
-            <Text style={styles.resultPrefix}>{conv.prefix}</Text>
             <Text
               style={[
-                styles.resultValue,
-                conv.value === inputBase && styles.resultValueHighlight,
+                styles.copyButtonText,
+                copiedBase === primaryConversion.value && styles.copyButtonTextCopied,
               ]}
             >
-              {conv.result || '0'}
+              {copiedBase === primaryConversion.value ? 'Copied!' : 'Copy'}
             </Text>
-            <TouchableOpacity
-              style={[
-                styles.copyButton,
-                copiedBase === conv.value && styles.copyButtonCopied,
-              ]}
-              onPress={() => copyToClipboard(conv.result || '0', conv.prefix, conv.value)}
-            >
-              <Text
+          </TouchableOpacity>
+        </View>
+        <View style={styles.heroResultValueRow}>
+          <Text style={styles.heroResultPrefix}>{primaryConversion.prefix}</Text>
+          <Text style={styles.heroResultValue}>{primaryConversion.result || '0'}</Text>
+        </View>
+      </View>
+
+      {/* Secondary conversions as chips */}
+      <View style={styles.chipGrid}>
+        {secondaryConversions.map((conv) => (
+          <View key={conv.value} style={styles.chip}>
+            <View style={styles.chipTopRow}>
+              <Text style={styles.chipLabel}>{conv.label}</Text>
+              <TouchableOpacity
                 style={[
-                  styles.copyButtonText,
-                  copiedBase === conv.value && styles.copyButtonTextCopied,
+                  styles.copyButton,
+                  copiedBase === conv.value && styles.copyButtonCopied,
                 ]}
+                onPress={() => copyToClipboard(conv.result || '0', conv.prefix, conv.value)}
               >
-                {copiedBase === conv.value ? 'Copied!' : 'Copy'}
-              </Text>
-            </TouchableOpacity>
+                <Text
+                  style={[
+                    styles.copyButtonText,
+                    copiedBase === conv.value && styles.copyButtonTextCopied,
+                  ]}
+                >
+                  {copiedBase === conv.value ? '✓' : 'Copy'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.chipValueRow}>
+              <Text style={styles.chipPrefix}>{conv.prefix}</Text>
+              <Text style={styles.chipValue}>{conv.result || '0'}</Text>
+            </View>
           </View>
         ))}
       </View>
@@ -503,6 +573,10 @@ export const HexCalculator: React.FC<HexCalculatorProps> = ({ colors, onTaskComp
             })}
           </View>
         ))}
+      </View>
+
+      <View style={{ marginTop: 16 }}>
+        <AdBanner size="banner" />
       </View>
     </ScrollView>
   );

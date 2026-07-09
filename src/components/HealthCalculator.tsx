@@ -8,6 +8,7 @@ import {
   ScrollView,
   Linking,
 } from 'react-native';
+import { AdBanner } from '../ads/AdBanner';
 
 interface HealthCalculatorProps {
   colors: {
@@ -178,35 +179,47 @@ export const HealthCalculator: React.FC<HealthCalculatorProps> = ({ colors, onTa
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      paddingHorizontal: 5,
-      marginTop: 30,
+      paddingHorizontal: 14,
+      marginTop: 26,
+    },
+    headerRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginBottom: 14,
     },
     title: {
-      fontSize: 18,
-      fontWeight: '600',
+      fontSize: 16,
+      fontWeight: '700',
       color: colors.white,
-      marginBottom: 12,
-      textAlign: 'center',
+      letterSpacing: 0.2,
+    },
+    headerHint: {
+      fontSize: 11,
+      color: colors.gray,
     },
     // Calc Type Selector
     calcTypeRow: {
       flexDirection: 'row',
-      marginBottom: 12,
+      backgroundColor: colors.iconButtonBg,
+      borderRadius: 14,
+      padding: 4,
+      marginBottom: 16,
     },
     calcTypeButton: {
       flex: 1,
-      paddingVertical: 10,
+      flexDirection: 'row',
+      paddingVertical: 8,
       borderRadius: 10,
       alignItems: 'center',
-      marginHorizontal: 3,
-      backgroundColor: colors.iconButtonBg,
+      justifyContent: 'center',
+      gap: 4,
     },
     calcTypeButtonActive: {
       backgroundColor: colors.orange,
     },
     calcTypeIcon: {
-      fontSize: 16,
-      marginBottom: 2,
+      fontSize: 13,
     },
     calcTypeLabel: {
       fontSize: 11,
@@ -221,14 +234,14 @@ export const HealthCalculator: React.FC<HealthCalculatorProps> = ({ colors, onTa
     // Toggle Row
     toggleRow: {
       flexDirection: 'row',
-      marginBottom: 12,
+      marginBottom: 10,
+      gap: 8,
     },
     toggleButton: {
       flex: 1,
       paddingVertical: 8,
       borderRadius: 8,
       alignItems: 'center',
-      marginHorizontal: 3,
       backgroundColor: colors.iconButtonBg,
     },
     toggleButtonActive: {
@@ -244,81 +257,42 @@ export const HealthCalculator: React.FC<HealthCalculatorProps> = ({ colors, onTa
     toggleTextInactive: {
       color: colors.gray,
     },
-    // Card
-    card: {
-      backgroundColor: colors.panelBg,
-      borderRadius: 16,
-      padding: 14,
-      marginBottom: 12,
-    },
-    // Input Row
-    inputRow: {
-      marginBottom: 12,
-    },
-    label: {
-      fontSize: 11,
-      color: colors.lightGray,
-      marginBottom: 6,
-      textTransform: 'uppercase',
-      letterSpacing: 0.5,
-    },
-    inputContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      backgroundColor: colors.iconButtonBg,
-      borderRadius: 10,
-    },
-    input: {
-      flex: 1,
-      fontSize: 18,
-      color: colors.white,
-      fontWeight: '600',
-      paddingVertical: 10,
-      paddingHorizontal: 12,
-    },
-    inputUnit: {
-      fontSize: 13,
-      color: colors.orange,
-      paddingRight: 12,
-      fontWeight: '500',
-    },
-    heightRow: {
-      flexDirection: 'row',
-    },
-    heightInput: {
-      flex: 1,
-      marginRight: 8,
-    },
-    // Results
+    // Results (hero, shown first)
     resultsCard: {
       backgroundColor: colors.panelBg,
-      borderRadius: 16,
-      padding: 16,
+      borderRadius: 20,
+      padding: 18,
+      marginBottom: 14,
     },
     mainResult: {
-      alignItems: 'center',
+      flexDirection: 'row',
+      alignItems: 'flex-end',
+      justifyContent: 'space-between',
       paddingBottom: 14,
       borderBottomWidth: 1,
       borderBottomColor: colors.iconButtonBg,
+    },
+    mainResultTextGroup: {
+      flexShrink: 1,
     },
     mainResultLabel: {
       fontSize: 11,
       color: colors.lightGray,
       textTransform: 'uppercase',
       letterSpacing: 0.5,
+      marginBottom: 2,
     },
     mainResultValue: {
-      fontSize: 40,
-      fontWeight: '700',
-      marginVertical: 4,
+      fontSize: 48,
+      fontWeight: '800',
     },
     mainResultUnit: {
       fontSize: 13,
       color: colors.gray,
+      marginTop: 2,
     },
     categoryBadge: {
-      marginTop: 8,
-      paddingVertical: 5,
+      paddingVertical: 6,
       paddingHorizontal: 14,
       borderRadius: 16,
     },
@@ -344,8 +318,8 @@ export const HealthCalculator: React.FC<HealthCalculatorProps> = ({ colors, onTa
     },
     // BMI Scale
     bmiScale: {
-      marginTop: 12,
-      paddingTop: 12,
+      marginTop: 14,
+      paddingTop: 14,
       borderTopWidth: 1,
       borderTopColor: colors.iconButtonBg,
     },
@@ -369,8 +343,8 @@ export const HealthCalculator: React.FC<HealthCalculatorProps> = ({ colors, onTa
     },
     // Ideal Weight Range
     rangeContainer: {
-      marginTop: 12,
-      paddingTop: 12,
+      marginTop: 14,
+      paddingTop: 14,
       borderTopWidth: 1,
       borderTopColor: colors.iconButtonBg,
     },
@@ -378,7 +352,6 @@ export const HealthCalculator: React.FC<HealthCalculatorProps> = ({ colors, onTa
       fontSize: 11,
       color: colors.lightGray,
       marginBottom: 8,
-      textAlign: 'center',
     },
     rangeBar: {
       height: 24,
@@ -393,11 +366,71 @@ export const HealthCalculator: React.FC<HealthCalculatorProps> = ({ colors, onTa
       fontWeight: '600',
       textAlign: 'center',
     },
+    // Inputs card
+    card: {
+      backgroundColor: colors.panelBg,
+      borderRadius: 20,
+      padding: 16,
+      marginBottom: 12,
+    },
+    cardHeading: {
+      fontSize: 11,
+      color: colors.lightGray,
+      textTransform: 'uppercase',
+      letterSpacing: 0.5,
+      marginBottom: 10,
+    },
+    inputGrid: {
+      flexDirection: 'row',
+      gap: 10,
+    },
+    inputRow: {
+      marginBottom: 10,
+    },
+    inputCell: {
+      flex: 1,
+    },
+    label: {
+      fontSize: 11,
+      color: colors.lightGray,
+      marginBottom: 6,
+      textTransform: 'uppercase',
+      letterSpacing: 0.5,
+    },
+    inputContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: colors.iconButtonBg,
+      borderRadius: 10,
+    },
+    input: {
+      flex: 1,
+      fontSize: 18,
+      color: colors.white,
+      fontWeight: '600',
+      paddingVertical: 10,
+      paddingHorizontal: 12,
+      minWidth: 0,
+    },
+    inputUnit: {
+      fontSize: 13,
+      color: colors.orange,
+      paddingRight: 12,
+      fontWeight: '500',
+    },
+    heightRow: {
+      flexDirection: 'row',
+      gap: 8,
+    },
+    heightInput: {
+      flex: 1,
+      marginRight: 0,
+    },
     sourceNote: {
       fontSize: 11,
       color: colors.lightGray,
-      textAlign: 'center',
-      marginTop: 16,
+      textAlign: 'left',
+      marginTop: 6,
       marginBottom: 8,
       lineHeight: 16,
     },
@@ -409,6 +442,7 @@ export const HealthCalculator: React.FC<HealthCalculatorProps> = ({ colors, onTa
 
   const renderInputs = () => (
     <View style={styles.card}>
+      <Text style={styles.cardHeading}>Your details</Text>
       {/* Unit System */}
       <View style={styles.toggleRow}>
         <TouchableOpacity
@@ -469,65 +503,87 @@ export const HealthCalculator: React.FC<HealthCalculatorProps> = ({ colors, onTa
         </View>
       )}
 
-      {/* Height */}
-      <View style={styles.inputRow}>
-        <Text style={styles.label}>Height</Text>
-        {unitSystem === 'metric' ? (
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.input}
-              value={height}
-              onChangeText={handleInputChange(setHeight)}
-              keyboardType="numeric"
-              placeholder="170"
-              placeholderTextColor={colors.gray}
-            />
-            <Text style={styles.inputUnit}>cm</Text>
-          </View>
-        ) : (
-          <View style={styles.heightRow}>
-            <View style={[styles.inputContainer, styles.heightInput]}>
-              <TextInput
-                style={styles.input}
-                value={heightFt}
-                onChangeText={handleInputChange(setHeightFt)}
-                keyboardType="numeric"
-                placeholder="5"
-                placeholderTextColor={colors.gray}
-              />
-              <Text style={styles.inputUnit}>ft</Text>
-            </View>
+      {/* Height + Weight */}
+      {unitSystem === 'metric' ? (
+        <View style={[styles.inputGrid, { marginBottom: 0 }]}>
+          <View style={[styles.inputRow, styles.inputCell, calcType === 'ideal' && { marginBottom: 0 }]}>
+            <Text style={styles.label}>Height</Text>
             <View style={styles.inputContainer}>
               <TextInput
-                style={[styles.input, { width: 60 }]}
-                value={heightIn}
-                onChangeText={handleInputChange(setHeightIn)}
+                style={styles.input}
+                value={height}
+                onChangeText={handleInputChange(setHeight)}
                 keyboardType="numeric"
-                placeholder="10"
+                placeholder="170"
                 placeholderTextColor={colors.gray}
               />
-              <Text style={styles.inputUnit}>in</Text>
+              <Text style={styles.inputUnit}>cm</Text>
             </View>
           </View>
-        )}
-      </View>
-
-      {/* Weight (not needed for ideal weight calc) */}
-      {calcType !== 'ideal' && (
-        <View style={[styles.inputRow, { marginBottom: 0 }]}>
-          <Text style={styles.label}>Weight</Text>
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.input}
-              value={weight}
-              onChangeText={handleInputChange(setWeight)}
-              keyboardType="numeric"
-              placeholder="70"
-              placeholderTextColor={colors.gray}
-            />
-            <Text style={styles.inputUnit}>{unitSystem === 'metric' ? 'kg' : 'lbs'}</Text>
-          </View>
+          {calcType !== 'ideal' && (
+            <View style={[styles.inputRow, styles.inputCell, { marginBottom: 0 }]}>
+              <Text style={styles.label}>Weight</Text>
+              <View style={styles.inputContainer}>
+                <TextInput
+                  style={styles.input}
+                  value={weight}
+                  onChangeText={handleInputChange(setWeight)}
+                  keyboardType="numeric"
+                  placeholder="70"
+                  placeholderTextColor={colors.gray}
+                />
+                <Text style={styles.inputUnit}>kg</Text>
+              </View>
+            </View>
+          )}
         </View>
+      ) : (
+        <>
+          <View style={styles.inputRow}>
+            <Text style={styles.label}>Height</Text>
+            <View style={styles.heightRow}>
+              <View style={[styles.inputContainer, styles.heightInput]}>
+                <TextInput
+                  style={styles.input}
+                  value={heightFt}
+                  onChangeText={handleInputChange(setHeightFt)}
+                  keyboardType="numeric"
+                  placeholder="5"
+                  placeholderTextColor={colors.gray}
+                />
+                <Text style={styles.inputUnit}>ft</Text>
+              </View>
+              <View style={styles.inputContainer}>
+                <TextInput
+                  style={[styles.input, { width: 60 }]}
+                  value={heightIn}
+                  onChangeText={handleInputChange(setHeightIn)}
+                  keyboardType="numeric"
+                  placeholder="10"
+                  placeholderTextColor={colors.gray}
+                />
+                <Text style={styles.inputUnit}>in</Text>
+              </View>
+            </View>
+          </View>
+
+          {calcType !== 'ideal' && (
+            <View style={[styles.inputRow, { marginBottom: 0 }]}>
+              <Text style={styles.label}>Weight</Text>
+              <View style={styles.inputContainer}>
+                <TextInput
+                  style={styles.input}
+                  value={weight}
+                  onChangeText={handleInputChange(setWeight)}
+                  keyboardType="numeric"
+                  placeholder="70"
+                  placeholderTextColor={colors.gray}
+                />
+                <Text style={styles.inputUnit}>lbs</Text>
+              </View>
+            </View>
+          )}
+        </>
       )}
     </View>
   );
@@ -535,11 +591,13 @@ export const HealthCalculator: React.FC<HealthCalculatorProps> = ({ colors, onTa
   const renderBMIResult = () => (
     <View style={styles.resultsCard}>
       <View style={styles.mainResult}>
-        <Text style={styles.mainResultLabel}>Your BMI</Text>
-        <Text style={[styles.mainResultValue, { color: bmiCategory.color }]}>
-          {bmi > 0 ? bmi.toFixed(1) : '0'}
-        </Text>
-        <Text style={styles.mainResultUnit}>kg/m²</Text>
+        <View style={styles.mainResultTextGroup}>
+          <Text style={styles.mainResultLabel}>Your BMI</Text>
+          <Text style={[styles.mainResultValue, { color: bmiCategory.color }]}>
+            {bmi > 0 ? bmi.toFixed(1) : '0'}
+          </Text>
+          <Text style={styles.mainResultUnit}>kg/m²</Text>
+        </View>
         <View style={[styles.categoryBadge, { backgroundColor: bmiCategory.color }]}>
           <Text style={styles.categoryText}>{bmiCategory.label}</Text>
         </View>
@@ -564,11 +622,13 @@ export const HealthCalculator: React.FC<HealthCalculatorProps> = ({ colors, onTa
   const renderBMRResult = () => (
     <View style={styles.resultsCard}>
       <View style={styles.mainResult}>
-        <Text style={styles.mainResultLabel}>Basal Metabolic Rate</Text>
-        <Text style={[styles.mainResultValue, { color: colors.orange }]}>
-          {bmr > 0 ? Math.round(bmr) : '0'}
-        </Text>
-        <Text style={styles.mainResultUnit}>calories/day</Text>
+        <View style={styles.mainResultTextGroup}>
+          <Text style={styles.mainResultLabel}>Basal Metabolic Rate</Text>
+          <Text style={[styles.mainResultValue, { color: colors.orange }]}>
+            {bmr > 0 ? Math.round(bmr) : '0'}
+          </Text>
+          <Text style={styles.mainResultUnit}>calories/day</Text>
+        </View>
       </View>
       <View style={styles.secondaryResult}>
         <Text style={styles.secondaryLabel}>Sedentary (×1.2)</Text>
@@ -592,11 +652,13 @@ export const HealthCalculator: React.FC<HealthCalculatorProps> = ({ colors, onTa
   const renderWaterResult = () => (
     <View style={styles.resultsCard}>
       <View style={styles.mainResult}>
-        <Text style={styles.mainResultLabel}>Daily Water Intake</Text>
-        <Text style={[styles.mainResultValue, { color: '#2196F3' }]}>
-          {water > 0 ? water.toFixed(1) : '0'}
-        </Text>
-        <Text style={styles.mainResultUnit}>liters/day</Text>
+        <View style={styles.mainResultTextGroup}>
+          <Text style={styles.mainResultLabel}>Daily Water Intake</Text>
+          <Text style={[styles.mainResultValue, { color: '#2196F3' }]}>
+            {water > 0 ? water.toFixed(1) : '0'}
+          </Text>
+          <Text style={styles.mainResultUnit}>liters/day</Text>
+        </View>
       </View>
       <View style={styles.secondaryResult}>
         <Text style={styles.secondaryLabel}>In Glasses (250ml)</Text>
@@ -621,11 +683,13 @@ export const HealthCalculator: React.FC<HealthCalculatorProps> = ({ colors, onTa
     return (
       <View style={styles.resultsCard}>
         <View style={styles.mainResult}>
-          <Text style={styles.mainResultLabel}>Ideal Weight</Text>
-          <Text style={[styles.mainResultValue, { color: '#4CAF50' }]}>
-            {idealWeight.ideal > 0 ? displayWeight(idealWeight.ideal).split(' ')[0] : '0'}
-          </Text>
-          <Text style={styles.mainResultUnit}>{unitSystem === 'metric' ? 'kg' : 'lbs'}</Text>
+          <View style={styles.mainResultTextGroup}>
+            <Text style={styles.mainResultLabel}>Ideal Weight</Text>
+            <Text style={[styles.mainResultValue, { color: '#4CAF50' }]}>
+              {idealWeight.ideal > 0 ? displayWeight(idealWeight.ideal).split(' ')[0] : '0'}
+            </Text>
+            <Text style={styles.mainResultUnit}>{unitSystem === 'metric' ? 'kg' : 'lbs'}</Text>
+          </View>
         </View>
         <View style={styles.rangeContainer}>
           <Text style={styles.rangeLabel}>Healthy Weight Range (BMI 18.5-24.9)</Text>
@@ -641,7 +705,10 @@ export const HealthCalculator: React.FC<HealthCalculatorProps> = ({ colors, onTa
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      <Text style={styles.title}>Health Calculator</Text>
+      <View style={styles.headerRow}>
+        <Text style={styles.title}>Health Calculator</Text>
+        <Text style={styles.headerHint}>{unitSystem === 'metric' ? 'kg / cm' : 'lbs / ft-in'}</Text>
+      </View>
 
       {/* Calculation Type Selector */}
       <View style={styles.calcTypeRow}>
@@ -662,16 +729,20 @@ export const HealthCalculator: React.FC<HealthCalculatorProps> = ({ colors, onTa
         ))}
       </View>
 
-      {/* Inputs */}
-      {renderInputs()}
-
       {/* Results */}
       {calcType === 'bmi' && renderBMIResult()}
       {calcType === 'bmr' && renderBMRResult()}
       {calcType === 'water' && renderWaterResult()}
       {calcType === 'ideal' && renderIdealResult()}
 
+      {/* Inputs */}
+      {renderInputs()}
+
       {renderSourceNote()}
+
+      <View style={{ marginTop: 16 }}>
+        <AdBanner size="banner" />
+      </View>
     </ScrollView>
   );
 };

@@ -7,6 +7,7 @@ import {
   StyleSheet,
   ScrollView,
 } from 'react-native';
+import { AdBanner } from '../ads/AdBanner';
 
 interface SavingsCalculatorProps {
   colors: {
@@ -144,33 +145,139 @@ export const SavingsCalculator: React.FC<SavingsCalculatorProps> = ({ colors, on
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      paddingHorizontal: 5,
-      marginTop: 30,
+      paddingHorizontal: 14,
+      marginTop: 24,
+    },
+    headerRow: {
+      flexDirection: 'row',
+      alignItems: 'baseline',
+      justifyContent: 'space-between',
+      marginBottom: 14,
     },
     title: {
-      fontSize: 18,
-      fontWeight: '600',
-      color: colors.white,
-      marginBottom: 12,
-      textAlign: 'center',
+      fontSize: 15,
+      fontWeight: '700',
+      color: colors.lightGray,
+      textTransform: 'uppercase',
+      letterSpacing: 1,
     },
-    // Card
-    card: {
+    headerBadge: {
+      fontSize: 11,
+      color: colors.gray,
+    },
+    // Hero result
+    heroCard: {
       backgroundColor: colors.panelBg,
-      borderRadius: 16,
-      padding: 14,
-      marginBottom: 12,
+      borderRadius: 20,
+      paddingVertical: 18,
+      paddingHorizontal: 18,
+      marginBottom: 10,
     },
-    // Input Row
-    inputRow: {
+    heroTopRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'flex-start',
+    },
+    heroLabel: {
+      fontSize: 11,
+      color: colors.lightGray,
+      textTransform: 'uppercase',
+      letterSpacing: 0.5,
+      marginBottom: 6,
+    },
+    heroValue: {
+      fontSize: 40,
+      fontWeight: '800',
+      color: colors.orange,
+    },
+    interestPill: {
+      backgroundColor: colors.iconButtonBg,
+      borderRadius: 20,
+      paddingHorizontal: 10,
+      paddingVertical: 6,
+      alignItems: 'flex-end',
+    },
+    interestText: {
+      fontSize: 13,
+      color: '#4CAF50',
+      fontWeight: '700',
+    },
+    interestSubtext: {
+      fontSize: 9,
+      color: colors.gray,
+      marginTop: 2,
+    },
+    breakdownBar: {
+      flexDirection: 'row',
+      height: 10,
+      borderRadius: 5,
+      overflow: 'hidden',
+      marginTop: 16,
+      marginBottom: 10,
+    },
+    breakdownInitial: {
+      backgroundColor: '#2196F3',
+    },
+    breakdownContributions: {
+      backgroundColor: '#4CAF50',
+    },
+    breakdownInterest: {
+      backgroundColor: colors.orange,
+    },
+    legendRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+    },
+    legendItem: {
+      alignItems: 'flex-start',
+    },
+    legendDotRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    legendDot: {
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+      marginRight: 5,
+    },
+    legendLabel: {
+      fontSize: 10,
+      color: colors.gray,
+    },
+    legendValue: {
+      fontSize: 12,
+      color: colors.white,
+      fontWeight: '700',
+      marginTop: 2,
+    },
+    // Inputs grid card
+    inputsCard: {
+      backgroundColor: colors.panelBg,
+      borderRadius: 20,
+      padding: 16,
+      marginBottom: 10,
+    },
+    sectionLabel: {
+      fontSize: 11,
+      color: colors.lightGray,
+      textTransform: 'uppercase',
+      letterSpacing: 0.5,
+      marginBottom: 10,
+    },
+    inputGrid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      justifyContent: 'space-between',
+    },
+    inputCell: {
+      width: '48%',
       marginBottom: 12,
     },
     label: {
-      fontSize: 11,
+      fontSize: 10,
       color: colors.lightGray,
       marginBottom: 6,
-      textTransform: 'uppercase',
-      letterSpacing: 0.5,
     },
     inputContainer: {
       flexDirection: 'row',
@@ -179,33 +286,33 @@ export const SavingsCalculator: React.FC<SavingsCalculatorProps> = ({ colors, on
       borderRadius: 10,
     },
     inputPrefix: {
-      fontSize: 18,
+      fontSize: 16,
       color: colors.orange,
-      paddingLeft: 14,
+      paddingLeft: 12,
       fontWeight: '600',
     },
     input: {
       flex: 1,
-      fontSize: 18,
+      fontSize: 16,
       color: colors.white,
       fontWeight: '600',
-      paddingVertical: 10,
-      paddingHorizontal: 10,
+      paddingVertical: 9,
+      paddingHorizontal: 8,
     },
     inputSuffix: {
-      fontSize: 14,
+      fontSize: 12,
       color: colors.orange,
-      paddingRight: 14,
+      paddingRight: 12,
       fontWeight: '500',
     },
     // Frequency selector
     frequencyRow: {
       flexDirection: 'row',
-      marginTop: 8,
+      marginTop: 2,
     },
     frequencyButton: {
       flex: 1,
-      paddingVertical: 10,
+      paddingVertical: 9,
       borderRadius: 8,
       alignItems: 'center',
       marginHorizontal: 2,
@@ -222,109 +329,23 @@ export const SavingsCalculator: React.FC<SavingsCalculatorProps> = ({ colors, on
     frequencyButtonTextActive: {
       color: '#ffffff',
     },
-    // Results
-    resultsCard: {
+    // Chart card
+    chartCard: {
       backgroundColor: colors.panelBg,
-      borderRadius: 16,
+      borderRadius: 20,
       padding: 16,
-      marginBottom: 12,
-    },
-    mainResult: {
-      alignItems: 'center',
-      paddingBottom: 16,
-      borderBottomWidth: 1,
-      borderBottomColor: colors.iconButtonBg,
-    },
-    mainResultLabel: {
-      fontSize: 11,
-      color: colors.lightGray,
-      textTransform: 'uppercase',
-      letterSpacing: 0.5,
-    },
-    mainResultValue: {
-      fontSize: 34,
-      fontWeight: '700',
-      color: colors.orange,
-      marginTop: 4,
-    },
-    interestText: {
-      fontSize: 14,
-      color: '#4CAF50',
-      marginTop: 6,
-      fontWeight: '600',
-    },
-    // Breakdown
-    breakdownSection: {
-      paddingTop: 14,
-    },
-    breakdownTitle: {
-      fontSize: 11,
-      color: colors.lightGray,
-      textTransform: 'uppercase',
-      letterSpacing: 0.5,
       marginBottom: 10,
     },
-    breakdownBar: {
-      flexDirection: 'row',
-      height: 14,
-      borderRadius: 7,
-      overflow: 'hidden',
-      marginBottom: 12,
-    },
-    breakdownInitial: {
-      backgroundColor: '#2196F3',
-    },
-    breakdownContributions: {
-      backgroundColor: '#4CAF50',
-    },
-    breakdownInterest: {
-      backgroundColor: colors.orange,
-    },
-    legendRow: {
+    chartHeaderRow: {
       flexDirection: 'row',
       justifyContent: 'space-between',
-      flexWrap: 'wrap',
-    },
-    legendItem: {
-      flexDirection: 'row',
       alignItems: 'center',
-      marginBottom: 8,
-      width: '48%',
-    },
-    legendDot: {
-      width: 10,
-      height: 10,
-      borderRadius: 5,
-      marginRight: 6,
-    },
-    legendLabel: {
-      fontSize: 11,
-      color: colors.gray,
-      flex: 1,
-    },
-    legendValue: {
-      fontSize: 12,
-      color: colors.white,
-      fontWeight: '600',
-    },
-    // Chart
-    chartSection: {
-      paddingTop: 14,
-      borderTopWidth: 1,
-      borderTopColor: colors.iconButtonBg,
-      marginTop: 14,
-    },
-    chartTitle: {
-      fontSize: 11,
-      color: colors.lightGray,
-      textTransform: 'uppercase',
-      letterSpacing: 0.5,
       marginBottom: 12,
     },
     chartContainer: {
       flexDirection: 'row',
       alignItems: 'flex-end',
-      height: 80,
+      height: 70,
     },
     chartBar: {
       flex: 1,
@@ -341,228 +362,246 @@ export const SavingsCalculator: React.FC<SavingsCalculatorProps> = ({ colors, on
       fontSize: 9,
       color: colors.gray,
     },
-    // Summary
-    summarySection: {
-      marginTop: 14,
-      paddingTop: 14,
-      borderTopWidth: 1,
-      borderTopColor: colors.iconButtonBg,
-    },
-    summaryRow: {
+    // Summary strip
+    summaryCard: {
+      backgroundColor: colors.panelBg,
+      borderRadius: 20,
+      padding: 14,
+      marginBottom: 20,
       flexDirection: 'row',
-      justifyContent: 'space-between',
+    },
+    summaryCell: {
+      flex: 1,
       alignItems: 'center',
-      paddingVertical: 8,
+      paddingVertical: 4,
+    },
+    summaryDivider: {
+      width: 1,
+      backgroundColor: colors.iconButtonBg,
+      marginVertical: 4,
     },
     summaryLabel: {
-      fontSize: 13,
+      fontSize: 9,
       color: colors.gray,
+      textTransform: 'uppercase',
+      letterSpacing: 0.3,
+      marginBottom: 4,
+      textAlign: 'center',
     },
     summaryValue: {
-      fontSize: 14,
+      fontSize: 13,
       color: colors.white,
-      fontWeight: '600',
+      fontWeight: '700',
     },
   });
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      <Text style={styles.title}>Savings Calculator</Text>
+      <View style={styles.headerRow}>
+        <Text style={styles.title}>Savings Calculator</Text>
+        <Text style={styles.headerBadge}>{frequency.label} compounding</Text>
+      </View>
 
-      {/* Inputs */}
-      <View style={styles.card}>
-        {/* Initial Deposit */}
-        <View style={styles.inputRow}>
-          <Text style={styles.label}>Initial Deposit</Text>
-          <View style={styles.inputContainer}>
-            <Text style={styles.inputPrefix}>$</Text>
-            <TextInput
-              style={styles.input}
-              value={initialDeposit}
-              onChangeText={handleInputChange(setInitialDeposit)}
-              keyboardType="numeric"
-              placeholder="0"
-              placeholderTextColor={colors.gray}
-            />
+      {/* Hero result */}
+      <View style={styles.heroCard}>
+        <View style={styles.heroTopRow}>
+          <View>
+            <Text style={styles.heroLabel}>Future Value</Text>
+            <Text style={styles.heroValue}>${formatCurrency(results.futureValue)}</Text>
           </View>
+          {results.totalInterest > 0 && (
+            <View style={styles.interestPill}>
+              <Text style={styles.interestText}>+${formatCurrency(results.totalInterest)}</Text>
+              <Text style={styles.interestSubtext}>interest earned</Text>
+            </View>
+          )}
         </View>
 
-        {/* Monthly Contribution */}
-        <View style={styles.inputRow}>
-          <Text style={styles.label}>Monthly Contribution</Text>
-          <View style={styles.inputContainer}>
-            <Text style={styles.inputPrefix}>$</Text>
-            <TextInput
-              style={styles.input}
-              value={monthlyContribution}
-              onChangeText={handleInputChange(setMonthlyContribution)}
-              keyboardType="numeric"
-              placeholder="0"
-              placeholderTextColor={colors.gray}
-            />
-          </View>
+        <View style={styles.breakdownBar}>
+          <View
+            style={[
+              styles.breakdownInitial,
+              { flex: breakdown.initialPercent || 0.1 },
+            ]}
+          />
+          <View
+            style={[
+              styles.breakdownContributions,
+              { flex: breakdown.contributionsPercent || 0.1 },
+            ]}
+          />
+          <View
+            style={[
+              styles.breakdownInterest,
+              { flex: breakdown.interestPercent || 0.1 },
+            ]}
+          />
         </View>
-
-        {/* Interest Rate */}
-        <View style={styles.inputRow}>
-          <Text style={styles.label}>Annual Interest Rate</Text>
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.input}
-              value={interestRate}
-              onChangeText={handleInputChange(setInterestRate)}
-              keyboardType="numeric"
-              placeholder="0"
-              placeholderTextColor={colors.gray}
-            />
-            <Text style={styles.inputSuffix}>%</Text>
+        <View style={styles.legendRow}>
+          <View style={styles.legendItem}>
+            <View style={styles.legendDotRow}>
+              <View style={[styles.legendDot, { backgroundColor: '#2196F3' }]} />
+              <Text style={styles.legendLabel}>Initial</Text>
+            </View>
+            <Text style={styles.legendValue}>${formatCurrency(results.initialDeposit)}</Text>
           </View>
-        </View>
-
-        {/* Time Period */}
-        <View style={styles.inputRow}>
-          <Text style={styles.label}>Time Period</Text>
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.input}
-              value={years}
-              onChangeText={handleInputChange(setYears)}
-              keyboardType="numeric"
-              placeholder="0"
-              placeholderTextColor={colors.gray}
-            />
-            <Text style={styles.inputSuffix}>years</Text>
+          <View style={styles.legendItem}>
+            <View style={styles.legendDotRow}>
+              <View style={[styles.legendDot, { backgroundColor: '#4CAF50' }]} />
+              <Text style={styles.legendLabel}>Contributions</Text>
+            </View>
+            <Text style={styles.legendValue}>${formatCurrency(results.monthlyTotal)}</Text>
           </View>
-        </View>
-
-        {/* Compound Frequency */}
-        <View style={[styles.inputRow, { marginBottom: 0 }]}>
-          <Text style={styles.label}>Compound Frequency</Text>
-          <View style={styles.frequencyRow}>
-            {FREQUENCIES.map((freq) => (
-              <TouchableOpacity
-                key={freq.value}
-                style={[
-                  styles.frequencyButton,
-                  compoundFrequency === freq.value && styles.frequencyButtonActive,
-                ]}
-                onPress={() => setCompoundFrequency(freq.value)}
-              >
-                <Text
-                  style={[
-                    styles.frequencyButtonText,
-                    compoundFrequency === freq.value && styles.frequencyButtonTextActive,
-                  ]}
-                >
-                  {freq.label}
-                </Text>
-              </TouchableOpacity>
-            ))}
+          <View style={styles.legendItem}>
+            <View style={styles.legendDotRow}>
+              <View style={[styles.legendDot, { backgroundColor: colors.orange }]} />
+              <Text style={styles.legendLabel}>Interest</Text>
+            </View>
+            <Text style={styles.legendValue}>${formatCurrency(results.totalInterest)}</Text>
           </View>
         </View>
       </View>
 
-      {/* Results */}
-      <View style={styles.resultsCard}>
-        <View style={styles.mainResult}>
-          <Text style={styles.mainResultLabel}>Future Value</Text>
-          <Text style={styles.mainResultValue}>
+      {/* Inputs grid */}
+      <View style={styles.inputsCard}>
+        <Text style={styles.sectionLabel}>Your Plan</Text>
+        <View style={styles.inputGrid}>
+          <View style={styles.inputCell}>
+            <Text style={styles.label}>Initial Deposit</Text>
+            <View style={styles.inputContainer}>
+              <Text style={styles.inputPrefix}>$</Text>
+              <TextInput
+                style={styles.input}
+                value={initialDeposit}
+                onChangeText={handleInputChange(setInitialDeposit)}
+                keyboardType="numeric"
+                placeholder="0"
+                placeholderTextColor={colors.gray}
+              />
+            </View>
+          </View>
+
+          <View style={styles.inputCell}>
+            <Text style={styles.label}>Monthly Contribution</Text>
+            <View style={styles.inputContainer}>
+              <Text style={styles.inputPrefix}>$</Text>
+              <TextInput
+                style={styles.input}
+                value={monthlyContribution}
+                onChangeText={handleInputChange(setMonthlyContribution)}
+                keyboardType="numeric"
+                placeholder="0"
+                placeholderTextColor={colors.gray}
+              />
+            </View>
+          </View>
+
+          <View style={styles.inputCell}>
+            <Text style={styles.label}>Annual Interest Rate</Text>
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.input}
+                value={interestRate}
+                onChangeText={handleInputChange(setInterestRate)}
+                keyboardType="numeric"
+                placeholder="0"
+                placeholderTextColor={colors.gray}
+              />
+              <Text style={styles.inputSuffix}>%</Text>
+            </View>
+          </View>
+
+          <View style={styles.inputCell}>
+            <Text style={styles.label}>Time Period</Text>
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.input}
+                value={years}
+                onChangeText={handleInputChange(setYears)}
+                keyboardType="numeric"
+                placeholder="0"
+                placeholderTextColor={colors.gray}
+              />
+              <Text style={styles.inputSuffix}>years</Text>
+            </View>
+          </View>
+        </View>
+
+        <Text style={[styles.label, { marginTop: 2 }]}>Compound Frequency</Text>
+        <View style={styles.frequencyRow}>
+          {FREQUENCIES.map((freq) => (
+            <TouchableOpacity
+              key={freq.value}
+              style={[
+                styles.frequencyButton,
+                compoundFrequency === freq.value && styles.frequencyButtonActive,
+              ]}
+              onPress={() => setCompoundFrequency(freq.value)}
+            >
+              <Text
+                style={[
+                  styles.frequencyButtonText,
+                  compoundFrequency === freq.value && styles.frequencyButtonTextActive,
+                ]}
+              >
+                {freq.label}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </View>
+
+      {/* Growth Chart */}
+      {yearlyGrowth.length > 0 && (
+        <View style={styles.chartCard}>
+          <View style={styles.chartHeaderRow}>
+            <Text style={styles.sectionLabel}>Growth Over Time</Text>
+            <Text style={styles.headerBadge}>
+              Yr 1 – Yr {Math.min(time, 30)}
+            </Text>
+          </View>
+          <View style={styles.chartContainer}>
+            {yearlyGrowth.map((item, index) => (
+              <View
+                key={index}
+                style={[
+                  styles.chartBar,
+                  {
+                    height: maxBalance > 0 ? (item.balance / maxBalance) * 70 + 10 : 10,
+                    backgroundColor: colors.orange,
+                    opacity: 0.4 + (index / yearlyGrowth.length) * 0.6,
+                  },
+                ]}
+              />
+            ))}
+          </View>
+        </View>
+      )}
+
+      {/* Summary strip */}
+      <View style={styles.summaryCard}>
+        <View style={styles.summaryCell}>
+          <Text style={styles.summaryLabel}>Contributions</Text>
+          <Text style={styles.summaryValue}>${formatCurrency(results.totalContributions)}</Text>
+        </View>
+        <View style={styles.summaryDivider} />
+        <View style={styles.summaryCell}>
+          <Text style={styles.summaryLabel}>Interest Earned</Text>
+          <Text style={[styles.summaryValue, { color: '#4CAF50' }]}>
+            ${formatCurrency(results.totalInterest)}
+          </Text>
+        </View>
+        <View style={styles.summaryDivider} />
+        <View style={styles.summaryCell}>
+          <Text style={styles.summaryLabel}>Final Balance</Text>
+          <Text style={[styles.summaryValue, { color: colors.orange }]}>
             ${formatCurrency(results.futureValue)}
           </Text>
-          {results.totalInterest > 0 && (
-            <Text style={styles.interestText}>
-              +${formatCurrency(results.totalInterest)} in interest
-            </Text>
-          )}
         </View>
+      </View>
 
-        {/* Breakdown */}
-        <View style={styles.breakdownSection}>
-          <Text style={styles.breakdownTitle}>Savings Breakdown</Text>
-          <View style={styles.breakdownBar}>
-            <View
-              style={[
-                styles.breakdownInitial,
-                { flex: breakdown.initialPercent || 0.1 },
-              ]}
-            />
-            <View
-              style={[
-                styles.breakdownContributions,
-                { flex: breakdown.contributionsPercent || 0.1 },
-              ]}
-            />
-            <View
-              style={[
-                styles.breakdownInterest,
-                { flex: breakdown.interestPercent || 0.1 },
-              ]}
-            />
-          </View>
-          <View style={styles.legendRow}>
-            <View style={styles.legendItem}>
-              <View style={[styles.legendDot, { backgroundColor: '#2196F3' }]} />
-              <Text style={styles.legendLabel}>Initial</Text>
-              <Text style={styles.legendValue}>${formatCurrency(results.initialDeposit)}</Text>
-            </View>
-            <View style={styles.legendItem}>
-              <View style={[styles.legendDot, { backgroundColor: '#4CAF50' }]} />
-              <Text style={styles.legendLabel}>Contributions</Text>
-              <Text style={styles.legendValue}>${formatCurrency(results.monthlyTotal)}</Text>
-            </View>
-            <View style={styles.legendItem}>
-              <View style={[styles.legendDot, { backgroundColor: colors.orange }]} />
-              <Text style={styles.legendLabel}>Interest</Text>
-              <Text style={styles.legendValue}>${formatCurrency(results.totalInterest)}</Text>
-            </View>
-          </View>
-        </View>
-
-        {/* Growth Chart */}
-        {yearlyGrowth.length > 0 && (
-          <View style={styles.chartSection}>
-            <Text style={styles.chartTitle}>Growth Over Time</Text>
-            <View style={styles.chartContainer}>
-              {yearlyGrowth.map((item, index) => (
-                <View
-                  key={index}
-                  style={[
-                    styles.chartBar,
-                    {
-                      height: maxBalance > 0 ? (item.balance / maxBalance) * 70 + 10 : 10,
-                      backgroundColor: colors.orange,
-                      opacity: 0.4 + (index / yearlyGrowth.length) * 0.6,
-                    },
-                  ]}
-                />
-              ))}
-            </View>
-            <View style={styles.chartLabels}>
-              <Text style={styles.chartLabel}>Year 1</Text>
-              <Text style={styles.chartLabel}>Year {Math.min(time, 30)}</Text>
-            </View>
-          </View>
-        )}
-
-        {/* Summary */}
-        <View style={styles.summarySection}>
-          <View style={styles.summaryRow}>
-            <Text style={styles.summaryLabel}>Total Contributions</Text>
-            <Text style={styles.summaryValue}>${formatCurrency(results.totalContributions)}</Text>
-          </View>
-          <View style={styles.summaryRow}>
-            <Text style={styles.summaryLabel}>Total Interest Earned</Text>
-            <Text style={[styles.summaryValue, { color: '#4CAF50' }]}>
-              ${formatCurrency(results.totalInterest)}
-            </Text>
-          </View>
-          <View style={styles.summaryRow}>
-            <Text style={styles.summaryLabel}>Final Balance</Text>
-            <Text style={[styles.summaryValue, { color: colors.orange }]}>
-              ${formatCurrency(results.futureValue)}
-            </Text>
-          </View>
-        </View>
+      <View style={{ marginTop: 16 }}>
+        <AdBanner size="banner" />
       </View>
     </ScrollView>
   );

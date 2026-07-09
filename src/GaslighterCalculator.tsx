@@ -19,6 +19,9 @@ import LinearGradient from 'react-native-linear-gradient';
 import { RESPONSES, MOOD_LABELS } from './constants/responses';
 import { useAnimations } from './hooks/useAnimations';
 import { styles, darkColors, lightColors, getFontSize, BUTTON_SIZE_EXPORT } from './styles/calculator';
+import { AdBanner } from './ads/AdBanner';
+import { useRewardedAd } from './ads/useRewardedAd';
+import { usePremium } from './iap/PremiumContext';
 import { BackspaceIcon } from './components/BackspaceIcon';
 import { HistoryIcon } from './components/HistoryIcon';
 import { SettingsIcon } from './components/SettingsIcon';
@@ -199,12 +202,34 @@ export default function GaslighterCalculator({ onSurfaceColorChange }: Gaslighte
   const [settingsVisible, setSettingsVisible] = useState(false);
   const settingsSlideAnim = useRef(new Animated.Value(Dimensions.get('window').width * 0.8)).current;
   const [isDarkTheme, setIsDarkTheme] = useState(true);
-  const [isPremium, setIsPremium] = useState(false);
+  const { isPremium, purchasing, priceLabel, purchasePremium, restore } = usePremium();
 
   // Calculator mode
   type CalculatorMode = 'calculator' | 'unit-converter' | 'tip-calculator' | 'fuel-calculator' | 'gpa-calculator' | 'fuel-efficiency' | 'health' | 'percentage' | 'loan' | 'ovulation' | 'hex' | 'discount' | 'currency' | 'savings';
   const [calculatorMode, setCalculatorMode] = useState<CalculatorMode>('calculator');
   const [modeMenuVisible, setModeMenuVisible] = useState(false);
+
+  // Locked calculators unlocked via rewarded ad
+  const LOCKED_MODES: CalculatorMode[] = ['loan', 'savings', 'currency', 'ovulation', 'hex'];
+  const [unlockedModes, setUnlockedModes] = useState<CalculatorMode[]>([]);
+  const [pendingUnlockMode, setPendingUnlockMode] = useState<CalculatorMode | null>(null);
+
+  const CALCULATOR_MODES: { mode: CalculatorMode; label: string }[] = [
+    { mode: 'calculator', label: 'Standard Calculator' },
+    { mode: 'unit-converter', label: 'Unit Converter' },
+    { mode: 'tip-calculator', label: 'Tip Calculator' },
+    { mode: 'fuel-calculator', label: 'Fuel Calculator' },
+    { mode: 'gpa-calculator', label: 'GPA Calculator' },
+    { mode: 'fuel-efficiency', label: 'Fuel Efficiency' },
+    { mode: 'health', label: 'Health Calculator' },
+    { mode: 'percentage', label: 'Percentage Calculator' },
+    { mode: 'loan', label: 'Loan Calculator' },
+    { mode: 'ovulation', label: 'Ovulation Calculator' },
+    { mode: 'hex', label: 'Hex Calculator' },
+    { mode: 'discount', label: 'Discount Calculator' },
+    { mode: 'currency', label: 'Currency Converter' },
+    { mode: 'savings', label: 'Savings Calculator' },
+  ];
 
   // Rating popup state
   const [showRatingPopup, setShowRatingPopup] = useState(false);
@@ -340,6 +365,65 @@ export default function GaslighterCalculator({ onSurfaceColorChange }: Gaslighte
     };
     loadRatingState();
   }, []);
+
+  // Load unlocked calculator modes from AsyncStorage
+  useEffect(() => {
+    const loadUnlockedModes = async () => {
+      try {
+        const stored = await AsyncStorage.getItem('unlockedModes');
+        if (stored) {
+          setUnlockedModes(JSON.parse(stored));
+        }
+      } catch (error) {
+        console.log('Error loading unlocked modes:', error);
+      }
+    };
+    loadUnlockedModes();
+  }, []);
+
+  const handleUnlockEarned = useCallback(() => {
+    setPendingUnlockMode((mode) => {
+      if (!mode) return mode;
+      setUnlockedModes((prev) => {
+        if (prev.includes(mode)) return prev;
+        const next = [...prev, mode];
+        AsyncStorage.setItem('unlockedModes', JSON.stringify(next)).catch((error) =>
+          console.log('Error saving unlocked modes:', error)
+        );
+        return next;
+      });
+      setCalculatorMode(mode);
+      closeSettings();
+      return null;
+    });
+  }, [closeSettings]);
+
+  const rewardedAd = useRewardedAd(handleUnlockEarned);
+
+  const handleModePress = useCallback((mode: CalculatorMode) => {
+    const isLocked = LOCKED_MODES.includes(mode) && !unlockedModes.includes(mode);
+    if (!isLocked) {
+      setCalculatorMode(mode);
+      closeSettings();
+      return;
+    }
+    const modeLabel = CALCULATOR_MODES.find((m) => m.mode === mode)?.label ?? 'this calculator';
+    Alert.alert(
+      'Locked Calculator',
+      `Watch a short ad to unlock ${modeLabel}?`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Watch Ad',
+          onPress: () => {
+            setPendingUnlockMode(mode);
+            rewardedAd.show();
+          },
+        },
+      ]
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [unlockedModes, closeSettings, rewardedAd]);
 
   // Check if should show rating popup after tasks
   useEffect(() => {
@@ -929,6 +1013,13 @@ export default function GaslighterCalculator({ onSurfaceColorChange }: Gaslighte
                 </TouchableOpacity>
               </View>
             </View>
+
+            {/* Home screen bottom banner ad */}
+            {!isPremium && (
+              <View style={{ marginTop: 10 }}>
+                <AdBanner size="banner" />
+              </View>
+            )}
           </>
         ) : calculatorMode === 'unit-converter' ? (
           /* Unit Converter Mode */
@@ -1069,238 +1160,87 @@ export default function GaslighterCalculator({ onSurfaceColorChange }: Gaslighte
                 <Text style={styles.premiumBadge}>PRO</Text>
               </View>
             ) : (
-              <TouchableOpacity
-                style={styles.premiumButton}
-                onPress={() => {
-                  Alert.alert(
-                    'Go Premium',
-                    'Remove ads and unlock exclusive features!\n\nPrice: $2.99',
-                    [
-                      { text: 'Cancel', style: 'cancel' },
-                      { text: 'Buy Now', onPress: () => setIsPremium(true) },
-                    ]
-                  );
-                }}
-              >
-                <Text style={styles.premiumButtonText}>Remove Ads - $2.99</Text>
-                <Text style={[styles.premiumButtonSubtext, { color: colors.gray }]}>Unlock premium features</Text>
-              </TouchableOpacity>
+              <>
+                <TouchableOpacity
+                  style={styles.premiumButton}
+                  disabled={purchasing}
+                  onPress={() => {
+                    Alert.alert(
+                      'Go Premium',
+                      `Remove ads and unlock exclusive features!\n\nPrice: ${priceLabel}`,
+                      [
+                        { text: 'Cancel', style: 'cancel' },
+                        { text: 'Buy Now', onPress: () => purchasePremium() },
+                      ]
+                    );
+                  }}
+                >
+                  <Text style={styles.premiumButtonText}>
+                    {purchasing ? 'Processing…' : `Remove Ads - ${priceLabel}`}
+                  </Text>
+                  <Text style={[styles.premiumButtonSubtext, { color: colors.gray }]}>Unlock premium features</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.settingsItem} onPress={() => restore()}>
+                  <Text style={[styles.settingsLabel, { color: colors.gray, fontSize: 14 }]}>Restore Purchases</Text>
+                </TouchableOpacity>
+              </>
             )}
           </View>
 
           {/* Calculator Mode */}
           <View style={styles.settingsSection}>
             <Text style={[styles.settingsSectionTitle, { color: colors.lightGray }]}>Calculator Mode</Text>
-            <TouchableOpacity
-              style={[
-                styles.settingsItem,
-                calculatorMode === 'calculator' && styles.settingsItemActive,
-              ]}
-              onPress={() => {
-                setCalculatorMode('calculator');
-                closeSettings();
-              }}
-            >
-              <Text style={[styles.settingsLabel, { color: colors.white }]}>Standard Calculator</Text>
-              {calculatorMode === 'calculator' && (
-                <Text style={{ color: colors.orange, fontSize: 16 }}>✓</Text>
-              )}
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.settingsItem,
-                calculatorMode === 'unit-converter' && styles.settingsItemActive,
-              ]}
-              onPress={() => {
-                setCalculatorMode('unit-converter');
-                closeSettings();
-              }}
-            >
-              <Text style={[styles.settingsLabel, { color: colors.white }]}>Unit Converter</Text>
-              {calculatorMode === 'unit-converter' && (
-                <Text style={{ color: colors.orange, fontSize: 16 }}>✓</Text>
-              )}
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.settingsItem,
-                calculatorMode === 'tip-calculator' && styles.settingsItemActive,
-              ]}
-              onPress={() => {
-                setCalculatorMode('tip-calculator');
-                closeSettings();
-              }}
-            >
-              <Text style={[styles.settingsLabel, { color: colors.white }]}>Tip Calculator</Text>
-              {calculatorMode === 'tip-calculator' && (
-                <Text style={{ color: colors.orange, fontSize: 16 }}>✓</Text>
-              )}
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.settingsItem,
-                calculatorMode === 'fuel-calculator' && styles.settingsItemActive,
-              ]}
-              onPress={() => {
-                setCalculatorMode('fuel-calculator');
-                closeSettings();
-              }}
-            >
-              <Text style={[styles.settingsLabel, { color: colors.white }]}>Fuel Calculator</Text>
-              {calculatorMode === 'fuel-calculator' && (
-                <Text style={{ color: colors.orange, fontSize: 16 }}>✓</Text>
-              )}
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.settingsItem,
-                calculatorMode === 'gpa-calculator' && styles.settingsItemActive,
-              ]}
-              onPress={() => {
-                setCalculatorMode('gpa-calculator');
-                closeSettings();
-              }}
-            >
-              <Text style={[styles.settingsLabel, { color: colors.white }]}>GPA Calculator</Text>
-              {calculatorMode === 'gpa-calculator' && (
-                <Text style={{ color: colors.orange, fontSize: 16 }}>✓</Text>
-              )}
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.settingsItem,
-                calculatorMode === 'fuel-efficiency' && styles.settingsItemActive,
-              ]}
-              onPress={() => {
-                setCalculatorMode('fuel-efficiency');
-                closeSettings();
-              }}
-            >
-              <Text style={[styles.settingsLabel, { color: colors.white }]}>Fuel Efficiency</Text>
-              {calculatorMode === 'fuel-efficiency' && (
-                <Text style={{ color: colors.orange, fontSize: 16 }}>✓</Text>
-              )}
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.settingsItem,
-                calculatorMode === 'health' && styles.settingsItemActive,
-              ]}
-              onPress={() => {
-                setCalculatorMode('health');
-                closeSettings();
-              }}
-            >
-              <Text style={[styles.settingsLabel, { color: colors.white }]}>Health Calculator</Text>
-              {calculatorMode === 'health' && (
-                <Text style={{ color: colors.orange, fontSize: 16 }}>✓</Text>
-              )}
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.settingsItem,
-                calculatorMode === 'percentage' && styles.settingsItemActive,
-              ]}
-              onPress={() => {
-                setCalculatorMode('percentage');
-                closeSettings();
-              }}
-            >
-              <Text style={[styles.settingsLabel, { color: colors.white }]}>Percentage Calculator</Text>
-              {calculatorMode === 'percentage' && (
-                <Text style={{ color: colors.orange, fontSize: 16 }}>✓</Text>
-              )}
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.settingsItem,
-                calculatorMode === 'loan' && styles.settingsItemActive,
-              ]}
-              onPress={() => {
-                setCalculatorMode('loan');
-                closeSettings();
-              }}
-            >
-              <Text style={[styles.settingsLabel, { color: colors.white }]}>Loan Calculator</Text>
-              {calculatorMode === 'loan' && (
-                <Text style={{ color: colors.orange, fontSize: 16 }}>✓</Text>
-              )}
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.settingsItem,
-                calculatorMode === 'ovulation' && styles.settingsItemActive,
-              ]}
-              onPress={() => {
-                setCalculatorMode('ovulation');
-                closeSettings();
-              }}
-            >
-              <Text style={[styles.settingsLabel, { color: colors.white }]}>Ovulation Calculator</Text>
-              {calculatorMode === 'ovulation' && (
-                <Text style={{ color: colors.orange, fontSize: 16 }}>✓</Text>
-              )}
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.settingsItem,
-                calculatorMode === 'hex' && styles.settingsItemActive,
-              ]}
-              onPress={() => {
-                setCalculatorMode('hex');
-                closeSettings();
-              }}
-            >
-              <Text style={[styles.settingsLabel, { color: colors.white }]}>Hex Calculator</Text>
-              {calculatorMode === 'hex' && (
-                <Text style={{ color: colors.orange, fontSize: 16 }}>✓</Text>
-              )}
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.settingsItem,
-                calculatorMode === 'discount' && styles.settingsItemActive,
-              ]}
-              onPress={() => {
-                setCalculatorMode('discount');
-                closeSettings();
-              }}
-            >
-              <Text style={[styles.settingsLabel, { color: colors.white }]}>Discount Calculator</Text>
-              {calculatorMode === 'discount' && (
-                <Text style={{ color: colors.orange, fontSize: 16 }}>✓</Text>
-              )}
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.settingsItem,
-                calculatorMode === 'currency' && styles.settingsItemActive,
-              ]}
-              onPress={() => {
-                setCalculatorMode('currency');
-                closeSettings();
-              }}
-            >
-              <Text style={[styles.settingsLabel, { color: colors.white }]}>Currency Converter</Text>
-              {calculatorMode === 'currency' && (
-                <Text style={{ color: colors.orange, fontSize: 16 }}>✓</Text>
-              )}
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.settingsItem,
-                calculatorMode === 'savings' && styles.settingsItemActive,
-              ]}
-              onPress={() => {
-                setCalculatorMode('savings');
-                closeSettings();
-              }}
-            >
-              <Text style={[styles.settingsLabel, { color: colors.white }]}>Savings Calculator</Text>
-              {calculatorMode === 'savings' && (
-                <Text style={{ color: colors.orange, fontSize: 16 }}>✓</Text>
-              )}
-            </TouchableOpacity>
+            {CALCULATOR_MODES.slice(0, 7).map(({ mode, label }) => {
+              const isLocked = LOCKED_MODES.includes(mode) && !unlockedModes.includes(mode);
+              return (
+                <TouchableOpacity
+                  key={mode}
+                  style={[
+                    styles.settingsItem,
+                    calculatorMode === mode && styles.settingsItemActive,
+                  ]}
+                  onPress={() => handleModePress(mode)}
+                >
+                  <Text style={[styles.settingsLabel, { color: colors.white }]}>{label}</Text>
+                  {isLocked ? (
+                    <Text style={{ color: colors.gray, fontSize: 16 }}>🔒</Text>
+                  ) : (
+                    calculatorMode === mode && (
+                      <Text style={{ color: colors.orange, fontSize: 16 }}>✓</Text>
+                    )
+                  )}
+                </TouchableOpacity>
+              );
+            })}
+
+            {!isPremium && (
+              <View style={{ marginVertical: 14 }}>
+                <AdBanner size="square" />
+              </View>
+            )}
+
+            {CALCULATOR_MODES.slice(7).map(({ mode, label }) => {
+              const isLocked = LOCKED_MODES.includes(mode) && !unlockedModes.includes(mode);
+              return (
+                <TouchableOpacity
+                  key={mode}
+                  style={[
+                    styles.settingsItem,
+                    calculatorMode === mode && styles.settingsItemActive,
+                  ]}
+                  onPress={() => handleModePress(mode)}
+                >
+                  <Text style={[styles.settingsLabel, { color: colors.white }]}>{label}</Text>
+                  {isLocked ? (
+                    <Text style={{ color: colors.gray, fontSize: 16 }}>🔒</Text>
+                  ) : (
+                    calculatorMode === mode && (
+                      <Text style={{ color: colors.orange, fontSize: 16 }}>✓</Text>
+                    )
+                  )}
+                </TouchableOpacity>
+              );
+            })}
           </View>
 
           {/* App Info */}

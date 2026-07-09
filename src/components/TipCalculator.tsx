@@ -6,6 +6,7 @@ import {
   TextInput,
   StyleSheet,
 } from 'react-native';
+import { AdBanner } from '../ads/AdBanner';
 
 interface TipCalculatorProps {
   colors: {
@@ -45,30 +46,89 @@ export const TipCalculator: React.FC<TipCalculatorProps> = ({ colors, onTaskComp
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      paddingHorizontal: 5,
-      marginTop: 30,
+      paddingHorizontal: 14,
+      marginTop: 24,
+    },
+    header: {
+      flexDirection: 'row',
+      alignItems: 'baseline',
+      justifyContent: 'space-between',
+      marginBottom: 14,
     },
     title: {
-      fontSize: 18,
+      fontSize: 15,
       fontWeight: '600',
+      color: colors.lightGray,
+      textTransform: 'uppercase',
+      letterSpacing: 0.8,
+    },
+    headerBadge: {
+      fontSize: 12,
+      color: colors.gray,
+    },
+    heroCard: {
+      backgroundColor: colors.panelBg,
+      borderRadius: 20,
+      paddingVertical: 18,
+      paddingHorizontal: 18,
+      marginBottom: 10,
+    },
+    heroTopRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'flex-start',
+    },
+    heroLabel: {
+      fontSize: 12,
+      color: colors.gray,
+      textTransform: 'uppercase',
+      letterSpacing: 0.6,
+      marginBottom: 2,
+    },
+    heroValue: {
+      fontSize: 40,
+      color: colors.orange,
+      fontWeight: '700',
+    },
+    heroSubStats: {
+      alignItems: 'flex-end',
+    },
+    heroSubStatRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 4,
+    },
+    heroSubLabel: {
+      fontSize: 12,
+      color: colors.gray,
+      marginRight: 6,
+    },
+    heroSubValue: {
+      fontSize: 14,
       color: colors.white,
-      marginBottom: 12,
-      textAlign: 'center',
+      fontWeight: '600',
+    },
+    twoColRow: {
+      flexDirection: 'row',
+      gap: 10,
+      marginBottom: 10,
     },
     card: {
       backgroundColor: colors.panelBg,
-      borderRadius: 16,
-      padding: 16,
-      marginBottom: 12,
+      borderRadius: 18,
+      padding: 14,
     },
-    // Bill Input
-    inputSection: {
-      marginBottom: 16,
+    billCard: {
+      flex: 1.2,
+    },
+    splitCard: {
+      flex: 1,
+      justifyContent: 'space-between',
     },
     label: {
-      fontSize: 11,
+      fontSize: 10,
       color: colors.lightGray,
-      marginBottom: 6,
+      marginBottom: 8,
       textTransform: 'uppercase',
       letterSpacing: 0.5,
     },
@@ -76,36 +136,98 @@ export const TipCalculator: React.FC<TipCalculatorProps> = ({ colors, onTaskComp
       flexDirection: 'row',
       alignItems: 'center',
       backgroundColor: colors.iconButtonBg,
-      borderRadius: 10,
-      paddingHorizontal: 14,
+      borderRadius: 12,
+      paddingHorizontal: 12,
     },
     currencySymbol: {
-      fontSize: 22,
+      fontSize: 20,
       color: colors.orange,
       fontWeight: '600',
-      marginRight: 8,
+      marginRight: 6,
     },
     billInput: {
       flex: 1,
-      fontSize: 28,
+      fontSize: 24,
       color: colors.white,
       fontWeight: '600',
-      paddingVertical: 12,
+      paddingVertical: 10,
     },
-    // Tip Presets
-    tipSection: {
-      marginBottom: 16,
+    splitRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    splitButton: {
+      width: 34,
+      height: 34,
+      borderRadius: 17,
+      backgroundColor: colors.iconButtonBg,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    splitButtonText: {
+      fontSize: 18,
+      color: colors.orange,
+      fontWeight: '300',
+    },
+    splitValue: {
+      fontSize: 22,
+      color: colors.white,
+      fontWeight: '600',
+      marginHorizontal: 14,
+      minWidth: 26,
+      textAlign: 'center',
+    },
+    splitLabel: {
+      fontSize: 11,
+      color: colors.gray,
+      textAlign: 'center',
+      marginTop: 6,
+    },
+    tipCard: {
+      marginBottom: 10,
+    },
+    tipHeaderRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 10,
+    },
+    customTipRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    customTipLabel: {
+      fontSize: 12,
+      color: colors.gray,
+      marginRight: 8,
+    },
+    customTipInput: {
+      backgroundColor: colors.iconButtonBg,
+      borderRadius: 8,
+      paddingVertical: 6,
+      paddingHorizontal: 10,
+      width: 54,
+      fontSize: 14,
+      color: colors.white,
+      fontWeight: '600',
+      textAlign: 'center',
+    },
+    percentSymbol: {
+      fontSize: 13,
+      color: colors.gray,
+      marginLeft: 4,
     },
     tipPresets: {
       flexDirection: 'row',
-      justifyContent: 'space-between',
+      flexWrap: 'wrap',
+      gap: 8,
     },
     tipButton: {
-      flex: 1,
-      paddingVertical: 12,
-      borderRadius: 10,
+      paddingVertical: 10,
+      paddingHorizontal: 16,
+      borderRadius: 12,
       alignItems: 'center',
-      marginHorizontal: 3,
     },
     tipButtonActive: {
       backgroundColor: colors.orange,
@@ -123,74 +245,11 @@ export const TipCalculator: React.FC<TipCalculatorProps> = ({ colors, onTaskComp
     tipButtonTextInactive: {
       color: colors.gray,
     },
-    // Custom Tip
-    customTipRow: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      marginTop: 10,
-    },
-    customTipLabel: {
-      fontSize: 13,
-      color: colors.gray,
-      marginRight: 10,
-    },
-    customTipInput: {
-      backgroundColor: colors.iconButtonBg,
-      borderRadius: 8,
-      paddingVertical: 8,
-      paddingHorizontal: 12,
-      width: 70,
-      fontSize: 16,
-      color: colors.white,
-      fontWeight: '600',
-      textAlign: 'center',
-    },
-    percentSymbol: {
-      fontSize: 14,
-      color: colors.gray,
-      marginLeft: 4,
-    },
-    // Split Section
-    splitSection: {
-      marginBottom: 8,
-    },
-    splitRow: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    splitButton: {
-      width: 44,
-      height: 44,
-      borderRadius: 22,
-      backgroundColor: colors.iconButtonBg,
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-    splitButtonText: {
-      fontSize: 24,
-      color: colors.orange,
-      fontWeight: '300',
-    },
-    splitValue: {
-      fontSize: 28,
-      color: colors.white,
-      fontWeight: '600',
-      marginHorizontal: 20,
-      minWidth: 40,
-      textAlign: 'center',
-    },
-    splitLabel: {
-      fontSize: 12,
-      color: colors.gray,
-      textAlign: 'center',
-      marginTop: 4,
-    },
-    // Results
     resultsCard: {
       backgroundColor: colors.panelBg,
-      borderRadius: 16,
-      padding: 16,
+      borderRadius: 18,
+      paddingVertical: 6,
+      paddingHorizontal: 14,
     },
     resultRow: {
       flexDirection: 'row',
@@ -202,31 +261,48 @@ export const TipCalculator: React.FC<TipCalculatorProps> = ({ colors, onTaskComp
     },
     resultRowLast: {
       borderBottomWidth: 0,
-      paddingTop: 12,
     },
     resultLabel: {
-      fontSize: 14,
+      fontSize: 13,
       color: colors.gray,
     },
     resultValue: {
-      fontSize: 18,
+      fontSize: 16,
       color: colors.white,
       fontWeight: '600',
-    },
-    resultValueHighlight: {
-      fontSize: 24,
-      color: colors.orange,
-      fontWeight: '700',
     },
   });
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Tip Calculator</Text>
+      <View style={styles.header}>
+        <Text style={styles.title}>Tip Calculator</Text>
+        <Text style={styles.headerBadge}>
+          {splitCount === 1 ? '1 person' : `${splitCount} people`}
+        </Text>
+      </View>
 
-      <View style={styles.card}>
-        {/* Bill Amount */}
-        <View style={styles.inputSection}>
+      <View style={styles.heroCard}>
+        <View style={styles.heroTopRow}>
+          <View>
+            <Text style={styles.heroLabel}>Per Person</Text>
+            <Text style={styles.heroValue}>${perPerson.toFixed(2)}</Text>
+          </View>
+          <View style={styles.heroSubStats}>
+            <View style={styles.heroSubStatRow}>
+              <Text style={styles.heroSubLabel}>Tip</Text>
+              <Text style={styles.heroSubValue}>${tipAmount.toFixed(2)}</Text>
+            </View>
+            <View style={styles.heroSubStatRow}>
+              <Text style={styles.heroSubLabel}>Total</Text>
+              <Text style={styles.heroSubValue}>${totalAmount.toFixed(2)}</Text>
+            </View>
+          </View>
+        </View>
+      </View>
+
+      <View style={styles.twoColRow}>
+        <View style={[styles.card, styles.billCard]}>
           <Text style={styles.label}>Bill Amount</Text>
           <View style={styles.billInputContainer}>
             <Text style={styles.currencySymbol}>$</Text>
@@ -241,45 +317,8 @@ export const TipCalculator: React.FC<TipCalculatorProps> = ({ colors, onTaskComp
           </View>
         </View>
 
-        {/* Tip Percentage */}
-        <View style={styles.tipSection}>
-          <Text style={styles.label}>Tip Percentage</Text>
-          <View style={styles.tipPresets}>
-            {TIP_PRESETS.map((percent) => (
-              <TouchableOpacity
-                key={percent}
-                style={[
-                  styles.tipButton,
-                  tipPercent === percent ? styles.tipButtonActive : styles.tipButtonInactive,
-                ]}
-                onPress={() => setTipPercent(percent)}
-              >
-                <Text
-                  style={[
-                    styles.tipButtonText,
-                    tipPercent === percent ? styles.tipButtonTextActive : styles.tipButtonTextInactive,
-                  ]}
-                >
-                  {percent}%
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-          <View style={styles.customTipRow}>
-            <Text style={styles.customTipLabel}>Custom:</Text>
-            <TextInput
-              style={styles.customTipInput}
-              value={String(tipPercent)}
-              onChangeText={(val) => setTipPercent(parseInt(val) || 0)}
-              keyboardType="numeric"
-            />
-            <Text style={styles.percentSymbol}>%</Text>
-          </View>
-        </View>
-
-        {/* Split */}
-        <View style={styles.splitSection}>
-          <Text style={styles.label}>Split Between</Text>
+        <View style={[styles.card, styles.splitCard]}>
+          <Text style={styles.label}>Split</Text>
           <View style={styles.splitRow}>
             <TouchableOpacity
               style={styles.splitButton}
@@ -301,20 +340,56 @@ export const TipCalculator: React.FC<TipCalculatorProps> = ({ colors, onTaskComp
         </View>
       </View>
 
-      {/* Results */}
+      <View style={[styles.card, styles.tipCard]}>
+        <View style={styles.tipHeaderRow}>
+          <Text style={styles.label}>Tip Percentage</Text>
+          <View style={styles.customTipRow}>
+            <Text style={styles.customTipLabel}>Custom:</Text>
+            <TextInput
+              style={styles.customTipInput}
+              value={String(tipPercent)}
+              onChangeText={(val) => setTipPercent(parseInt(val) || 0)}
+              keyboardType="numeric"
+            />
+            <Text style={styles.percentSymbol}>%</Text>
+          </View>
+        </View>
+        <View style={styles.tipPresets}>
+          {TIP_PRESETS.map((percent) => (
+            <TouchableOpacity
+              key={percent}
+              style={[
+                styles.tipButton,
+                tipPercent === percent ? styles.tipButtonActive : styles.tipButtonInactive,
+              ]}
+              onPress={() => setTipPercent(percent)}
+            >
+              <Text
+                style={[
+                  styles.tipButtonText,
+                  tipPercent === percent ? styles.tipButtonTextActive : styles.tipButtonTextInactive,
+                ]}
+              >
+                {percent}%
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </View>
+
       <View style={styles.resultsCard}>
         <View style={styles.resultRow}>
           <Text style={styles.resultLabel}>Tip Amount</Text>
           <Text style={styles.resultValue}>${tipAmount.toFixed(2)}</Text>
         </View>
-        <View style={styles.resultRow}>
+        <View style={[styles.resultRow, styles.resultRowLast]}>
           <Text style={styles.resultLabel}>Total</Text>
           <Text style={styles.resultValue}>${totalAmount.toFixed(2)}</Text>
         </View>
-        <View style={[styles.resultRow, styles.resultRowLast]}>
-          <Text style={styles.resultLabel}>Per Person</Text>
-          <Text style={styles.resultValueHighlight}>${perPerson.toFixed(2)}</Text>
-        </View>
+      </View>
+
+      <View style={{ marginTop: 16 }}>
+        <AdBanner size="banner" />
       </View>
     </View>
   );

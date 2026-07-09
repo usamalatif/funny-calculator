@@ -7,6 +7,7 @@ import {
   StyleSheet,
   ScrollView,
 } from 'react-native';
+import { AdBanner } from '../ads/AdBanner';
 
 interface LoanCalculatorProps {
   colors: {
@@ -113,35 +114,104 @@ export const LoanCalculator: React.FC<LoanCalculatorProps> = ({ colors, onTaskCo
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      paddingHorizontal: 5,
-      marginTop: 30,
+      paddingHorizontal: 14,
+      marginTop: 24,
+    },
+    // Header
+    headerRow: {
+      flexDirection: 'row',
+      alignItems: 'flex-end',
+      justifyContent: 'space-between',
+      marginBottom: 14,
+    },
+    eyebrow: {
+      fontSize: 10,
+      color: colors.gray,
+      textTransform: 'uppercase',
+      letterSpacing: 1,
+      marginBottom: 2,
     },
     title: {
-      fontSize: 18,
-      fontWeight: '600',
+      fontSize: 20,
+      fontWeight: '700',
       color: colors.white,
-      marginBottom: 12,
-      textAlign: 'center',
+    },
+    activeTypeChip: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: colors.iconButtonBg,
+      borderRadius: 20,
+      paddingVertical: 6,
+      paddingHorizontal: 10,
+    },
+    activeTypeIcon: {
+      fontSize: 14,
+      marginRight: 4,
+    },
+    activeTypeLabel: {
+      fontSize: 11,
+      fontWeight: '600',
+      color: colors.orange,
+    },
+    // Hero result
+    heroCard: {
+      backgroundColor: colors.panelBg,
+      borderRadius: 20,
+      paddingVertical: 18,
+      paddingHorizontal: 18,
+      marginBottom: 14,
+    },
+    heroTopRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'flex-start',
+    },
+    heroLabel: {
+      fontSize: 11,
+      color: colors.lightGray,
+      textTransform: 'uppercase',
+      letterSpacing: 0.5,
+    },
+    heroUnit: {
+      fontSize: 11,
+      color: colors.gray,
+      textAlign: 'right',
+    },
+    heroValueRow: {
+      flexDirection: 'row',
+      alignItems: 'baseline',
+      marginTop: 6,
+    },
+    heroPrefix: {
+      fontSize: 20,
+      fontWeight: '700',
+      color: colors.orange,
+      marginRight: 2,
+    },
+    heroValue: {
+      fontSize: 42,
+      fontWeight: '800',
+      color: colors.orange,
     },
     // Loan Type Selector
     loanTypeRow: {
       flexDirection: 'row',
-      marginBottom: 12,
+      marginBottom: 14,
     },
     loanTypeButton: {
       flex: 1,
-      paddingVertical: 10,
-      borderRadius: 10,
+      paddingVertical: 12,
+      borderRadius: 14,
       alignItems: 'center',
-      marginHorizontal: 3,
+      marginRight: 8,
       backgroundColor: colors.iconButtonBg,
     },
     loanTypeButtonActive: {
       backgroundColor: colors.orange,
     },
     loanTypeIcon: {
-      fontSize: 18,
-      marginBottom: 2,
+      fontSize: 20,
+      marginBottom: 4,
     },
     loanTypeLabel: {
       fontSize: 10,
@@ -156,16 +226,29 @@ export const LoanCalculator: React.FC<LoanCalculatorProps> = ({ colors, onTaskCo
     // Card
     card: {
       backgroundColor: colors.panelBg,
-      borderRadius: 16,
-      padding: 14,
+      borderRadius: 20,
+      padding: 16,
+      marginBottom: 14,
+    },
+    sectionHeading: {
+      fontSize: 12,
+      fontWeight: '700',
+      color: colors.white,
       marginBottom: 12,
     },
     // Input Row
     inputRow: {
       marginBottom: 12,
     },
+    inputGrid: {
+      flexDirection: 'row',
+    },
+    inputGridItem: {
+      flex: 1,
+      marginRight: 10,
+    },
     label: {
-      fontSize: 11,
+      fontSize: 10,
       color: colors.lightGray,
       marginBottom: 6,
       textTransform: 'uppercase',
@@ -175,26 +258,26 @@ export const LoanCalculator: React.FC<LoanCalculatorProps> = ({ colors, onTaskCo
       flexDirection: 'row',
       alignItems: 'center',
       backgroundColor: colors.iconButtonBg,
-      borderRadius: 10,
+      borderRadius: 12,
     },
     inputPrefix: {
-      fontSize: 18,
+      fontSize: 16,
       color: colors.orange,
-      paddingLeft: 14,
+      paddingLeft: 12,
       fontWeight: '600',
     },
     input: {
       flex: 1,
-      fontSize: 18,
+      fontSize: 16,
       color: colors.white,
       fontWeight: '600',
       paddingVertical: 10,
       paddingHorizontal: 10,
     },
     inputSuffix: {
-      fontSize: 14,
+      fontSize: 12,
       color: colors.orange,
-      paddingRight: 14,
+      paddingRight: 12,
       fontWeight: '500',
     },
     // Term Row
@@ -208,52 +291,20 @@ export const LoanCalculator: React.FC<LoanCalculatorProps> = ({ colors, onTaskCo
     termInputSmall: {
       flex: 0.6,
     },
-    // Results
-    resultsCard: {
-      backgroundColor: colors.panelBg,
-      borderRadius: 16,
-      padding: 16,
-    },
-    mainResult: {
-      alignItems: 'center',
-      paddingBottom: 16,
-      borderBottomWidth: 1,
-      borderBottomColor: colors.iconButtonBg,
-    },
-    mainResultLabel: {
-      fontSize: 11,
-      color: colors.lightGray,
-      textTransform: 'uppercase',
-      letterSpacing: 0.5,
-    },
-    mainResultValue: {
-      fontSize: 36,
-      fontWeight: '700',
-      color: colors.orange,
-      marginTop: 4,
-    },
-    mainResultUnit: {
-      fontSize: 13,
-      color: colors.gray,
-      marginTop: 2,
-    },
     // Breakdown
-    breakdownSection: {
-      paddingTop: 14,
-    },
+    breakdownSection: {},
     breakdownTitle: {
-      fontSize: 11,
-      color: colors.lightGray,
-      textTransform: 'uppercase',
-      letterSpacing: 0.5,
+      fontSize: 12,
+      fontWeight: '700',
+      color: colors.white,
       marginBottom: 10,
     },
     breakdownBar: {
       flexDirection: 'row',
-      height: 12,
-      borderRadius: 6,
+      height: 10,
+      borderRadius: 5,
       overflow: 'hidden',
-      marginBottom: 10,
+      marginBottom: 12,
     },
     breakdownPrincipal: {
       backgroundColor: '#4CAF50',
@@ -263,55 +314,82 @@ export const LoanCalculator: React.FC<LoanCalculatorProps> = ({ colors, onTaskCo
     },
     breakdownLegend: {
       flexDirection: 'row',
-      justifyContent: 'space-between',
+      justifyContent: 'flex-start',
     },
     legendItem: {
       flexDirection: 'row',
       alignItems: 'center',
+      marginRight: 20,
     },
     legendDot: {
-      width: 10,
-      height: 10,
-      borderRadius: 5,
+      width: 8,
+      height: 8,
+      borderRadius: 4,
       marginRight: 6,
     },
     legendLabel: {
-      fontSize: 12,
+      fontSize: 11,
       color: colors.gray,
     },
     legendValue: {
-      fontSize: 12,
+      fontSize: 11,
       color: colors.white,
-      fontWeight: '600',
+      fontWeight: '700',
       marginLeft: 4,
     },
     // Summary
-    summarySection: {
-      marginTop: 14,
-      paddingTop: 14,
-      borderTopWidth: 1,
-      borderTopColor: colors.iconButtonBg,
-    },
-    summaryRow: {
+    summaryGrid: {
       flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      paddingVertical: 8,
+      flexWrap: 'wrap',
+      marginTop: 4,
+    },
+    summaryTile: {
+      width: '50%',
+      paddingVertical: 10,
     },
     summaryLabel: {
-      fontSize: 13,
+      fontSize: 10,
       color: colors.gray,
+      textTransform: 'uppercase',
+      letterSpacing: 0.4,
+      marginBottom: 4,
     },
     summaryValue: {
-      fontSize: 15,
+      fontSize: 16,
       color: colors.white,
-      fontWeight: '600',
+      fontWeight: '700',
     },
   });
 
+  const activeLoan = LOAN_TYPES.find(l => l.value === loanType);
+
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      <Text style={styles.title}>Loan Calculator</Text>
+      {/* Header */}
+      <View style={styles.headerRow}>
+        <View>
+          <Text style={styles.eyebrow}>Calculator</Text>
+          <Text style={styles.title}>Loan</Text>
+        </View>
+        {activeLoan && (
+          <View style={styles.activeTypeChip}>
+            <Text style={styles.activeTypeIcon}>{activeLoan.icon}</Text>
+            <Text style={styles.activeTypeLabel}>{activeLoan.label}</Text>
+          </View>
+        )}
+      </View>
+
+      {/* Hero Result */}
+      <View style={styles.heroCard}>
+        <View style={styles.heroTopRow}>
+          <Text style={styles.heroLabel}>Monthly Payment</Text>
+          <Text style={styles.heroUnit}>{totalMonths} months</Text>
+        </View>
+        <View style={styles.heroValueRow}>
+          <Text style={styles.heroPrefix}>$</Text>
+          <Text style={styles.heroValue}>{formatCurrency(monthlyPayment)}</Text>
+        </View>
+      </View>
 
       {/* Loan Type Selector */}
       <View style={styles.loanTypeRow}>
@@ -321,6 +399,7 @@ export const LoanCalculator: React.FC<LoanCalculatorProps> = ({ colors, onTaskCo
             style={[
               styles.loanTypeButton,
               loanType === type.value && styles.loanTypeButtonActive,
+              type.value === 'student' && { marginRight: 0 },
             ]}
             onPress={() => handleLoanTypeChange(type.value)}
           >
@@ -341,6 +420,8 @@ export const LoanCalculator: React.FC<LoanCalculatorProps> = ({ colors, onTaskCo
 
       {/* Inputs */}
       <View style={styles.card}>
+        <Text style={styles.sectionHeading}>Loan Details</Text>
+
         {/* Loan Amount */}
         <View style={styles.inputRow}>
           <Text style={styles.label}>Loan Amount</Text>
@@ -357,63 +438,54 @@ export const LoanCalculator: React.FC<LoanCalculatorProps> = ({ colors, onTaskCo
           </View>
         </View>
 
-        {/* Interest Rate */}
-        <View style={styles.inputRow}>
-          <Text style={styles.label}>Interest Rate (Annual)</Text>
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.input}
-              value={interestRate}
-              onChangeText={handleInputChange(setInterestRate)}
-              keyboardType="numeric"
-              placeholder="0"
-              placeholderTextColor={colors.gray}
-            />
-            <Text style={styles.inputSuffix}>%</Text>
-          </View>
-        </View>
-
-        {/* Loan Term */}
-        <View style={[styles.inputRow, { marginBottom: 0 }]}>
-          <Text style={styles.label}>Loan Term</Text>
-          <View style={styles.termRow}>
-            <View style={[styles.inputContainer, styles.termInput]}>
+        {/* Interest Rate + Term grouped in a grid */}
+        <View style={styles.inputGrid}>
+          <View style={styles.inputGridItem}>
+            <Text style={styles.label}>Interest Rate</Text>
+            <View style={styles.inputContainer}>
               <TextInput
                 style={styles.input}
-                value={termYears}
-                onChangeText={handleInputChange(setTermYears)}
+                value={interestRate}
+                onChangeText={handleInputChange(setInterestRate)}
                 keyboardType="numeric"
                 placeholder="0"
                 placeholderTextColor={colors.gray}
               />
-              <Text style={styles.inputSuffix}>years</Text>
+              <Text style={styles.inputSuffix}>%</Text>
             </View>
-            <View style={[styles.inputContainer, styles.termInputSmall]}>
-              <TextInput
-                style={styles.input}
-                value={termMonths}
-                onChangeText={handleInputChange(setTermMonths)}
-                keyboardType="numeric"
-                placeholder="0"
-                placeholderTextColor={colors.gray}
-              />
-              <Text style={styles.inputSuffix}>mo</Text>
+          </View>
+          <View style={[styles.inputGridItem, { marginRight: 0 }]}>
+            <Text style={styles.label}>Term</Text>
+            <View style={styles.termRow}>
+              <View style={[styles.inputContainer, styles.termInput]}>
+                <TextInput
+                  style={styles.input}
+                  value={termYears}
+                  onChangeText={handleInputChange(setTermYears)}
+                  keyboardType="numeric"
+                  placeholder="0"
+                  placeholderTextColor={colors.gray}
+                />
+                <Text style={styles.inputSuffix}>yr</Text>
+              </View>
+              <View style={[styles.inputContainer, styles.termInputSmall]}>
+                <TextInput
+                  style={styles.input}
+                  value={termMonths}
+                  onChangeText={handleInputChange(setTermMonths)}
+                  keyboardType="numeric"
+                  placeholder="0"
+                  placeholderTextColor={colors.gray}
+                />
+                <Text style={styles.inputSuffix}>mo</Text>
+              </View>
             </View>
           </View>
         </View>
       </View>
 
-      {/* Results */}
-      <View style={styles.resultsCard}>
-        <View style={styles.mainResult}>
-          <Text style={styles.mainResultLabel}>Monthly Payment</Text>
-          <Text style={styles.mainResultValue}>
-            ${formatCurrency(monthlyPayment)}
-          </Text>
-          <Text style={styles.mainResultUnit}>per month for {totalMonths} months</Text>
-        </View>
-
-        {/* Payment Breakdown */}
+      {/* Payment Breakdown */}
+      <View style={styles.card}>
         <View style={styles.breakdownSection}>
           <Text style={styles.breakdownTitle}>Payment Breakdown</Text>
           <View style={styles.breakdownBar}>
@@ -445,24 +517,28 @@ export const LoanCalculator: React.FC<LoanCalculatorProps> = ({ colors, onTaskCo
         </View>
 
         {/* Summary */}
-        <View style={styles.summarySection}>
-          <View style={styles.summaryRow}>
+        <View style={styles.summaryGrid}>
+          <View style={styles.summaryTile}>
             <Text style={styles.summaryLabel}>Principal Amount</Text>
             <Text style={styles.summaryValue}>${formatCurrency(principalNum)}</Text>
           </View>
-          <View style={styles.summaryRow}>
+          <View style={styles.summaryTile}>
             <Text style={styles.summaryLabel}>Total Interest</Text>
             <Text style={[styles.summaryValue, { color: '#F44336' }]}>
               ${formatCurrency(totalInterest)}
             </Text>
           </View>
-          <View style={styles.summaryRow}>
+          <View style={styles.summaryTile}>
             <Text style={styles.summaryLabel}>Total Payment</Text>
             <Text style={[styles.summaryValue, { color: colors.orange }]}>
               ${formatCurrency(totalPayment)}
             </Text>
           </View>
         </View>
+      </View>
+
+      <View style={{ marginTop: 16 }}>
+        <AdBanner size="banner" />
       </View>
     </ScrollView>
   );

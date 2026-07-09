@@ -7,6 +7,7 @@ import {
   StyleSheet,
   ScrollView,
 } from 'react-native';
+import { AdBanner } from '../ads/AdBanner';
 
 interface DiscountCalculatorProps {
   colors: {
@@ -64,24 +65,67 @@ export const DiscountCalculator: React.FC<DiscountCalculatorProps> = ({ colors, 
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      paddingHorizontal: 5,
-      marginTop: 30,
+      paddingHorizontal: 14,
+      marginTop: 20,
+    },
+    header: {
+      flexDirection: 'row',
+      alignItems: 'baseline',
+      justifyContent: 'space-between',
+      marginBottom: 10,
     },
     title: {
-      fontSize: 18,
+      fontSize: 15,
       fontWeight: '600',
-      color: colors.white,
+      color: colors.lightGray,
+      textTransform: 'uppercase',
+      letterSpacing: 0.8,
+    },
+    heroCard: {
+      backgroundColor: colors.panelBg,
+      borderRadius: 20,
+      paddingVertical: 20,
+      paddingHorizontal: 18,
       marginBottom: 12,
-      textAlign: 'center',
+    },
+    heroTopRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'flex-end',
+    },
+    mainResultLabel: {
+      fontSize: 11,
+      color: colors.lightGray,
+      textTransform: 'uppercase',
+      letterSpacing: 0.5,
+      marginBottom: 4,
+    },
+    mainResultValue: {
+      fontSize: 44,
+      fontWeight: '700',
+      color: colors.orange,
+    },
+    savingsBadge: {
+      alignItems: 'flex-end',
+    },
+    savingsText: {
+      fontSize: 13,
+      color: '#4CAF50',
+      fontWeight: '600',
+    },
+    savingsPercent: {
+      fontSize: 20,
+      color: '#4CAF50',
+      fontWeight: '700',
     },
     card: {
       backgroundColor: colors.panelBg,
-      borderRadius: 16,
-      padding: 14,
+      borderRadius: 20,
+      padding: 16,
       marginBottom: 12,
     },
-    inputRow: {
-      marginBottom: 12,
+    priceRow: {
+      marginBottom: 14,
     },
     label: {
       fontSize: 11,
@@ -94,7 +138,7 @@ export const DiscountCalculator: React.FC<DiscountCalculatorProps> = ({ colors, 
       flexDirection: 'row',
       alignItems: 'center',
       backgroundColor: colors.iconButtonBg,
-      borderRadius: 10,
+      borderRadius: 12,
     },
     inputPrefix: {
       fontSize: 18,
@@ -116,9 +160,16 @@ export const DiscountCalculator: React.FC<DiscountCalculatorProps> = ({ colors, 
       paddingRight: 14,
       fontWeight: '500',
     },
+    discountGrid: {
+      flexDirection: 'row',
+      gap: 10,
+    },
+    discountCol: {
+      flex: 1,
+    },
     // Quick Discounts
     quickSection: {
-      marginTop: 4,
+      marginTop: 10,
     },
     quickTitle: {
       fontSize: 10,
@@ -131,9 +182,11 @@ export const DiscountCalculator: React.FC<DiscountCalculatorProps> = ({ colors, 
     },
     quickButton: {
       backgroundColor: colors.iconButtonBg,
-      paddingVertical: 6,
-      paddingHorizontal: 10,
-      borderRadius: 6,
+      width: 42,
+      height: 30,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: 8,
       marginRight: 6,
       marginBottom: 6,
     },
@@ -148,45 +201,24 @@ export const DiscountCalculator: React.FC<DiscountCalculatorProps> = ({ colors, 
     quickButtonTextActive: {
       color: '#ffffff',
     },
-    // Results
-    resultsCard: {
+    // Breakdown
+    breakdownCard: {
       backgroundColor: colors.panelBg,
-      borderRadius: 16,
+      borderRadius: 20,
       padding: 16,
     },
-    mainResult: {
-      alignItems: 'center',
-      paddingBottom: 14,
-      borderBottomWidth: 1,
-      borderBottomColor: colors.iconButtonBg,
-    },
-    mainResultLabel: {
+    breakdownHeading: {
       fontSize: 11,
       color: colors.lightGray,
       textTransform: 'uppercase',
       letterSpacing: 0.5,
-    },
-    mainResultValue: {
-      fontSize: 38,
-      fontWeight: '700',
-      color: colors.orange,
-      marginTop: 4,
-    },
-    savingsText: {
-      fontSize: 14,
-      color: '#4CAF50',
-      marginTop: 6,
-      fontWeight: '600',
-    },
-    // Breakdown
-    breakdownSection: {
-      paddingTop: 14,
+      marginBottom: 10,
     },
     breakdownRow: {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      paddingVertical: 8,
+      paddingVertical: 7,
     },
     breakdownLabel: {
       fontSize: 13,
@@ -211,12 +243,29 @@ export const DiscountCalculator: React.FC<DiscountCalculatorProps> = ({ colors, 
   });
 
   return (
+    <View style={{ flex: 1 }}>
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      <Text style={styles.title}>Discount Calculator</Text>
+      <View style={styles.header}>
+        <Text style={styles.title}>Discount Calculator</Text>
+      </View>
+
+      <View style={styles.heroCard}>
+        <View style={styles.heroTopRow}>
+          <View>
+            <Text style={styles.mainResultLabel}>Final Price</Text>
+            <Text style={styles.mainResultValue}>${formatCurrency(finalPrice)}</Text>
+          </View>
+          {totalDiscount > 0 && (
+            <View style={styles.savingsBadge}>
+              <Text style={styles.savingsPercent}>{totalDiscountPercent.toFixed(0)}%</Text>
+              <Text style={styles.savingsText}>saved ${formatCurrency(totalDiscount)}</Text>
+            </View>
+          )}
+        </View>
+      </View>
 
       <View style={styles.card}>
-        {/* Original Price */}
-        <View style={styles.inputRow}>
+        <View style={styles.priceRow}>
           <Text style={styles.label}>Original Price</Text>
           <View style={styles.inputContainer}>
             <Text style={styles.inputPrefix}>$</Text>
@@ -231,64 +280,63 @@ export const DiscountCalculator: React.FC<DiscountCalculatorProps> = ({ colors, 
           </View>
         </View>
 
-        {/* First Discount */}
-        <View style={styles.inputRow}>
-          <Text style={styles.label}>Discount</Text>
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.input}
-              value={discountPercent}
-              onChangeText={handleInputChange(setDiscountPercent)}
-              keyboardType="numeric"
-              placeholder="0"
-              placeholderTextColor={colors.gray}
-            />
-            <Text style={styles.inputSuffix}>%</Text>
+        <View style={styles.discountGrid}>
+          <View style={styles.discountCol}>
+            <Text style={styles.label}>Discount</Text>
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.input}
+                value={discountPercent}
+                onChangeText={handleInputChange(setDiscountPercent)}
+                keyboardType="numeric"
+                placeholder="0"
+                placeholderTextColor={colors.gray}
+              />
+              <Text style={styles.inputSuffix}>%</Text>
+            </View>
           </View>
-          <View style={styles.quickSection}>
-            <Text style={styles.quickTitle}>Quick select:</Text>
-            <View style={styles.quickRow}>
-              {QUICK_DISCOUNTS.map((d) => (
-                <TouchableOpacity
-                  key={d}
-                  style={[
-                    styles.quickButton,
-                    discount1 === d && styles.quickButtonActive,
-                  ]}
-                  onPress={() => setDiscountPercent(String(d))}
-                >
-                  <Text
-                    style={[
-                      styles.quickButtonText,
-                      discount1 === d && styles.quickButtonTextActive,
-                    ]}
-                  >
-                    {d}%
-                  </Text>
-                </TouchableOpacity>
-              ))}
+          <View style={styles.discountCol}>
+            <Text style={styles.label}>Additional</Text>
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.input}
+                value={secondDiscount}
+                onChangeText={handleInputChange(setSecondDiscount)}
+                keyboardType="numeric"
+                placeholder="0"
+                placeholderTextColor={colors.gray}
+              />
+              <Text style={styles.inputSuffix}>%</Text>
             </View>
           </View>
         </View>
 
-        {/* Second Discount (Optional) */}
-        <View style={styles.inputRow}>
-          <Text style={styles.label}>Additional Discount (Optional)</Text>
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.input}
-              value={secondDiscount}
-              onChangeText={handleInputChange(setSecondDiscount)}
-              keyboardType="numeric"
-              placeholder="0"
-              placeholderTextColor={colors.gray}
-            />
-            <Text style={styles.inputSuffix}>%</Text>
+        <View style={styles.quickSection}>
+          <Text style={styles.quickTitle}>Quick select:</Text>
+          <View style={styles.quickRow}>
+            {QUICK_DISCOUNTS.map((d) => (
+              <TouchableOpacity
+                key={d}
+                style={[
+                  styles.quickButton,
+                  discount1 === d && styles.quickButtonActive,
+                ]}
+                onPress={() => setDiscountPercent(String(d))}
+              >
+                <Text
+                  style={[
+                    styles.quickButtonText,
+                    discount1 === d && styles.quickButtonTextActive,
+                  ]}
+                >
+                  {d}%
+                </Text>
+              </TouchableOpacity>
+            ))}
           </View>
         </View>
 
-        {/* Tax */}
-        <View style={[styles.inputRow, { marginBottom: 0 }]}>
+        <View style={[styles.priceRow, { marginBottom: 0, marginTop: 14 }]}>
           <Text style={styles.label}>Sales Tax (Optional)</Text>
           <View style={styles.inputContainer}>
             <TextInput
@@ -304,59 +352,52 @@ export const DiscountCalculator: React.FC<DiscountCalculatorProps> = ({ colors, 
         </View>
       </View>
 
-      {/* Results */}
-      <View style={styles.resultsCard}>
-        <View style={styles.mainResult}>
-          <Text style={styles.mainResultLabel}>Final Price</Text>
-          <Text style={styles.mainResultValue}>${formatCurrency(finalPrice)}</Text>
-          {totalDiscount > 0 && (
-            <Text style={styles.savingsText}>
-              You save ${formatCurrency(totalDiscount)} ({totalDiscountPercent.toFixed(0)}% off)
-            </Text>
-          )}
+      {/* Results Breakdown */}
+      <View style={styles.breakdownCard}>
+        <Text style={styles.breakdownHeading}>Breakdown</Text>
+        <View style={styles.breakdownRow}>
+          <Text style={styles.breakdownLabel}>Original Price</Text>
+          <Text style={styles.breakdownValue}>${formatCurrency(price)}</Text>
         </View>
 
-        <View style={styles.breakdownSection}>
+        {discount1 > 0 && (
           <View style={styles.breakdownRow}>
-            <Text style={styles.breakdownLabel}>Original Price</Text>
-            <Text style={styles.breakdownValue}>${formatCurrency(price)}</Text>
+            <Text style={styles.breakdownLabel}>Discount ({discount1}%)</Text>
+            <Text style={[styles.breakdownValue, styles.breakdownValueDiscount]}>
+              -${formatCurrency(discountAmount1)}
+            </Text>
           </View>
+        )}
 
-          {discount1 > 0 && (
+        {discount2 > 0 && (
+          <View style={styles.breakdownRow}>
+            <Text style={styles.breakdownLabel}>Additional ({discount2}%)</Text>
+            <Text style={[styles.breakdownValue, styles.breakdownValueDiscount]}>
+              -${formatCurrency(discountAmount2)}
+            </Text>
+          </View>
+        )}
+
+        {tax > 0 && (
+          <>
+            <View style={styles.divider} />
             <View style={styles.breakdownRow}>
-              <Text style={styles.breakdownLabel}>Discount ({discount1}%)</Text>
-              <Text style={[styles.breakdownValue, styles.breakdownValueDiscount]}>
-                -${formatCurrency(discountAmount1)}
+              <Text style={styles.breakdownLabel}>Subtotal</Text>
+              <Text style={styles.breakdownValue}>${formatCurrency(priceAfterDiscount2)}</Text>
+            </View>
+            <View style={styles.breakdownRow}>
+              <Text style={styles.breakdownLabel}>Tax ({tax}%)</Text>
+              <Text style={[styles.breakdownValue, styles.breakdownValueTax]}>
+                +${formatCurrency(taxAmount)}
               </Text>
             </View>
-          )}
-
-          {discount2 > 0 && (
-            <View style={styles.breakdownRow}>
-              <Text style={styles.breakdownLabel}>Additional ({discount2}%)</Text>
-              <Text style={[styles.breakdownValue, styles.breakdownValueDiscount]}>
-                -${formatCurrency(discountAmount2)}
-              </Text>
-            </View>
-          )}
-
-          {tax > 0 && (
-            <>
-              <View style={styles.divider} />
-              <View style={styles.breakdownRow}>
-                <Text style={styles.breakdownLabel}>Subtotal</Text>
-                <Text style={styles.breakdownValue}>${formatCurrency(priceAfterDiscount2)}</Text>
-              </View>
-              <View style={styles.breakdownRow}>
-                <Text style={styles.breakdownLabel}>Tax ({tax}%)</Text>
-                <Text style={[styles.breakdownValue, styles.breakdownValueTax]}>
-                  +${formatCurrency(taxAmount)}
-                </Text>
-              </View>
-            </>
-          )}
-        </View>
+          </>
+        )}
       </View>
     </ScrollView>
+    <View style={{ marginTop: 16 }}>
+      <AdBanner size="banner" />
+    </View>
+    </View>
   );
 };

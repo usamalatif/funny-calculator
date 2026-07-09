@@ -6,6 +6,7 @@ import {
   TextInput,
   StyleSheet,
 } from 'react-native';
+import { AdBanner } from '../ads/AdBanner';
 
 interface FuelEfficiencyCalculatorProps {
   colors: {
@@ -92,24 +93,29 @@ export const FuelEfficiencyCalculator: React.FC<FuelEfficiencyCalculatorProps> =
       paddingHorizontal: 5,
       marginTop: 30,
     },
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginBottom: 14,
+    },
     title: {
-      fontSize: 18,
+      fontSize: 15,
       fontWeight: '600',
-      color: colors.white,
-      marginBottom: 12,
-      textAlign: 'center',
+      color: colors.gray,
+      textTransform: 'uppercase',
+      letterSpacing: 0.5,
     },
     // Unit Toggle
     unitToggle: {
       flexDirection: 'row',
       backgroundColor: colors.iconButtonBg,
       borderRadius: 10,
-      padding: 4,
-      marginBottom: 15,
+      padding: 3,
     },
     unitButton: {
-      flex: 1,
-      paddingVertical: 10,
+      paddingVertical: 6,
+      paddingHorizontal: 10,
       borderRadius: 8,
       alignItems: 'center',
     },
@@ -117,7 +123,7 @@ export const FuelEfficiencyCalculator: React.FC<FuelEfficiencyCalculatorProps> =
       backgroundColor: colors.orange,
     },
     unitButtonText: {
-      fontSize: 13,
+      fontSize: 11,
       fontWeight: '600',
     },
     unitButtonTextActive: {
@@ -126,21 +132,73 @@ export const FuelEfficiencyCalculator: React.FC<FuelEfficiencyCalculatorProps> =
     unitButtonTextInactive: {
       color: colors.gray,
     },
-    // Card
-    card: {
+    // Hero result
+    heroCard: {
       backgroundColor: colors.panelBg,
-      borderRadius: 16,
-      padding: 16,
+      borderRadius: 18,
+      paddingVertical: 22,
+      paddingHorizontal: 20,
+      marginBottom: 12,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    heroLeft: {
+      flexShrink: 1,
+    },
+    mainResultLabel: {
+      fontSize: 12,
+      color: colors.lightGray,
+      textTransform: 'uppercase',
+      letterSpacing: 0.5,
+      marginBottom: 2,
+    },
+    mainResultRow: {
+      flexDirection: 'row',
+      alignItems: 'baseline',
+    },
+    mainResultValue: {
+      fontSize: 48,
+      fontWeight: '700',
+      color: colors.orange,
+    },
+    mainResultUnit: {
+      fontSize: 14,
+      color: colors.gray,
+      marginLeft: 6,
+    },
+    secondaryInline: {
+      fontSize: 13,
+      color: colors.gray,
+      marginTop: 6,
+    },
+    ratingBadge: {
+      paddingVertical: 8,
+      paddingHorizontal: 14,
+      borderRadius: 20,
+      alignItems: 'center',
+    },
+    ratingText: {
+      fontSize: 12,
+      fontWeight: '600',
+      color: '#ffffff',
+    },
+    // Inputs
+    inputsRow: {
+      flexDirection: 'row',
+      gap: 10,
       marginBottom: 12,
     },
-    // Input Row
-    inputRow: {
-      marginBottom: 14,
+    inputCard: {
+      flex: 1,
+      backgroundColor: colors.panelBg,
+      borderRadius: 16,
+      padding: 14,
     },
     label: {
-      fontSize: 11,
+      fontSize: 10,
       color: colors.lightGray,
-      marginBottom: 6,
+      marginBottom: 8,
       textTransform: 'uppercase',
       letterSpacing: 0.5,
     },
@@ -152,78 +210,24 @@ export const FuelEfficiencyCalculator: React.FC<FuelEfficiencyCalculatorProps> =
     },
     input: {
       flex: 1,
-      fontSize: 20,
+      fontSize: 18,
       color: colors.white,
       fontWeight: '600',
-      paddingVertical: 12,
-      paddingHorizontal: 14,
+      paddingVertical: 10,
+      paddingHorizontal: 12,
+      minWidth: 0,
     },
     inputUnit: {
-      fontSize: 14,
-      color: colors.orange,
-      paddingRight: 14,
-      fontWeight: '500',
-    },
-    // Results
-    resultsCard: {
-      backgroundColor: colors.panelBg,
-      borderRadius: 16,
-      padding: 16,
-    },
-    mainResult: {
-      alignItems: 'center',
-      paddingBottom: 16,
-      borderBottomWidth: 1,
-      borderBottomColor: colors.iconButtonBg,
-    },
-    mainResultLabel: {
-      fontSize: 12,
-      color: colors.lightGray,
-      textTransform: 'uppercase',
-      letterSpacing: 0.5,
-    },
-    mainResultValue: {
-      fontSize: 42,
-      fontWeight: '700',
-      color: colors.orange,
-      marginVertical: 4,
-    },
-    mainResultUnit: {
-      fontSize: 14,
-      color: colors.gray,
-    },
-    ratingBadge: {
-      marginTop: 10,
-      paddingVertical: 6,
-      paddingHorizontal: 16,
-      borderRadius: 20,
-    },
-    ratingText: {
       fontSize: 13,
-      fontWeight: '600',
-      color: '#ffffff',
-    },
-    secondaryResult: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      paddingTop: 14,
-    },
-    secondaryLabel: {
-      fontSize: 14,
-      color: colors.gray,
-    },
-    secondaryValue: {
-      fontSize: 16,
-      color: colors.white,
-      fontWeight: '600',
+      color: colors.orange,
+      paddingRight: 12,
+      fontWeight: '500',
     },
     // Comparison
     comparisonCard: {
       backgroundColor: colors.panelBg,
       borderRadius: 16,
       padding: 14,
-      marginTop: 12,
     },
     comparisonTitle: {
       fontSize: 11,
@@ -231,65 +235,100 @@ export const FuelEfficiencyCalculator: React.FC<FuelEfficiencyCalculatorProps> =
       textTransform: 'uppercase',
       letterSpacing: 0.5,
       marginBottom: 10,
-      textAlign: 'center',
     },
     comparisonRow: {
       flexDirection: 'row',
-      justifyContent: 'space-around',
+      flexWrap: 'wrap',
+      gap: 10,
     },
     comparisonItem: {
+      flexBasis: '47%',
+      flexGrow: 1,
+      flexDirection: 'row',
       alignItems: 'center',
+      backgroundColor: colors.iconButtonBg,
+      borderRadius: 12,
+      paddingVertical: 10,
+      paddingHorizontal: 10,
     },
     comparisonIcon: {
       fontSize: 20,
-      marginBottom: 4,
+      marginRight: 8,
+    },
+    comparisonTextCol: {
+      alignItems: 'flex-start',
+      flexShrink: 1,
     },
     comparisonValue: {
-      fontSize: 12,
+      fontSize: 15,
       color: colors.white,
-      fontWeight: '600',
+      fontWeight: '700',
     },
     comparisonLabel: {
-      fontSize: 10,
+      fontSize: 11,
       color: colors.gray,
-      marginTop: 2,
+      marginTop: 1,
     },
   });
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Fuel Efficiency Calculator</Text>
+      <View style={styles.header}>
+        <Text style={styles.title}>Fuel Efficiency</Text>
 
-      {/* Unit System Toggle */}
-      <View style={styles.unitToggle}>
-        <TouchableOpacity
-          style={[styles.unitButton, unitSystem === 'metric' && styles.unitButtonActive]}
-          onPress={() => setUnitSystem('metric')}
-        >
-          <Text style={[
-            styles.unitButtonText,
-            unitSystem === 'metric' ? styles.unitButtonTextActive : styles.unitButtonTextInactive
-          ]}>
-            Metric (L/100km)
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.unitButton, unitSystem === 'imperial' && styles.unitButtonActive]}
-          onPress={() => setUnitSystem('imperial')}
-        >
-          <Text style={[
-            styles.unitButtonText,
-            unitSystem === 'imperial' ? styles.unitButtonTextActive : styles.unitButtonTextInactive
-          ]}>
-            Imperial (MPG)
-          </Text>
-        </TouchableOpacity>
+        <View style={styles.unitToggle}>
+          <TouchableOpacity
+            style={[styles.unitButton, unitSystem === 'metric' && styles.unitButtonActive]}
+            onPress={() => setUnitSystem('metric')}
+          >
+            <Text style={[
+              styles.unitButtonText,
+              unitSystem === 'metric' ? styles.unitButtonTextActive : styles.unitButtonTextInactive
+            ]}>
+              Metric
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.unitButton, unitSystem === 'imperial' && styles.unitButtonActive]}
+            onPress={() => setUnitSystem('imperial')}
+          >
+            <Text style={[
+              styles.unitButtonText,
+              unitSystem === 'imperial' ? styles.unitButtonTextActive : styles.unitButtonTextInactive
+            ]}>
+              Imperial
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
-      <View style={styles.card}>
-        {/* Distance */}
-        <View style={styles.inputRow}>
-          <Text style={styles.label}>Distance Traveled</Text>
+      {/* Hero Result */}
+      <View style={styles.heroCard}>
+        <View style={styles.heroLeft}>
+          <Text style={styles.mainResultLabel}>Your Fuel Efficiency</Text>
+          <View style={styles.mainResultRow}>
+            <Text style={styles.mainResultValue}>
+              {primary > 0 ? primary.toFixed(1) : '0'}
+            </Text>
+            <Text style={styles.mainResultUnit}>
+              {unitSystem === 'metric' ? 'L/100km' : 'MPG'}
+            </Text>
+          </View>
+          <Text style={styles.secondaryInline}>
+            {secondary > 0 ? secondary.toFixed(2) : '0'} {unitSystem === 'metric' ? 'km/L' : 'gal/100mi'}
+            {'  ·  '}
+            {unitSystem === 'metric' ? 'Kilometers per Liter' : 'Gallons per 100 mi'}
+          </Text>
+        </View>
+        <View style={[styles.ratingBadge, { backgroundColor: rating.color }]}>
+          <Text style={styles.ratingText}>{rating.label}</Text>
+        </View>
+      </View>
+
+      {/* Inputs */}
+      <View style={styles.inputsRow}>
+        <View style={styles.inputCard}>
+          <Text style={styles.label}>Distance</Text>
           <View style={styles.inputContainer}>
             <TextInput
               style={styles.input}
@@ -303,8 +342,7 @@ export const FuelEfficiencyCalculator: React.FC<FuelEfficiencyCalculatorProps> =
           </View>
         </View>
 
-        {/* Fuel Used */}
-        <View style={[styles.inputRow, { marginBottom: 0 }]}>
+        <View style={styles.inputCard}>
           <Text style={styles.label}>Fuel Used</Text>
           <View style={styles.inputContainer}>
             <TextInput
@@ -320,31 +358,6 @@ export const FuelEfficiencyCalculator: React.FC<FuelEfficiencyCalculatorProps> =
         </View>
       </View>
 
-      {/* Results */}
-      <View style={styles.resultsCard}>
-        <View style={styles.mainResult}>
-          <Text style={styles.mainResultLabel}>Your Fuel Efficiency</Text>
-          <Text style={styles.mainResultValue}>
-            {primary > 0 ? primary.toFixed(1) : '0'}
-          </Text>
-          <Text style={styles.mainResultUnit}>
-            {unitSystem === 'metric' ? 'L/100km' : 'MPG'}
-          </Text>
-          <View style={[styles.ratingBadge, { backgroundColor: rating.color }]}>
-            <Text style={styles.ratingText}>{rating.label}</Text>
-          </View>
-        </View>
-
-        <View style={styles.secondaryResult}>
-          <Text style={styles.secondaryLabel}>
-            {unitSystem === 'metric' ? 'Kilometers per Liter' : 'Gallons per 100 mi'}
-          </Text>
-          <Text style={styles.secondaryValue}>
-            {secondary > 0 ? secondary.toFixed(2) : '0'} {unitSystem === 'metric' ? 'km/L' : 'gal'}
-          </Text>
-        </View>
-      </View>
-
       {/* Comparison Reference */}
       <View style={styles.comparisonCard}>
         <Text style={styles.comparisonTitle}>
@@ -353,25 +366,37 @@ export const FuelEfficiencyCalculator: React.FC<FuelEfficiencyCalculatorProps> =
         <View style={styles.comparisonRow}>
           <View style={styles.comparisonItem}>
             <Text style={styles.comparisonIcon}>🏍️</Text>
-            <Text style={styles.comparisonValue}>{unitSystem === 'metric' ? '3-4' : '45-60'}</Text>
-            <Text style={styles.comparisonLabel}>Motorcycle</Text>
+            <View style={styles.comparisonTextCol}>
+              <Text style={styles.comparisonValue}>{unitSystem === 'metric' ? '3-4' : '45-60'}</Text>
+              <Text style={styles.comparisonLabel}>Motorcycle</Text>
+            </View>
           </View>
           <View style={styles.comparisonItem}>
             <Text style={styles.comparisonIcon}>🚗</Text>
-            <Text style={styles.comparisonValue}>{unitSystem === 'metric' ? '6-8' : '28-35'}</Text>
-            <Text style={styles.comparisonLabel}>Sedan</Text>
+            <View style={styles.comparisonTextCol}>
+              <Text style={styles.comparisonValue}>{unitSystem === 'metric' ? '6-8' : '28-35'}</Text>
+              <Text style={styles.comparisonLabel}>Sedan</Text>
+            </View>
           </View>
           <View style={styles.comparisonItem}>
             <Text style={styles.comparisonIcon}>🚙</Text>
-            <Text style={styles.comparisonValue}>{unitSystem === 'metric' ? '9-12' : '20-25'}</Text>
-            <Text style={styles.comparisonLabel}>SUV</Text>
+            <View style={styles.comparisonTextCol}>
+              <Text style={styles.comparisonValue}>{unitSystem === 'metric' ? '9-12' : '20-25'}</Text>
+              <Text style={styles.comparisonLabel}>SUV</Text>
+            </View>
           </View>
           <View style={styles.comparisonItem}>
             <Text style={styles.comparisonIcon}>🚚</Text>
-            <Text style={styles.comparisonValue}>{unitSystem === 'metric' ? '12-16' : '15-20'}</Text>
-            <Text style={styles.comparisonLabel}>Truck</Text>
+            <View style={styles.comparisonTextCol}>
+              <Text style={styles.comparisonValue}>{unitSystem === 'metric' ? '12-16' : '15-20'}</Text>
+              <Text style={styles.comparisonLabel}>Truck</Text>
+            </View>
           </View>
         </View>
+      </View>
+
+      <View style={{ marginTop: 16 }}>
+        <AdBanner size="banner" />
       </View>
     </View>
   );

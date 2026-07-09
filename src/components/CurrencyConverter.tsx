@@ -8,6 +8,7 @@ import {
   ScrollView,
   ActivityIndicator,
 } from 'react-native';
+import { AdBanner } from '../ads/AdBanner';
 
 interface CurrencyConverterProps {
   colors: {
@@ -139,35 +140,91 @@ export const CurrencyConverter: React.FC<CurrencyConverterProps> = ({ colors, on
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      paddingHorizontal: 5,
-      marginTop: 30,
+      paddingHorizontal: 16,
+      marginTop: 24,
+    },
+    headerRow: {
+      flexDirection: 'row',
+      alignItems: 'baseline',
+      justifyContent: 'space-between',
+      marginBottom: 18,
     },
     title: {
-      fontSize: 18,
+      fontSize: 15,
       fontWeight: '600',
-      color: colors.white,
-      marginBottom: 12,
-      textAlign: 'center',
+      color: colors.lightGray,
+      textTransform: 'uppercase',
+      letterSpacing: 0.8,
     },
-    // Card
-    card: {
+    headerHint: {
+      fontSize: 11,
+      color: colors.gray,
+    },
+    // Hero result
+    heroBlock: {
+      marginBottom: 22,
+    },
+    heroLabel: {
+      fontSize: 11,
+      color: colors.lightGray,
+      textTransform: 'uppercase',
+      letterSpacing: 0.5,
+      marginBottom: 4,
+    },
+    heroRow: {
+      flexDirection: 'row',
+      alignItems: 'flex-end',
+      justifyContent: 'space-between',
+    },
+    heroValue: {
+      fontSize: 40,
+      color: colors.white,
+      fontWeight: '700',
+      flexShrink: 1,
+    },
+    heroSymbol: {
+      fontSize: 22,
+      color: colors.orange,
+      fontWeight: '700',
+    },
+    heroBadge: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: colors.iconButtonBg,
+      borderRadius: 10,
+      paddingVertical: 6,
+      paddingHorizontal: 10,
+    },
+    heroBadgeFlag: {
+      fontSize: 16,
+      marginRight: 6,
+    },
+    heroBadgeCode: {
+      fontSize: 13,
+      fontWeight: '700',
+      color: colors.white,
+    },
+    // Converter panel
+    panel: {
       backgroundColor: colors.panelBg,
-      borderRadius: 16,
-      padding: 14,
+      borderRadius: 18,
+      padding: 12,
       marginBottom: 12,
     },
     // Currency Input Section
     currencySection: {
-      marginBottom: 16,
+      flexDirection: 'row',
+      alignItems: 'center',
     },
     label: {
-      fontSize: 11,
+      fontSize: 10,
       color: colors.lightGray,
-      marginBottom: 8,
+      marginBottom: 6,
       textTransform: 'uppercase',
       letterSpacing: 0.5,
     },
     currencyRow: {
+      flex: 1,
       flexDirection: 'row',
       alignItems: 'center',
     },
@@ -176,24 +233,23 @@ export const CurrencyConverter: React.FC<CurrencyConverterProps> = ({ colors, on
       alignItems: 'center',
       backgroundColor: colors.iconButtonBg,
       borderRadius: 10,
-      paddingVertical: 12,
-      paddingHorizontal: 12,
-      marginRight: 10,
-      minWidth: 110,
-    },
-    currencyFlag: {
-      fontSize: 22,
+      paddingVertical: 10,
+      paddingHorizontal: 10,
       marginRight: 8,
     },
+    currencyFlag: {
+      fontSize: 18,
+      marginRight: 6,
+    },
     currencyCode: {
-      fontSize: 16,
+      fontSize: 14,
       fontWeight: '700',
       color: colors.white,
     },
     currencyArrow: {
-      fontSize: 12,
+      fontSize: 10,
       color: colors.gray,
-      marginLeft: 6,
+      marginLeft: 5,
     },
     inputContainer: {
       flex: 1,
@@ -203,35 +259,43 @@ export const CurrencyConverter: React.FC<CurrencyConverterProps> = ({ colors, on
       borderRadius: 10,
     },
     inputPrefix: {
-      fontSize: 16,
+      fontSize: 14,
       color: colors.orange,
-      paddingLeft: 12,
+      paddingLeft: 10,
       fontWeight: '600',
     },
     input: {
       flex: 1,
-      fontSize: 22,
+      fontSize: 18,
       color: colors.white,
       fontWeight: '700',
-      paddingVertical: 10,
-      paddingHorizontal: 8,
+      paddingVertical: 8,
+      paddingHorizontal: 6,
       textAlign: 'right',
     },
     // Swap Button
     swapContainer: {
+      flexDirection: 'row',
       alignItems: 'center',
-      marginVertical: 4,
+      marginVertical: 8,
+      paddingLeft: 4,
+    },
+    swapDivider: {
+      flex: 1,
+      height: 1,
+      backgroundColor: colors.iconButtonBg,
     },
     swapButton: {
-      width: 44,
-      height: 44,
-      borderRadius: 22,
+      width: 36,
+      height: 36,
+      borderRadius: 18,
       backgroundColor: colors.orange,
       justifyContent: 'center',
       alignItems: 'center',
+      marginHorizontal: 10,
     },
     swapIcon: {
-      fontSize: 20,
+      fontSize: 16,
       color: '#ffffff',
     },
     // Result Section
@@ -239,54 +303,60 @@ export const CurrencyConverter: React.FC<CurrencyConverterProps> = ({ colors, on
       marginTop: 4,
     },
     resultValue: {
-      fontSize: 18,
+      fontSize: 16,
       color: colors.white,
       fontWeight: '600',
       textAlign: 'right',
-      paddingVertical: 12,
-      paddingHorizontal: 12,
+      paddingVertical: 10,
+      paddingHorizontal: 10,
       backgroundColor: colors.iconButtonBg,
       borderRadius: 10,
     },
     // Exchange Rate Info
     rateCard: {
       backgroundColor: colors.panelBg,
-      borderRadius: 16,
-      padding: 14,
+      borderRadius: 14,
+      paddingVertical: 10,
+      paddingHorizontal: 14,
       marginBottom: 12,
+      flexDirection: 'row',
+      alignItems: 'center',
     },
     rateTitle: {
-      fontSize: 11,
+      fontSize: 10,
       color: colors.lightGray,
       textTransform: 'uppercase',
       letterSpacing: 0.5,
-      marginBottom: 10,
     },
     rateRow: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      paddingVertical: 8,
+      flex: 1,
+      alignItems: 'flex-end',
     },
     rateLabel: {
-      fontSize: 13,
+      fontSize: 11,
       color: colors.gray,
     },
     rateValue: {
-      fontSize: 14,
+      fontSize: 13,
       color: colors.white,
       fontWeight: '600',
     },
+    rateSeparator: {
+      width: 1,
+      alignSelf: 'stretch',
+      backgroundColor: colors.iconButtonBg,
+      marginHorizontal: 12,
+    },
     // Disclaimer
     disclaimer: {
-      backgroundColor: colors.panelBg,
-      borderRadius: 12,
-      padding: 12,
+      paddingHorizontal: 4,
+      paddingVertical: 4,
+      marginBottom: 12,
     },
     disclaimerText: {
       fontSize: 10,
       color: colors.gray,
-      textAlign: 'center',
+      textAlign: 'left',
       lineHeight: 14,
     },
     // Picker Modal
@@ -399,13 +469,34 @@ export const CurrencyConverter: React.FC<CurrencyConverterProps> = ({ colors, on
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      <Text style={styles.title}>Currency Converter</Text>
+      <View style={styles.headerRow}>
+        <Text style={styles.title}>Currency Converter</Text>
+        <Text style={styles.headerHint}>Static rates</Text>
+      </View>
 
-      <View style={styles.card}>
+      <View style={styles.heroBlock}>
+        <Text style={styles.heroLabel}>You get</Text>
+        <View style={styles.heroRow}>
+          <Text style={styles.heroValue} numberOfLines={1} adjustsFontSizeToFit>
+            <Text style={styles.heroSymbol}>{toCurrencyData.symbol} </Text>
+            {formatNumber(convertedAmount)}
+          </Text>
+          <TouchableOpacity
+            style={styles.heroBadge}
+            onPress={() => setShowToPicker(true)}
+          >
+            <Text style={styles.heroBadgeFlag}>{toCurrencyData.flag}</Text>
+            <Text style={styles.heroBadgeCode}>{toCurrency}</Text>
+            <Text style={styles.currencyArrow}>▼</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      <View style={styles.panel}>
         {/* From Currency */}
-        <View style={styles.currencySection}>
+        <View>
           <Text style={styles.label}>From</Text>
-          <View style={styles.currencyRow}>
+          <View style={styles.currencySection}>
             <TouchableOpacity
               style={styles.currencySelector}
               onPress={() => setShowFromPicker(true)}
@@ -430,15 +521,17 @@ export const CurrencyConverter: React.FC<CurrencyConverterProps> = ({ colors, on
 
         {/* Swap Button */}
         <View style={styles.swapContainer}>
+          <View style={styles.swapDivider} />
           <TouchableOpacity style={styles.swapButton} onPress={swapCurrencies}>
             <Text style={styles.swapIcon}>⇅</Text>
           </TouchableOpacity>
+          <View style={styles.swapDivider} />
         </View>
 
         {/* To Currency */}
-        <View style={styles.currencySection}>
+        <View>
           <Text style={styles.label}>To</Text>
-          <View style={styles.currencyRow}>
+          <View style={styles.currencySection}>
             <TouchableOpacity
               style={styles.currencySelector}
               onPress={() => setShowToPicker(true)}
@@ -458,13 +551,13 @@ export const CurrencyConverter: React.FC<CurrencyConverterProps> = ({ colors, on
 
       {/* Exchange Rate Info */}
       <View style={styles.rateCard}>
-        <Text style={styles.rateTitle}>Exchange Rate</Text>
         <View style={styles.rateRow}>
           <Text style={styles.rateLabel}>1 {fromCurrency}</Text>
           <Text style={styles.rateValue}>
             {toCurrencyData.symbol} {formatNumber(exchangeRate, 4)}
           </Text>
         </View>
+        <View style={styles.rateSeparator} />
         <View style={styles.rateRow}>
           <Text style={styles.rateLabel}>1 {toCurrency}</Text>
           <Text style={styles.rateValue}>
@@ -495,6 +588,10 @@ export const CurrencyConverter: React.FC<CurrencyConverterProps> = ({ colors, on
         onSelect={setToCurrency}
         title="Select Currency"
       />
+
+      <View style={{ marginTop: 16 }}>
+        <AdBanner size="banner" />
+      </View>
     </ScrollView>
   );
 };

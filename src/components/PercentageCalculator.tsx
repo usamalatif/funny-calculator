@@ -7,6 +7,7 @@ import {
   StyleSheet,
   ScrollView,
 } from 'react-native';
+import { AdBanner } from '../ads/AdBanner';
 
 interface PercentageCalculatorProps {
   colors: {
@@ -124,35 +125,79 @@ export const PercentageCalculator: React.FC<PercentageCalculatorProps> = ({ colo
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      paddingHorizontal: 5,
-      marginTop: 30,
+      paddingHorizontal: 14,
+      marginTop: 24,
+    },
+    headerRow: {
+      flexDirection: 'row',
+      alignItems: 'baseline',
+      justifyContent: 'space-between',
+      marginBottom: 14,
     },
     title: {
-      fontSize: 18,
-      fontWeight: '600',
-      color: colors.white,
-      marginBottom: 12,
-      textAlign: 'center',
+      fontSize: 15,
+      fontWeight: '700',
+      color: colors.gray,
+      textTransform: 'uppercase',
+      letterSpacing: 1,
+    },
+    headerDesc: {
+      fontSize: 12,
+      color: colors.lightGray,
+      maxWidth: '55%',
+      textAlign: 'right',
+    },
+    // Hero result
+    heroCard: {
+      backgroundColor: colors.panelBg,
+      borderRadius: 20,
+      paddingVertical: 18,
+      paddingHorizontal: 20,
+      marginBottom: 14,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    heroLeft: {
+      flexShrink: 1,
+      paddingRight: 12,
+    },
+    resultLabel: {
+      fontSize: 11,
+      color: colors.lightGray,
+      textTransform: 'uppercase',
+      letterSpacing: 0.5,
+      marginBottom: 4,
+    },
+    resultValue: {
+      fontSize: 40,
+      fontWeight: '700',
+      color: colors.orange,
+    },
+    formulaText: {
+      fontSize: 12,
+      color: colors.gray,
+      marginTop: 6,
     },
     // Calc Type Selector
     calcTypeScroll: {
-      marginBottom: 12,
+      marginBottom: 14,
     },
     calcTypeRow: {
       flexDirection: 'row',
     },
     calcTypeButton: {
-      paddingVertical: 10,
-      paddingHorizontal: 14,
-      borderRadius: 10,
-      marginRight: 8,
+      paddingVertical: 8,
+      paddingHorizontal: 12,
+      borderRadius: 20,
+      marginRight: 6,
       backgroundColor: colors.iconButtonBg,
     },
     calcTypeButtonActive: {
       backgroundColor: colors.orange,
     },
     calcTypeLabel: {
-      fontSize: 13,
+      fontSize: 12,
       fontWeight: '600',
     },
     calcTypeLabelActive: {
@@ -161,31 +206,22 @@ export const PercentageCalculator: React.FC<PercentageCalculatorProps> = ({ colo
     calcTypeLabelInactive: {
       color: colors.gray,
     },
-    // Description
-    descCard: {
+    // Inputs grid
+    inputsGrid: {
+      flexDirection: 'row',
+      marginBottom: 12,
+    },
+    inputCol: {
+      flex: 1,
       backgroundColor: colors.panelBg,
-      borderRadius: 12,
+      borderRadius: 14,
       padding: 12,
-      marginBottom: 12,
     },
-    descText: {
-      fontSize: 14,
-      color: colors.lightGray,
-      textAlign: 'center',
-    },
-    // Card
-    card: {
-      backgroundColor: colors.panelBg,
-      borderRadius: 16,
-      padding: 16,
-      marginBottom: 12,
-    },
-    // Input Row
-    inputRow: {
-      marginBottom: 14,
+    inputColGap: {
+      width: 10,
     },
     label: {
-      fontSize: 11,
+      fontSize: 10,
       color: colors.lightGray,
       marginBottom: 6,
       textTransform: 'uppercase',
@@ -199,50 +235,21 @@ export const PercentageCalculator: React.FC<PercentageCalculatorProps> = ({ colo
     },
     input: {
       flex: 1,
-      fontSize: 22,
+      fontSize: 20,
       color: colors.white,
       fontWeight: '600',
-      paddingVertical: 12,
-      paddingHorizontal: 14,
+      paddingVertical: 10,
+      paddingHorizontal: 12,
     },
     inputSuffix: {
-      fontSize: 16,
+      fontSize: 15,
       color: colors.orange,
-      paddingRight: 14,
+      paddingRight: 12,
       fontWeight: '500',
-    },
-    // Results
-    resultsCard: {
-      backgroundColor: colors.panelBg,
-      borderRadius: 16,
-      padding: 20,
-    },
-    resultLabel: {
-      fontSize: 12,
-      color: colors.lightGray,
-      textTransform: 'uppercase',
-      letterSpacing: 0.5,
-      textAlign: 'center',
-      marginBottom: 8,
-    },
-    resultValue: {
-      fontSize: 44,
-      fontWeight: '700',
-      color: colors.orange,
-      textAlign: 'center',
-    },
-    formulaText: {
-      fontSize: 14,
-      color: colors.gray,
-      textAlign: 'center',
-      marginTop: 12,
-      paddingTop: 12,
-      borderTopWidth: 1,
-      borderTopColor: colors.iconButtonBg,
     },
     // Quick percentages
     quickSection: {
-      marginTop: 12,
+      marginBottom: 20,
     },
     quickTitle: {
       fontSize: 11,
@@ -298,8 +305,22 @@ export const PercentageCalculator: React.FC<PercentageCalculatorProps> = ({ colo
   };
 
   return (
+    <View style={{ flex: 1 }}>
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      <Text style={styles.title}>Percentage Calculator</Text>
+      {/* Header */}
+      <View style={styles.headerRow}>
+        <Text style={styles.title}>Percentage</Text>
+        <Text style={styles.headerDesc}>{currentCalc?.desc}</Text>
+      </View>
+
+      {/* Hero Result */}
+      <View style={styles.heroCard}>
+        <View style={styles.heroLeft}>
+          <Text style={styles.resultLabel}>Result</Text>
+          <Text style={styles.formulaText}>{formula}</Text>
+        </View>
+        <Text style={styles.resultValue}>{result}</Text>
+      </View>
 
       {/* Calc Type Selector */}
       <ScrollView
@@ -336,14 +357,9 @@ export const PercentageCalculator: React.FC<PercentageCalculatorProps> = ({ colo
         </View>
       </ScrollView>
 
-      {/* Description */}
-      <View style={styles.descCard}>
-        <Text style={styles.descText}>{currentCalc?.desc}</Text>
-      </View>
-
       {/* Inputs */}
-      <View style={styles.card}>
-        <View style={styles.inputRow}>
+      <View style={styles.inputsGrid}>
+        <View style={styles.inputCol}>
           <Text style={styles.label}>{labels.label1}</Text>
           <View style={styles.inputContainer}>
             <TextInput
@@ -361,7 +377,9 @@ export const PercentageCalculator: React.FC<PercentageCalculatorProps> = ({ colo
           </View>
         </View>
 
-        <View style={[styles.inputRow, { marginBottom: 0 }]}>
+        <View style={styles.inputColGap} />
+
+        <View style={styles.inputCol}>
           <Text style={styles.label}>{labels.label2}</Text>
           <View style={styles.inputContainer}>
             <TextInput
@@ -377,16 +395,13 @@ export const PercentageCalculator: React.FC<PercentageCalculatorProps> = ({ colo
             )}
           </View>
         </View>
-
-        <QuickPercentages />
       </View>
 
-      {/* Results */}
-      <View style={styles.resultsCard}>
-        <Text style={styles.resultLabel}>Result</Text>
-        <Text style={styles.resultValue}>{result}</Text>
-        <Text style={styles.formulaText}>{formula}</Text>
-      </View>
+      <QuickPercentages />
     </ScrollView>
+    <View style={{ marginTop: 16 }}>
+      <AdBanner size="banner" />
+    </View>
+    </View>
   );
 };

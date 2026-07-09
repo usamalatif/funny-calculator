@@ -7,6 +7,7 @@ import {
   StyleSheet,
   ScrollView,
 } from 'react-native';
+import { AdBanner } from '../ads/AdBanner';
 
 interface GPACalculatorProps {
   colors: {
@@ -104,44 +105,55 @@ export const GPACalculator: React.FC<GPACalculatorProps> = ({ colors, onTaskComp
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      paddingHorizontal: 5,
-      marginTop: 30,
+      paddingHorizontal: 14,
+      marginTop: 24,
+    },
+    headerRow: {
+      flexDirection: 'row',
+      alignItems: 'flex-end',
+      justifyContent: 'space-between',
+      marginBottom: 14,
     },
     title: {
-      fontSize: 18,
+      fontSize: 15,
       fontWeight: '600',
-      color: colors.white,
-      marginBottom: 12,
-      textAlign: 'center',
+      color: colors.lightGray,
+      textTransform: 'uppercase',
+      letterSpacing: 1,
     },
-    // Results Card
-    resultsCard: {
-      backgroundColor: colors.panelBg,
-      borderRadius: 16,
-      padding: 16,
-      marginBottom: 12,
-      alignItems: 'center',
+    creditsText: {
+      fontSize: 13,
+      color: colors.gray,
+    },
+    // Hero GPA
+    heroRow: {
+      flexDirection: 'row',
+      alignItems: 'baseline',
+      marginBottom: 18,
+    },
+    gpaValue: {
+      fontSize: 64,
+      fontWeight: '700',
+      lineHeight: 66,
+    },
+    heroMeta: {
+      marginLeft: 12,
+      paddingBottom: 6,
     },
     gpaLabel: {
       fontSize: 12,
       color: colors.lightGray,
       textTransform: 'uppercase',
       letterSpacing: 1,
-    },
-    gpaValue: {
-      fontSize: 48,
-      fontWeight: '700',
-      marginVertical: 4,
-    },
-    creditsText: {
-      fontSize: 13,
-      color: colors.gray,
+      marginBottom: 2,
     },
     // Courses Card
     coursesCard: {
       backgroundColor: colors.panelBg,
-      borderRadius: 16,
-      padding: 12,
+      borderRadius: 20,
+      paddingTop: 14,
+      paddingBottom: 6,
+      paddingHorizontal: 12,
       flex: 1,
     },
     coursesHeader: {
@@ -159,14 +171,17 @@ export const GPACalculator: React.FC<GPACalculatorProps> = ({ colors, onTaskComp
     },
     addButton: {
       backgroundColor: colors.orange,
-      paddingVertical: 6,
-      paddingHorizontal: 12,
-      borderRadius: 6,
+      width: 30,
+      height: 30,
+      borderRadius: 15,
+      justifyContent: 'center',
+      alignItems: 'center',
     },
     addButtonText: {
-      fontSize: 12,
+      fontSize: 16,
       color: '#ffffff',
-      fontWeight: '600',
+      fontWeight: '700',
+      lineHeight: 18,
     },
     // Course Row
     coursesList: {
@@ -176,21 +191,22 @@ export const GPACalculator: React.FC<GPACalculatorProps> = ({ colors, onTaskComp
       flexDirection: 'row',
       alignItems: 'center',
       backgroundColor: colors.iconButtonBg,
-      borderRadius: 10,
+      borderRadius: 12,
       marginBottom: 8,
-      padding: 10,
+      paddingVertical: 8,
+      paddingHorizontal: 10,
     },
     courseIndex: {
-      width: 24,
-      height: 24,
-      borderRadius: 12,
+      width: 22,
+      height: 22,
+      borderRadius: 6,
       backgroundColor: colors.orange,
       justifyContent: 'center',
       alignItems: 'center',
       marginRight: 10,
     },
     courseIndexText: {
-      fontSize: 12,
+      fontSize: 11,
       color: '#ffffff',
       fontWeight: '600',
     },
@@ -198,25 +214,25 @@ export const GPACalculator: React.FC<GPACalculatorProps> = ({ colors, onTaskComp
       flex: 1,
       flexDirection: 'row',
       alignItems: 'center',
+      gap: 8,
     },
     creditsInput: {
-      width: 45,
+      width: 42,
       backgroundColor: 'rgba(255,255,255,0.1)',
-      borderRadius: 6,
-      paddingVertical: 8,
-      paddingHorizontal: 8,
+      borderRadius: 8,
+      paddingVertical: 6,
+      paddingHorizontal: 6,
       fontSize: 14,
       color: colors.white,
       fontWeight: '600',
       textAlign: 'center',
-      marginRight: 8,
     },
     gradeButton: {
       backgroundColor: 'rgba(255,255,255,0.1)',
-      borderRadius: 6,
-      paddingVertical: 8,
+      borderRadius: 8,
+      paddingVertical: 6,
       paddingHorizontal: 12,
-      minWidth: 50,
+      minWidth: 46,
       alignItems: 'center',
     },
     gradeButtonText: {
@@ -225,16 +241,16 @@ export const GPACalculator: React.FC<GPACalculatorProps> = ({ colors, onTaskComp
       fontWeight: '600',
     },
     removeButton: {
-      width: 28,
-      height: 28,
-      borderRadius: 14,
+      width: 24,
+      height: 24,
+      borderRadius: 12,
       backgroundColor: 'rgba(255,100,100,0.2)',
       justifyContent: 'center',
       alignItems: 'center',
-      marginLeft: 8,
+      marginLeft: 6,
     },
     removeButtonText: {
-      fontSize: 16,
+      fontSize: 14,
       color: '#ff6b6b',
       fontWeight: '400',
     },
@@ -294,7 +310,7 @@ export const GPACalculator: React.FC<GPACalculatorProps> = ({ colors, onTaskComp
       color: colors.gray,
     },
     inputLabel: {
-      fontSize: 10,
+      fontSize: 9,
       color: colors.gray,
       textAlign: 'center',
       marginTop: 2,
@@ -341,17 +357,19 @@ export const GPACalculator: React.FC<GPACalculatorProps> = ({ colors, onTaskComp
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>GPA Calculator</Text>
+      <View style={styles.headerRow}>
+        <Text style={styles.title}>GPA Calculator</Text>
+        <Text style={styles.creditsText}>{getTotalCredits()} credits</Text>
+      </View>
 
-      {/* GPA Result */}
-      <View style={styles.resultsCard}>
-        <Text style={styles.gpaLabel}>Your GPA</Text>
+      {/* Hero GPA */}
+      <View style={styles.heroRow}>
         <Text style={[styles.gpaValue, { color: getGPAColor() }]}>
           {gpa.toFixed(2)}
         </Text>
-        <Text style={styles.creditsText}>
-          {getTotalCredits()} Total Credits
-        </Text>
+        <View style={styles.heroMeta}>
+          <Text style={styles.gpaLabel}>Your GPA</Text>
+        </View>
       </View>
 
       {/* Courses */}
@@ -359,7 +377,7 @@ export const GPACalculator: React.FC<GPACalculatorProps> = ({ colors, onTaskComp
         <View style={styles.coursesHeader}>
           <Text style={styles.coursesTitle}>Courses</Text>
           <TouchableOpacity style={styles.addButton} onPress={addCourse}>
-            <Text style={styles.addButtonText}>+ Add</Text>
+            <Text style={styles.addButtonText}>+</Text>
           </TouchableOpacity>
         </View>
 
@@ -403,6 +421,10 @@ export const GPACalculator: React.FC<GPACalculatorProps> = ({ colors, onTaskComp
       </View>
 
       <GradePicker />
+
+      <View style={{ marginTop: 16 }}>
+        <AdBanner size="banner" />
+      </View>
     </View>
   );
 };

@@ -9,6 +9,7 @@ import {
   Dimensions,
 } from 'react-native';
 import Svg, { Path, Circle, Line, Rect } from 'react-native-svg';
+import { AdBanner } from '../ads/AdBanner';
 
 interface UnitConverterProps {
   colors: {
@@ -188,22 +189,46 @@ export const UnitConverter: React.FC<UnitConverterProps> = ({ colors, onTaskComp
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      paddingHorizontal: 5,
-      marginTop: 30,
+      paddingHorizontal: 16,
+      marginTop: 24,
     },
-    // Category Grid - 3x2
-    categoryGrid: {
+    // Header
+    header: {
       flexDirection: 'row',
-      flexWrap: 'wrap',
+      alignItems: 'baseline',
       justifyContent: 'space-between',
-      marginBottom: 15,
+      marginBottom: 14,
+    },
+    headerLabel: {
+      fontSize: 12,
+      color: colors.lightGray,
+      textTransform: 'uppercase',
+      letterSpacing: 1,
+      fontWeight: '600',
+    },
+    headerTitle: {
+      fontSize: 20,
+      fontWeight: '700',
+      color: colors.white,
+    },
+    // Category strip - horizontal scroll of chips
+    categoryStrip: {
+      flexGrow: 0,
+      height: 44,
+      marginBottom: 18,
+    },
+    categoryStripContent: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingBottom: 4,
     },
     categoryItem: {
-      width: '31%',
-      paddingVertical: 12,
-      borderRadius: 12,
+      flexDirection: 'row',
       alignItems: 'center',
-      marginBottom: 8,
+      paddingVertical: 8,
+      paddingHorizontal: 12,
+      borderRadius: 20,
+      marginRight: 8,
     },
     categoryItemActive: {
       backgroundColor: colors.orange,
@@ -212,10 +237,10 @@ export const UnitConverter: React.FC<UnitConverterProps> = ({ colors, onTaskComp
       backgroundColor: colors.iconButtonBg,
     },
     categoryIcon: {
-      marginBottom: 4,
+      marginRight: 6,
     },
     categoryLabel: {
-      fontSize: 11,
+      fontSize: 12,
       fontWeight: '600',
     },
     categoryLabelActive: {
@@ -224,45 +249,61 @@ export const UnitConverter: React.FC<UnitConverterProps> = ({ colors, onTaskComp
     categoryLabelInactive: {
       color: colors.gray,
     },
-    // Category Title
-    categoryTitle: {
-      fontSize: 18,
-      fontWeight: '600',
-      color: colors.white,
-      marginBottom: 12,
-      textAlign: 'center',
-    },
-    // Conversion Section
-    conversionSection: {
+    // Hero result
+    heroCard: {
       backgroundColor: colors.panelBg,
-      borderRadius: 16,
-      padding: 16,
+      borderRadius: 20,
+      paddingVertical: 22,
+      paddingHorizontal: 18,
+      marginBottom: 14,
     },
-    // Input Row
-    inputRow: {
-      marginBottom: 12,
+    heroTopRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'flex-start',
+      marginBottom: 6,
     },
-    rowLabel: {
+    heroLabel: {
       fontSize: 11,
       color: colors.lightGray,
-      marginBottom: 6,
       textTransform: 'uppercase',
       letterSpacing: 0.5,
     },
-    rowContent: {
+    heroUnitBadge: {
+      fontSize: 12,
+      color: colors.orange,
+      fontWeight: '600',
+    },
+    heroValueRow: {
+      flexDirection: 'row',
+      alignItems: 'flex-end',
+    },
+    resultValue: {
+      fontSize: 40,
+      fontWeight: '700',
+      color: colors.orange,
+    },
+    resultUnit: {
+      fontSize: 16,
+      color: colors.lightGray,
+      marginLeft: 8,
+      marginBottom: 6,
+      fontWeight: '500',
+    },
+    // Input + swap combined row
+    convertRow: {
       flexDirection: 'row',
       alignItems: 'center',
     },
     unitDropdown: {
       backgroundColor: colors.iconButtonBg,
       paddingVertical: 12,
-      paddingHorizontal: 14,
-      borderRadius: 10,
-      marginRight: 10,
-      minWidth: 100,
+      paddingHorizontal: 12,
+      borderRadius: 12,
+      minWidth: 84,
     },
     unitDropdownText: {
-      fontSize: 15,
+      fontSize: 14,
       color: colors.white,
       fontWeight: '500',
     },
@@ -274,18 +315,14 @@ export const UnitConverter: React.FC<UnitConverterProps> = ({ colors, onTaskComp
     valueInput: {
       flex: 1,
       backgroundColor: colors.iconButtonBg,
-      borderRadius: 10,
+      borderRadius: 12,
       paddingVertical: 12,
       paddingHorizontal: 14,
-      fontSize: 22,
+      marginHorizontal: 8,
+      fontSize: 20,
       color: colors.white,
       fontWeight: '600',
       textAlign: 'right',
-    },
-    // Swap Button
-    swapRow: {
-      alignItems: 'center',
-      marginVertical: 8,
     },
     swapBtn: {
       backgroundColor: colors.orange,
@@ -299,32 +336,17 @@ export const UnitConverter: React.FC<UnitConverterProps> = ({ colors, onTaskComp
       fontSize: 18,
       color: '#ffffff',
     },
-    // Result Row
-    resultRow: {
-      marginTop: 4,
-    },
-    resultContent: {
+    toRow: {
       flexDirection: 'row',
       alignItems: 'center',
+      marginTop: 10,
     },
-    resultDisplay: {
-      flex: 1,
-      backgroundColor: colors.iconButtonBg,
-      borderRadius: 10,
-      paddingVertical: 12,
-      paddingHorizontal: 14,
-    },
-    resultValue: {
-      fontSize: 24,
-      fontWeight: '700',
-      color: colors.orange,
-      textAlign: 'right',
-    },
-    resultUnit: {
-      fontSize: 12,
+    toLabel: {
+      fontSize: 11,
       color: colors.lightGray,
-      textAlign: 'right',
-      marginTop: 2,
+      marginRight: 8,
+      textTransform: 'uppercase',
+      letterSpacing: 0.5,
     },
     // Picker Modal
     pickerOverlay: {
@@ -424,8 +446,21 @@ export const UnitConverter: React.FC<UnitConverterProps> = ({ colors, onTaskComp
 
   return (
     <View style={styles.container}>
-      {/* Category Grid */}
-      <View style={styles.categoryGrid}>
+      {/* Header */}
+      <View style={styles.header}>
+        <Text style={styles.headerLabel}>Convert</Text>
+        <Text style={styles.headerTitle}>
+          {CATEGORIES.find(c => c.value === category)?.label}
+        </Text>
+      </View>
+
+      {/* Category strip */}
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={styles.categoryStrip}
+        contentContainerStyle={styles.categoryStripContent}
+      >
         {CATEGORIES.map((cat) => (
           <TouchableOpacity
             key={cat.value}
@@ -442,7 +477,7 @@ export const UnitConverter: React.FC<UnitConverterProps> = ({ colors, onTaskComp
             <View style={styles.categoryIcon}>
               <cat.Icon
                 color={category === cat.value ? '#ffffff' : colors.gray}
-                size={20}
+                size={16}
               />
             </View>
             <Text
@@ -455,61 +490,51 @@ export const UnitConverter: React.FC<UnitConverterProps> = ({ colors, onTaskComp
             </Text>
           </TouchableOpacity>
         ))}
-      </View>
+      </ScrollView>
 
-      {/* Category Title */}
-      <Text style={styles.categoryTitle}>
-        {CATEGORIES.find(c => c.value === category)?.label} Converter
-      </Text>
-
-      {/* Conversion Section */}
-      <View style={styles.conversionSection}>
-        {/* From */}
-        <View style={styles.inputRow}>
-          <Text style={styles.rowLabel}>From</Text>
-          <View style={styles.rowContent}>
-            <TouchableOpacity
-              style={styles.unitDropdown}
-              onPress={() => setShowFromPicker(true)}
-            >
-              <Text style={styles.unitDropdownText}>{from.label}</Text>
-              <Text style={styles.unitDropdownSymbol}>{from.value}</Text>
-            </TouchableOpacity>
-            <TextInput
-              style={styles.valueInput}
-              value={inputValue}
-              onChangeText={handleInputChange}
-              keyboardType="numeric"
-              placeholder="0"
-              placeholderTextColor={colors.gray}
-            />
-          </View>
+      {/* Hero result */}
+      <View style={styles.heroCard}>
+        <View style={styles.heroTopRow}>
+          <Text style={styles.heroLabel}>Result</Text>
+          <Text style={styles.heroUnitBadge}>{to.value}</Text>
+        </View>
+        <View style={styles.heroValueRow}>
+          <Text style={styles.resultValue}>{convert()}</Text>
+          <Text style={styles.resultUnit}>{to.label}</Text>
         </View>
 
-        {/* Swap */}
-        <View style={styles.swapRow}>
-          <TouchableOpacity style={styles.swapBtn} onPress={swapUnits}>
-            <Text style={styles.swapIcon}>⇅</Text>
+        <View style={styles.toRow}>
+          <Text style={styles.toLabel}>To</Text>
+          <TouchableOpacity
+            style={styles.unitDropdown}
+            onPress={() => setShowToPicker(true)}
+          >
+            <Text style={styles.unitDropdownText}>{to.label}</Text>
+            <Text style={styles.unitDropdownSymbol}>{to.value}</Text>
           </TouchableOpacity>
         </View>
+      </View>
 
-        {/* To */}
-        <View style={styles.resultRow}>
-          <Text style={styles.rowLabel}>To</Text>
-          <View style={styles.rowContent}>
-            <TouchableOpacity
-              style={styles.unitDropdown}
-              onPress={() => setShowToPicker(true)}
-            >
-              <Text style={styles.unitDropdownText}>{to.label}</Text>
-              <Text style={styles.unitDropdownSymbol}>{to.value}</Text>
-            </TouchableOpacity>
-            <View style={styles.resultDisplay}>
-              <Text style={styles.resultValue}>{convert()}</Text>
-              <Text style={styles.resultUnit}>{to.label}</Text>
-            </View>
-          </View>
-        </View>
+      {/* From + swap */}
+      <View style={styles.convertRow}>
+        <TouchableOpacity
+          style={styles.unitDropdown}
+          onPress={() => setShowFromPicker(true)}
+        >
+          <Text style={styles.unitDropdownText}>{from.label}</Text>
+          <Text style={styles.unitDropdownSymbol}>{from.value}</Text>
+        </TouchableOpacity>
+        <TextInput
+          style={styles.valueInput}
+          value={inputValue}
+          onChangeText={handleInputChange}
+          keyboardType="numeric"
+          placeholder="0"
+          placeholderTextColor={colors.gray}
+        />
+        <TouchableOpacity style={styles.swapBtn} onPress={swapUnits}>
+          <Text style={styles.swapIcon}>⇅</Text>
+        </TouchableOpacity>
       </View>
 
       {/* Pickers */}
@@ -527,6 +552,10 @@ export const UnitConverter: React.FC<UnitConverterProps> = ({ colors, onTaskComp
         onSelect={setToUnit}
         title="Select Target Unit"
       />
+
+      <View style={{ marginTop: 16 }}>
+        <AdBanner size="banner" />
+      </View>
     </View>
   );
 };
