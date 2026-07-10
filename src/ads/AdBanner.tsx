@@ -19,7 +19,10 @@ export const AdBanner: React.FC<AdBannerProps> = ({ size = 'banner' }) => {
       <BannerAd
         unitId={size === 'square' ? SQUARE_AD_UNIT_ID : BANNER_AD_UNIT_ID}
         size={size === 'square' ? BannerAdSize.MEDIUM_RECTANGLE : BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
-        onAdFailedToLoad={() => setFailed(true)}
+        onAdFailedToLoad={(error) => {
+          console.log('[AdBanner] failed to load', size, error);
+          setFailed(true);
+        }}
       />
     </View>
   );
