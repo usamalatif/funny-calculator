@@ -832,6 +832,11 @@ export default function GaslighterCalculator({ onSurfaceColorChange }: Gaslighte
     if (abs !== 0 && (abs >= 1e10 || abs < 1e-9)) {
       return num.toExponential(3);
     }
+    // While the user is actively typing a decimal (e.g. "0.500"), keep the
+    // raw input as-is so trailing zeros aren't silently dropped.
+    if (value.includes('.')) {
+      return value;
+    }
     // Trim to at most 10 significant digits, dropping trailing zeros.
     return String(parseFloat(num.toPrecision(10)));
   };
@@ -932,6 +937,11 @@ export default function GaslighterCalculator({ onSurfaceColorChange }: Gaslighte
                 },
               ]}
             >
+              {previousValue !== null && operator && (
+                <Text style={[styles.expressionText, { color: colors.displayText }]}>
+                  {formatDisplay(String(previousValue))}{operator}{!waitingForOperand ? formatDisplay(display) : ''}
+                </Text>
+              )}
               <Animated.View
                 style={[
                   styles.displayWrapper,
@@ -1031,8 +1041,8 @@ export default function GaslighterCalculator({ onSurfaceColorChange }: Gaslighte
 
               {/* Row 5 */}
               <View style={styles.buttonRow}>
-                <NumButton value="0" onPress={() => inputDigit('0')} pressed={pressedButton === '0'} themeColors={colors} />
                 <NumButton value="." onPress={inputDecimal} pressed={pressedButton === '.'} themeColors={colors} />
+                <NumButton value="0" onPress={() => inputDigit('0')} pressed={pressedButton === '0'} themeColors={colors} />
                 <FuncButton
                   value={'\u00B1'}
                   onPress={toggleSign}

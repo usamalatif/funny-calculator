@@ -157,6 +157,13 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  expressionText: {
+    alignSelf: 'flex-end',
+    fontSize: 18,
+    fontWeight: '500',
+    opacity: 0.6,
+    marginBottom: 4,
+  },
   displayText: {
     color: '#ffffff',
     fontWeight: '700',
